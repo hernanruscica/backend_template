@@ -1,0 +1,125 @@
+@api = http://localhost:5000/api
+
+###
+# User endpoints
+###
+
+# Create a new user
+POST {{api}}/users
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe.unique@example.com",
+  "password": "password123",
+  "phone": "1234567890",
+  "dni": "12345678Z",
+  "street": "123 Main St",
+  "city": "Anytown",
+  "state": "Anystate",
+  "country": "USA",
+  "zipCode": "12345"
+}
+
+###
+
+# Get all users
+GET {{api}}/users
+
+###
+
+# Get user by ID
+GET {{api}}/users/1
+
+###
+
+# Update user
+PUT {{api}}/users/1
+Content-Type: application/json
+
+{
+  "phone": "0987654321",
+  "street": "456 Oak Ave",
+  "city": "Somecity"
+}
+
+###
+
+# Update user image
+# Note: Create a test.jpg file in the root directory for this to work.
+PUT {{api}}/users/1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+# Delete user
+DELETE {{api}}/users/9
+
+
+###
+# Business endpoints
+###
+
+# Create a new business
+POST {{api}}/businesses
+Content-Type: application/json
+
+{
+  "name": "Test Business Inc.",
+  "description": "A test business for the API.",
+  "email": "business.unique@example.com",
+  "phone": "123456789",
+  "street": "789 Business Rd",
+  "city": "Businesstown",
+  "state": "Businessland",
+  "country": "BUSA",
+  "zip_code": "54321"
+}
+
+###
+
+# Get all businesses
+GET {{api}}/businesses
+
+###
+
+# Get business by ID
+GET {{api}}/businesses/1
+
+###
+
+# Update business
+PUT {{api}}/businesses/1
+Content-Type: application/json
+
+{
+  "phone": "987654321",
+  "description": "An updated test business description."
+}
+
+###
+
+# Update business image
+# Note: Create a test.jpg file in the root directory for this to work.
+PUT {{api}}/businesses/1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+# Delete business
+DELETE {{api}}/businesses/1
