@@ -4,7 +4,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "db:reset": "node scripts/dbReset.js",
@@ -19,13 +19,20 @@
     "cloudinary": "^1.41.3",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
     "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "mysql2": "^3.14.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "jest": "^30.0.5",
+    "nodemon": "^3.1.4",
+    "supertest": "^7.1.4"
+  },
+  "jest": {
+    "transform": {}
   }
 }

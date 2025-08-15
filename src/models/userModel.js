@@ -1,5 +1,6 @@
 import pool from '../config/database.js';
 import { randomUUID } from 'crypto';
+import CustomError from '../utils/customError.js';
 
 export const UserModel = {
   async create({ firstName, lastName, email, password, phone, dni, avatarUrl, address, createdBy }) {
@@ -9,9 +10,16 @@ export const UserModel = {
       INSERT INTO users (uuid, first_name, last_name, email, password, phone, dni, avatar_url, street, city, state, country, zip_code, created_by)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    await pool.query(sql, [uuid, firstName, lastName, email, password, phone, dni, avatarUrl, street, city, state, country, zipCode, createdBy]);
-    const newUser = await this.findByUuid(uuid);
-    return newUser;
+    try {
+      await pool.query(sql, [uuid, firstName, lastName, email, password, phone, dni, avatarUrl, street, city, state, country, zipCode, createdBy]);
+      const newUser = await this.findByUuid(uuid);
+      return newUser;
+    } catch (error) {
+      if (error.code === 'ER_DUP_ENTRY') {
+        throw new CustomError(`The email '${email}' is already in use.`, 409);
+      }
+      throw error;
+    }
   },
 
   async findByEmail(email) {

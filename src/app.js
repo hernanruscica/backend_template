@@ -1,9 +1,23 @@
 import express from 'express';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import userRoutes from './routes/userRoutes.js';
 import businessRoutes from './routes/businessRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import errorHandler from './middlewares/errorHandler.js';
 
 const app = express();
+
+// Set security HTTP headers
+app.use(helmet());
+
+// Limit requests from same API
+const limiter = rateLimit({
+  max: 100, // 100 requests from the same IP in 15 minutes
+  windowMs: 15 * 60 * 1000,
+  message: 'Too many requests from this IP, please try again in 15 minutes!',
+});
+app.use('/api', limiter);
 
 app.use(express.json());
 
@@ -14,5 +28,7 @@ app.use('/api/businesses', businessRoutes);
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
+
+app.use(errorHandler);
 
 export default app;
