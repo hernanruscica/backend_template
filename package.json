@@ -1,5 +1,5 @@
 {
-  "name": "mdv-sensores-backend-v2",
+  "name": "backend_template",
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
@@ -11,8 +11,8 @@
     "hash:password": "node scripts/hashPassword.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Cesar Hernan Ruscica",
+  "license": "MIT",
   "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.2",
