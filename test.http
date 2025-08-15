@@ -30,8 +30,8 @@ Authorization: Bearer {{token}}
 {
   "firstName": "juan",
   "lastName": "perez",
-  "email": "juan.perez.unique@example.com",
-  "password": "Password123",
+  "email": "juand2.perez.unique@example.com",
+  "password": "Password1232",
   "phone": "1234567890",
   "dni": "12345677",
   "street": "123 Main St",

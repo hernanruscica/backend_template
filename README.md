@@ -1,8 +1,14 @@
-# MDV Sensores - Backend V2
+# Generic users, business, roles, permissions system
+
+## Author 
+Cesar Hernan Ruscica 
+### Enlaces: 
+- <a href= 'https://www.linkedin.com/in/cesar-hernan-ruscica' target="_blank"> linkedin </a>
+- <a href= 'https://ruscica.com.ar' target="_blank"> ruscica.com.ar </a>
 
 ## Project Overview
 
-This project is the backend service for the MDV Sensores application. It's a robust and scalable RESTful API built with Node.js and Express. It handles user management, business logic, authentication, and permissions, providing a solid foundation for the application's needs. The architecture has been refactored to follow best practices, including a service layer, centralized error handling, and enhanced security.
+This project is the generic backend service for many uses. It's a robust and scalable RESTful API built with Node.js and Express. It handles user management, business logic, authentication, and permissions, providing a solid foundation for the application's needs. The architecture has been refactored to follow best practices, including a service layer, centralized error handling, and enhanced security.
 
 ## Technologies Used
 
@@ -107,3 +113,4 @@ The project uses Jest for testing. To run the tests, use the following command:
 
 ```bash
 npm test
+```

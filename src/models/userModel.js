@@ -16,7 +16,12 @@ export const UserModel = {
       return newUser;
     } catch (error) {
       if (error.code === 'ER_DUP_ENTRY') {
-        throw new CustomError(`The email '${email}' is already in use.`, 409);
+        if (error.message.includes('email')) {
+          throw new CustomError(`The email '${email}' is already in use.`, 409);
+        } else if (error.message.includes('dni')) {
+          throw new CustomError(`The DNI '${dni}' is already in use.`, 409);
+        }
+        throw new CustomError('A user with the provided information already exists.', 409);
       }
       throw error;
     }
@@ -114,8 +119,15 @@ export const UserModel = {
 
   async delete(uuid) {
     const sql = 'DELETE FROM users WHERE uuid = ?';
-    const [result] = await pool.query(sql, [uuid]);
-    return result;
+    try {
+      const [result] = await pool.query(sql, [uuid]);
+      return result;
+    } catch (error) {
+      if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+        throw new CustomError('This user cannot be deleted because they are referenced by other records.', 409);
+      }
+      throw error;
+    }
   },
 
   async findUserBusinessesAndRoles(userUuid) {

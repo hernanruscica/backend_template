@@ -9,7 +9,9 @@ SELECT
     entity
 FROM (
     SELECT 'GET' AS action, 'businesses' AS entity
+    UNION ALL SELECT 'POST', 'businesses'
     UNION ALL SELECT 'PUT', 'businesses'
+    UNION ALL SELECT 'DELETE', 'businesses'
     UNION ALL SELECT 'GET', 'users'
     UNION ALL SELECT 'POST', 'users'
     UNION ALL SELECT 'DELETE', 'users'
