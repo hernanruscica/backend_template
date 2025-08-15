@@ -2,7 +2,11 @@ import { BusinessModel } from '../models/businessModel.js';
 
 export const createBusiness = async (req, res) => {
   try {
-    const business = await BusinessModel.create(req.body);
+    const { street, city, state, country, zip_code, ...businessData } = req.body;
+    const created_by = req.user.uuid;
+    const address = { street, city, state, country, zip_code };
+    const businessPayload = { ...businessData, address, createdBy: created_by };
+    const business = await BusinessModel.create(businessPayload);
     res.status(201).json({
       success: true,
       message: 'Business created successfully',
@@ -25,10 +29,10 @@ export const getAllBusinesses = async (req, res) => {
   }
 };
 
-export const getBusinessById = async (req, res) => {
+export const getBusinessByUuid = async (req, res) => {
   try {
-    const { id } = req.params;
-    const business = await BusinessModel.findById(id);
+    const { uuid } = req.params;
+    const business = await BusinessModel.findByUuid(uuid);
     if (!business) {
       return res.status(200).json({ success: false, message: 'Business not found' });
     }
@@ -41,24 +45,30 @@ export const getBusinessById = async (req, res) => {
   }
 };
 
-export const updateBusiness = async (req, res) => {
+export const updateBusinessByUuid = async (req, res) => {
   try {
-    const { id } = req.params;
-    const fieldsToUpdate = req.body;
+    const { uuid } = req.params;
+    const updated_by = req.user.uuid;
+    const { street, city, state, country, zip_code, ...otherFields } = req.body;
+    const fieldsToUpdate = { ...otherFields };
+
+    if (street || city || state || country || zip_code) {
+      fieldsToUpdate.address = { street, city, state, country, zip_code };
+    }
 
     if (req.file) {
       fieldsToUpdate.logo_url = req.file.path;
     }
 
-    const business = await BusinessModel.findById(id);
+    const business = await BusinessModel.findByUuid(uuid);
 
     if (!business) {
       return res.status(200).json({ success: false, message: 'Business not found' });
     }
 
-    await BusinessModel.update(id, fieldsToUpdate);
+    await BusinessModel.update(business.uuid, fieldsToUpdate, updated_by);
 
-    const updatedBusiness = await BusinessModel.findById(id);
+    const updatedBusiness = await BusinessModel.findByUuid(business.uuid);
 
     res.status(200).json({
       success: true,
@@ -70,10 +80,14 @@ export const updateBusiness = async (req, res) => {
   }
 };
 
-export const deleteBusiness = async (req, res) => {
+export const deleteBusinessByUuid = async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await BusinessModel.delete(id);
+    const { uuid } = req.params;
+    const business = await BusinessModel.findByUuid(uuid);
+    if (!business) {
+      return res.status(200).json({ success: false, message: 'Business not found' });
+    }
+    const result = await BusinessModel.delete(business.uuid);
     if (result.affectedRows === 0) {
       return res.status(200).json({ success: false, message: 'Business not found' });
     }

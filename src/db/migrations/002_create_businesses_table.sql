@@ -1,6 +1,5 @@
 CREATE TABLE businesses (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    uuid CHAR(36) NOT NULL UNIQUE,
+    uuid CHAR(36) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
     email VARCHAR(100),
@@ -13,5 +12,7 @@ CREATE TABLE businesses (
     zip_code VARCHAR(20),
     is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by CHAR(36),
+    updated_by CHAR(36)
 );

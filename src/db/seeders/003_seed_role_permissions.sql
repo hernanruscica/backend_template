@@ -1,62 +1,88 @@
--- This script assumes that the roles and permissions have been seeded already.
--- It uses the names of the roles and permissions to get their IDs and create the relationships.
+-- This script assumes that the roles have been seeded already.
+-- It uses the names of the roles to get their UUIDs and create the relationships.
 
 -- Owner permissions (all permissions)
-INSERT INTO role_permissions (role_id, permission_id)
+INSERT INTO role_permissions (role_uuid, action, entity)
 SELECT
-    (SELECT id FROM roles WHERE name = 'Owner'),
-    p.id
-FROM permissions p;
+    (SELECT uuid FROM roles WHERE name = 'Owner'),
+    action,
+    entity
+FROM (
+    SELECT 'GET' AS action, 'businesses' AS entity
+    UNION ALL SELECT 'PUT', 'businesses'
+    UNION ALL SELECT 'GET', 'users'
+    UNION ALL SELECT 'POST', 'users'
+    UNION ALL SELECT 'DELETE', 'users'
+    UNION ALL SELECT 'PUT', 'users'
+    UNION ALL SELECT 'GET', 'dataloggers'
+    UNION ALL SELECT 'POST', 'dataloggers'
+    UNION ALL SELECT 'PUT', 'dataloggers'
+    UNION ALL SELECT 'DELETE', 'dataloggers'
+    UNION ALL SELECT 'GET', 'alarms'
+    UNION ALL SELECT 'POST', 'alarms'
+    UNION ALL SELECT 'PUT', 'alarms'
+    UNION ALL SELECT 'DELETE', 'alarms'
+    UNION ALL SELECT 'POST', 'alarms/acknowledge'
+    UNION ALL SELECT 'GET', 'reports'
+    UNION ALL SELECT 'GET', 'channels'
+    UNION ALL SELECT 'POST', 'channels'
+    UNION ALL SELECT 'PUT', 'channels'
+    UNION ALL SELECT 'DELETE', 'channels'
+) AS permissions;
 
 -- Administrator permissions
-INSERT INTO role_permissions (role_id, permission_id)
+INSERT INTO role_permissions (role_uuid, action, entity)
 SELECT
-    (SELECT id FROM roles WHERE name = 'Administrator'),
-    p.id
-FROM permissions p
-WHERE p.name IN (
-    'view_business_dashboard',
-    'edit_business_settings',
-    'view_users',
-    'invite_users',
-    'remove_users',
-    'manage_user_roles',
-    'view_dataloggers',
-    'create_dataloggers',
-    'edit_dataloggers',
-    'delete_dataloggers',
-    'view_alarms',
-    'create_alarms',
-    'edit_alarms',
-    'delete_alarms',
-    'acknowledge_alarms',
-    'view_reports'
-);
+    (SELECT uuid FROM roles WHERE name = 'Administrator'),
+    action,
+    entity
+FROM (
+    SELECT 'GET' AS action, 'businesses' AS entity
+    UNION ALL SELECT 'PUT', 'businesses'
+    UNION ALL SELECT 'GET', 'users'
+    UNION ALL SELECT 'POST', 'users'
+    UNION ALL SELECT 'DELETE', 'users'
+    UNION ALL SELECT 'PUT', 'users'
+    UNION ALL SELECT 'GET', 'dataloggers'
+    UNION ALL SELECT 'POST', 'dataloggers'
+    UNION ALL SELECT 'PUT', 'dataloggers'
+    UNION ALL SELECT 'DELETE', 'dataloggers'
+    UNION ALL SELECT 'GET', 'alarms'
+    UNION ALL SELECT 'POST', 'alarms'
+    UNION ALL SELECT 'PUT', 'alarms'
+    UNION ALL SELECT 'DELETE', 'alarms'
+    UNION ALL SELECT 'POST', 'alarms/acknowledge'
+    UNION ALL SELECT 'GET', 'reports'
+    UNION ALL SELECT 'GET', 'channels'
+    UNION ALL SELECT 'PUT', 'channels'
+) AS permissions;
 
 -- Technician permissions
-INSERT INTO role_permissions (role_id, permission_id)
+INSERT INTO role_permissions (role_uuid, action, entity)
 SELECT
-    (SELECT id FROM roles WHERE name = 'Technician'),
-    p.id
-FROM permissions p
-WHERE p.name IN (
-    'view_business_dashboard',
-    'view_dataloggers',
-    'edit_dataloggers',
-    'view_alarms',
-    'acknowledge_alarms',
-    'view_reports'
-);
+    (SELECT uuid FROM roles WHERE name = 'Technician'),
+    action,
+    entity
+FROM (
+    SELECT 'GET' AS action, 'businesses' AS entity
+    UNION ALL SELECT 'GET', 'dataloggers'
+    UNION ALL SELECT 'PUT', 'dataloggers'
+    UNION ALL SELECT 'GET', 'alarms'
+    UNION ALL SELECT 'POST', 'alarms/acknowledge'
+    UNION ALL SELECT 'GET', 'reports'
+    UNION ALL SELECT 'GET', 'channels'
+) AS permissions;
 
 -- Read-only User permissions
-INSERT INTO role_permissions (role_id, permission_id)
+INSERT INTO role_permissions (role_uuid, action, entity)
 SELECT
-    (SELECT id FROM roles WHERE name = 'Read-only User'),
-    p.id
-FROM permissions p
-WHERE p.name IN (
-    'view_business_dashboard',
-    'view_dataloggers',
-    'view_alarms',
-    'view_reports'
-);
+    (SELECT uuid FROM roles WHERE name = 'Read-only User'),
+    action,
+    entity
+FROM (
+    SELECT 'GET' AS action, 'businesses' AS entity
+    UNION ALL SELECT 'GET', 'dataloggers'
+    UNION ALL SELECT 'GET', 'alarms'
+    UNION ALL SELECT 'GET', 'reports'
+    UNION ALL SELECT 'GET', 'channels'
+) AS permissions;

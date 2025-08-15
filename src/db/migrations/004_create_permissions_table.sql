@@ -1,6 +1,0 @@
-CREATE TABLE permissions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    uuid CHAR(36) NOT NULL UNIQUE,
-    name VARCHAR(50) NOT NULL UNIQUE,
-    description VARCHAR(255)
-);

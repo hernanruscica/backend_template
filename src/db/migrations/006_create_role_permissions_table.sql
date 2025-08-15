@@ -1,7 +1,9 @@
 CREATE TABLE role_permissions (
-    role_id INT NOT NULL,
-    permission_id INT NOT NULL,
-    PRIMARY KEY (role_id, permission_id),
-    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
-    FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
+    role_uuid CHAR(36) NOT NULL,
+    action VARCHAR(10) NOT NULL,
+    entity VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by CHAR(36),
+    PRIMARY KEY (role_uuid, action, entity),
+    FOREIGN KEY (role_uuid) REFERENCES roles(uuid) ON DELETE CASCADE
 );

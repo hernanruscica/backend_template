@@ -2,60 +2,92 @@ import pool from '../config/database.js';
 import { randomUUID } from 'crypto';
 
 export const BusinessModel = {
-  async create({ name, description, phone, email, street, city, state, country, zip_code }) {
+  async create({ name, description, phone, email, address, createdBy }) {
+    const { street, city, state, country, zip_code } = address;
     const uuid = randomUUID();
     const sql = `
-      INSERT INTO businesses (uuid, name, description, phone, email, street, city, state, country, zip_code)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO businesses (uuid, name, description, phone, email, street, city, state, country, zip_code, created_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    const [result] = await pool.query(sql, [uuid, name, description, phone, email, street, city, state, country, zip_code]);
-    const newBusiness = await this.findById(result.insertId);
+    await pool.query(sql, [uuid, name, description, phone, email, street, city, state, country, zip_code, createdBy]);
+    const newBusiness = await this.findByUuid(uuid);
     return newBusiness;
-  },
-
-  async findById(id) {
-    const sql = 'SELECT * FROM businesses WHERE id = ?';
-    const [rows] = await pool.query(sql, [id]);
-    return rows[0];
   },
 
   async findByUuid(uuid) {
     const sql = 'SELECT * FROM businesses WHERE uuid = ?';
     const [rows] = await pool.query(sql, [uuid]);
-    return rows[0];
+    if (rows[0]) {
+      const { street, city, state, country, zip_code, ...businessData } = rows[0];
+      return {
+        ...businessData,
+        address: { street, city, state, country, zip_code }
+      };
+    }
+    return undefined;
   },
 
-  async addUser(businessId, userId, roleId) {
-    const sql = 'INSERT INTO business_users (business_id, user_id, role_id) VALUES (?, ?, ?)';
-    await pool.query(sql, [businessId, userId, roleId]);
+  async addUser(businessUuid, userUuid, roleUuid, createdBy) {
+    const uuid = randomUUID();
+    const sql = 'INSERT INTO business_users (uuid, business_uuid, user_uuid, role_uuid, created_by) VALUES (?, ?, ?, ?, ?)';
+    await pool.query(sql, [uuid, businessUuid, userUuid, roleUuid, createdBy]);
   },
 
   async findAll() {
     const sql = 'SELECT * FROM businesses';
     const [rows] = await pool.query(sql);
-    return rows;
+    return rows.map(row => {
+      const { street, city, state, country, zip_code, ...businessData } = row;
+      return {
+        ...businessData,
+        address: { street, city, state, country, zip_code }
+      };
+    });
   },
 
-  async update(id, fields) {
-    const allowedFields = ['name', 'description', 'phone', 'email', 'street', 'city', 'state', 'country', 'zip_code', 'logo_url'];
-    const fieldEntries = Object.entries(fields);
+  async update(uuid, fields, updatedBy) {
+    const { address, ...otherFields } = fields;
+    const allowedFields = ['name', 'description', 'phone', 'email', 'logo_url'];
+    
+    const fieldEntries = Object.entries(otherFields);
     const validFields = fieldEntries.filter(([key]) => allowedFields.includes(key));
+    
+    let setClause = validFields.map(([key]) => `${key} = ?`).join(', ');
+    const values = validFields.map(([, value]) => value);
 
-    if (validFields.length === 0) {
+    if (address) {
+      const addressFields = Object.entries(address);
+      const validAddressFields = addressFields.filter(([key]) => ['street', 'city', 'state', 'country', 'zip_code'].includes(key));
+      if (validAddressFields.length > 0) {
+        const addressSetClause = validAddressFields.map(([key]) => `${key} = ?`).join(', ');
+        if (setClause) {
+          setClause += ', ';
+        }
+        setClause += addressSetClause;
+        values.push(...validAddressFields.map(([, value]) => value));
+      }
+    }
+
+    if (updatedBy) {
+        if (setClause) {
+            setClause += ', ';
+        }
+        setClause += 'updated_by = ?';
+        values.push(updatedBy);
+    }
+
+    if (values.length === 0) {
       return { affectedRows: 0 };
     }
 
-    const setClause = validFields.map(([key]) => `${key} = ?`).join(', ');
-    const values = validFields.map(([, value]) => value);
-
-    const sql = `UPDATE businesses SET ${setClause} WHERE id = ?`;
-    const [result] = await pool.query(sql, [...values, id]);
+    const sql = `UPDATE businesses SET ${setClause} WHERE uuid = ?`;
+    const [result] = await pool.query(sql, [...values, uuid]);
     return result;
   },
 
-  async delete(id) {
-    const sql = 'DELETE FROM businesses WHERE id = ?';
-    const [result] = await pool.query(sql, [id]);
+  async delete(uuid) {
+    const sql = 'DELETE FROM businesses WHERE uuid = ?';
+    const [result] = await pool.query(sql, [uuid]);
     return result;
   }
 };

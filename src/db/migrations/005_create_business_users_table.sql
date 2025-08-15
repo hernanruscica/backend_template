@@ -1,12 +1,12 @@
 CREATE TABLE business_users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    uuid CHAR(36) NOT NULL UNIQUE,
-    user_id INT NOT NULL,
-    business_id INT NOT NULL,
-    role_id INT NOT NULL,
+    uuid CHAR(36) PRIMARY KEY,
+    user_uuid CHAR(36) NOT NULL,
+    business_uuid CHAR(36) NOT NULL,
+    role_uuid CHAR(36) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (business_id) REFERENCES businesses(id) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES roles(id),
-    UNIQUE KEY (user_id, business_id)
+    created_by CHAR(36),
+    FOREIGN KEY (user_uuid) REFERENCES users(uuid) ON DELETE CASCADE,
+    FOREIGN KEY (business_uuid) REFERENCES businesses(uuid) ON DELETE CASCADE,
+    FOREIGN KEY (role_uuid) REFERENCES roles(uuid),
+    UNIQUE KEY (user_uuid, business_uuid, role_uuid)
 );

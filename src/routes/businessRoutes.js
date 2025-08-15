@@ -3,20 +3,26 @@ import upload from '../middlewares/uploadMiddleware.js';
 import {
   createBusiness,
   getAllBusinesses,
-  getBusinessById,
-  updateBusiness,
-  deleteBusiness,
+  getBusinessByUuid,
+  updateBusinessByUuid,
+  deleteBusinessByUuid,
 } from '../controllers/businessController.js';
+import { authMiddleware } from '../middlewares/authMiddleware.js';
+import { permissionMiddleware } from '../middlewares/permissionMiddleware.js';
 
 const router = Router();
 
-router.route('/')
-  .post(createBusiness)
-  .get(getAllBusinesses);
+// Apply auth middleware to all routes
+router.use(authMiddleware);
 
-router.route('/:id')
-  .get(getBusinessById)
-  .put(upload.single('image'), updateBusiness)
-  .delete(deleteBusiness);
+// Apply permission middleware to each route individually
+router.route('/')
+  .post(permissionMiddleware, createBusiness)
+  .get(permissionMiddleware, getAllBusinesses);
+
+router.route('/:uuid')
+  .get(permissionMiddleware, getBusinessByUuid)
+  .put(permissionMiddleware, upload.single('image'), updateBusinessByUuid)
+  .delete(permissionMiddleware, deleteBusinessByUuid);
 
 export default router;

@@ -3,20 +3,27 @@ import upload from '../middlewares/uploadMiddleware.js';
 import {
   createUser,
   getAllUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
+  getUserByUuid,
+  updateUserByUuid,
+  deleteUserByUuid,
 } from '../controllers/userController.js';
+import { validateCreateUser, validateUpdateUser } from '../middlewares/userValidation.js';
+import { authMiddleware } from '../middlewares/authMiddleware.js';
+import { permissionMiddleware } from '../middlewares/permissionMiddleware.js';
 
 const router = Router();
 
-router.route('/')
-  .post(createUser)
-  .get(getAllUsers);
+// Apply auth middleware to all routes
+router.use(authMiddleware);
 
-router.route('/:id')
-  .get(getUserById)
-  .put(upload.single('image'), updateUser)
-  .delete(deleteUser);
+// Apply permission middleware to each route individually
+router.route('/')
+  .post(permissionMiddleware, validateCreateUser, createUser)
+  .get(permissionMiddleware, getAllUsers);
+
+router.route('/:uuid')
+  .get(permissionMiddleware, getUserByUuid)
+  .put(permissionMiddleware, upload.single('image'), validateUpdateUser, updateUserByUuid)
+  .delete(permissionMiddleware, deleteUserByUuid);
 
 export default router;
