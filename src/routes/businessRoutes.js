@@ -9,6 +9,7 @@ import {
 } from '../controllers/businessController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { permissionMiddleware } from '../middlewares/permissionMiddleware.js';
+import { verifyBusinessAccess } from '../middlewares/businessVerificationMiddleware.js';
 
 const router = Router();
 
@@ -21,8 +22,11 @@ router.route('/')
   .get(permissionMiddleware, getAllBusinesses);
 
 router.route('/:uuid')
-  .get(permissionMiddleware, getBusinessByUuid)
-  .put(permissionMiddleware, upload.single('image'), updateBusinessByUuid)
-  .delete(permissionMiddleware, deleteBusinessByUuid);
+  .get(permissionMiddleware, verifyBusinessAccess('user'), getBusinessByUuid)
+  .put(permissionMiddleware, verifyBusinessAccess('admin'), upload.single('image'), updateBusinessByUuid)
+  .delete(permissionMiddleware, verifyBusinessAccess('admin'), deleteBusinessByUuid);
+
+router.route('/:uuid/hard')
+  .delete(permissionMiddleware, verifyBusinessAccess('admin'), deleteBusinessByUuid);
 
 export default router;

@@ -6,11 +6,14 @@ import {
   getUserByUuidService,
   updateUserByUuidService,
   deleteUserByUuidService,
+  hardDeleteUserByUuidService,
 } from '../services/userService.js';
+import { UserModel } from '../models/userModel.js';
 
 export const createUser = catchAsync(async (req, res, next) => {
   const { business_uuid, role, ...userData } = req.body;
-  const userWithDetails = await createUserService(userData, business_uuid, role, req.user);
+  const adminUser = await UserModel.findByUuid(req.user.uuid);
+  const userWithDetails = await createUserService(userData, business_uuid, role, adminUser);
 
   res.status(201).json({
     success: true,
@@ -20,7 +23,8 @@ export const createUser = catchAsync(async (req, res, next) => {
 });
 
 export const getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await getAllUsersService();
+  const user = await UserModel.findByUuid(req.user.uuid);
+  const users = await getAllUsersService(user);
   res.status(200).json({
     success: true,
     users,
@@ -29,7 +33,8 @@ export const getAllUsers = catchAsync(async (req, res, next) => {
 
 export const getUserByUuid = catchAsync(async (req, res, next) => {
   const { uuid } = req.params;
-  const user = await getUserByUuidService(uuid);
+  const requester = await UserModel.findByUuid(req.user.uuid);
+  const user = await getUserByUuidService(uuid, requester);
   res.status(200).json({
     success: true,
     user,
@@ -38,8 +43,8 @@ export const getUserByUuid = catchAsync(async (req, res, next) => {
 
 export const updateUserByUuid = catchAsync(async (req, res, next) => {
   const { uuid } = req.params;
+  console.log(req)
   const updatedUser = await updateUserByUuidService(uuid, req.body, req.user.uuid, req.file);
-
   res.status(200).json({
     success: true,
     message: 'User updated successfully',
@@ -49,9 +54,15 @@ export const updateUserByUuid = catchAsync(async (req, res, next) => {
 
 export const deleteUserByUuid = catchAsync(async (req, res, next) => {
   const { uuid } = req.params;
-  await deleteUserByUuidService(uuid);
+  let response = [];
+  if (req.hardDelete) {
+    response = await hardDeleteUserByUuidService(uuid);    
+  } else {
+    response = await deleteUserByUuidService(uuid, req.user);
+  }
   res.status(200).json({
     success: true,
-    message: 'User deleted successfully',
+    message: response.message,
+    user: response.user
   });
 });

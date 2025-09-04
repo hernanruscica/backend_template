@@ -1,6 +1,6 @@
 # API Documentation
 
-This document provides detailed information about the API endpoints for the MDV Sensores backend.
+This document provides detailed information about the API endpoints backend.
 
 ## Base URL
 
@@ -152,7 +152,6 @@ All endpoints (except for `/auth/login`) are protected and require a JSON Web To
       "success": false,
       "message": "User not found"
     }
-    ```
 
 ### Update User by UUID
 
@@ -196,3 +195,163 @@ All endpoints (except for `/auth/login`) are protected and require a JSON Web To
       "success": false,
       "message": "User not found"
     }
+
+### Hard Delete User by UUID
+
+-   **Endpoint:** `DELETE /users/:uuid/hard`
+-   **Description:** Permanently deletes a user from the system. This is a hard delete and cannot be undone.
+-   **Permissions:** Requires a role with `DELETE` permission on the `users` entity.
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "success": true,
+      "message": "User permanently deleted"
+    }
+    ```
+-   **Error Response (404 Not Found):**
+    ```json
+    {
+      "success": false,
+      "message": "User not found"
+    }
+---
+
+## Business Endpoints
+
+-   **Base Path:** `/businesses`
+
+### Get All Businesses
+
+-   **Endpoint:** `GET /businesses`
+-   **Description:** Retrieves a list of all businesses in the system.
+-   **Permissions:** Requires a role with `GET` permission on the `businesses` entity.
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "success": true,
+      "businesses": [
+        {
+          "uuid": "...",
+          "name": "Business Name",
+          // ... other business fields
+        }
+      ]
+    }
+    ```
+
+### Create a New Business
+
+-   **Endpoint:** `POST /businesses`
+-   **Description:** Creates a new business.
+-   **Permissions:** Requires a role with `POST` permission on the `businesses` entity.
+-   **Request Body:**
+    ```json
+    {
+      "name": "New Business",
+      "cuit": "30-12345678-9",
+      "street": "456 Business Ave",
+      "city": "Businesstown",
+      "state": "Businessstate",
+      "country": "Country",
+      "zipCode": "54321",
+      "phone": "1231231234",
+      "email": "contact@newbusiness.com"
+    }
+    ```
+-   **Success Response (201 Created):**
+    ```json
+    {
+      "success": true,
+      "message": "Business created successfully",
+      "business": {
+        "uuid": "new-business-uuid",
+        // ... full business object
+      }
+    }
+    ```
+
+### Get Business by UUID
+
+-   **Endpoint:** `GET /businesses/:uuid`
+-   **Description:** Retrieves a single business by its unique identifier.
+-   **Permissions:** Requires a role with `GET` permission on the `businesses` entity.
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "success": true,
+      "business": {
+        "uuid": "business-uuid-to-fetch",
+        // ... full business object
+      }
+    }
+    ```
+-   **Error Response (404 Not Found):**
+    ```json
+    {
+      "success": false,
+      "message": "Business not found"
+    }
+    ```
+
+### Update Business by UUID
+
+-   **Endpoint:** `PUT /businesses/:uuid`
+-   **Description:** Updates a business's information. Can also handle image uploads for the business's logo.
+-   **Permissions:** Requires a role with `PUT` permission on the `businesses` entity.
+-   **Request Body:** Can be `application/json` for data or `multipart/form-data` for file uploads. Include any fields to update.
+    ```json
+    {
+      "name": "Updated Business Name",
+      "phone": "0987654321"
+    }
+    ```
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "success": true,
+      "message": "Business updated successfully",
+      "business": {
+        "uuid": "updated-business-uuid",
+        // ... full updated business object
+      }
+    }
+    ```
+
+### Delete Business by UUID
+
+-   **Endpoint:** `DELETE /businesses/:uuid`
+-   **Description:** Deletes a business from the system.
+-   **Permissions:** Requires a role with `DELETE` permission on the `businesses` entity.
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "success": true,
+      "message": "Business deleted successfully"
+    }
+    ```
+-   **Error Response (404 Not Found):**
+    ```json
+    {
+      "success": false,
+      "message": "Business not found"
+    }
+
+### Hard Delete Business by UUID
+
+-   **Endpoint:** `DELETE /businesses/:uuid/hard`
+-   **Description:** Permanently deletes a business from the system. This is a hard delete and cannot be undone.
+-   **Permissions:** Requires a role with `DELETE` permission on the `businesses` entity.
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "success": true,
+      "message": "Business permanently deleted"
+    }
+    ```
+-   **Error Response (404 Not Found):**
+    ```json
+    {
+      "success": false,
+      "message": "Business not found"
+    }
+    ```

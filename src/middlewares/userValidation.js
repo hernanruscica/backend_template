@@ -45,5 +45,6 @@ export const validateUpdateUser = [
   body('state').optional().trim().isString().isLength({ max: 50 }).withMessage('State must be 50 characters or less'),
   body('country').optional().trim().isString().isLength({ max: 50 }).withMessage('Country must be 50 characters or less'),
   body('zipCode').optional().trim().isString().isLength({ max: 20 }).withMessage('Zip code must be 20 characters or less'),
+  body('is_active').optional().isBoolean().withMessage('is_active must be a boolean value'),
   handleValidationErrors,
 ];

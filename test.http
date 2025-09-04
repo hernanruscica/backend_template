@@ -5,7 +5,9 @@
 # Auth endpoints
 ###
 
-# Login user
+# Login user 
+# Examples dni: 28470359 password: Password1234 Owner - All actions in all bussiness
+#          dni: 12345677 password: Password1232 Administrator in 'Tech Corp', UUID: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d       
 # @name login
 POST {{api}}/auth/login
 Content-Type: application/json
@@ -30,17 +32,17 @@ Authorization: Bearer {{token}}
 {
   "firstName": "juan",
   "lastName": "perez",
-  "email": "juand2.perez.unique@example.com",
+  "email": "juand5.perez.unique@example.com",
   "password": "Password1232",
   "phone": "1234567890",
-  "dni": "12345677",
+  "dni": "12345659",
   "street": "123 Main St",
   "city": "Anytown",
   "state": "Anystate",
   "country": "USA",
   "zipCode": "12345",
-  "business_uuid": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
-  "role": "Administrator"
+  "business_uuid": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+  "role": "Technician"
 }
 
 ###
@@ -52,7 +54,8 @@ Authorization: Bearer {{token}}
 ###
 
 # Get user by ID
-GET {{api}}/users/a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d
+# 69328825-b615-4e13-a627-ee2f7e75600c   
+GET {{api}}/users/8fe3ca3d-0a97-44a3-9934-f93c6d825c44
 Authorization: Bearer {{token}}
 
 ###

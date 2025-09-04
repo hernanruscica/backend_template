@@ -1,0 +1,165 @@
+@api = http://localhost:5000/api
+@token = 
+
+###
+# Administrator Own Business Tests
+# This file tests actions for an 'Administrator' user within their own business.
+# An Administrator should be able to perform permitted actions on users and businesses within their assigned business.
+###
+
+# Login as Administrator
+# dni: 12345677 password: Password1232 Administrator in 'Tech Corp', UUID: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+# @name login_admin_own
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{
+  "dni": "12345677",
+  "password": "Password1232"
+}
+
+###
+@token = {{login_admin_own.response.body.token}}
+
+###
+# User endpoints (Administrator - Own Business)
+###
+
+# Create a new user within own business (Administrator)
+POST {{api}}/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "firstName": "AdminOwn",
+  "lastName": "User",
+  "email": "admin.own.user.unique@example.com",
+  "password": "Password1232",
+  "phone": "3333333333",
+  "dni": "33333333",
+  "street": "Admin Own St",
+  "city": "Admin Own City",
+  "state": "Admin Own State",
+  "country": "Admin Own Country",
+  "zipCode": "33333",
+  "business_uuid": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+  "role": "Technician"
+}
+
+###
+
+# Get all users within own business (Administrator)
+GET {{api}}/users
+Authorization: Bearer {{token}}
+
+###
+
+# Get user by ID within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
+GET {{api}}/users/cc3d63f0-84d7-4cff-a6b3-85029241d5ec
+Authorization: Bearer {{token}}
+
+###
+
+# Update user within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
+PUT {{api}}/users/cc3d63f0-84d7-4cff-a6b3-85029241d5ec
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "phone": "0987654321",
+  "street": "456 Admin Own Ave",
+  "city": "Admin Own City Updated",
+  "is_active": true
+}
+
+###
+
+# Update user image within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
+# Note: Create a test.jpg file in the root directory for this to work.
+PUT {{api}}/users/e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d/image
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer {{token}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+# Delete user within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
+DELETE {{api}}/users/cc3d63f0-84d7-4cff-a6b3-85029241d5ec
+Authorization: Bearer {{token}}
+
+### Delete user Hard (Owner) -  Use a placeholder UUID, replace with an actual user ID
+
+DELETE {{api}}/users/cc3d63f0-84d7-4cff-a6b3-85029241d5ec/hard
+Authorization: Bearer {{token}}
+
+###
+# Business endpoints (Administrator - Own Business)
+###
+
+# Create a new business (Administrator) - Should be restricted
+POST {{api}}/businesses
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Admin Own Test Business Inc.",
+  "description": "A test business created by Admin Own.",
+  "email": "admin.own.business.unique@example.com",
+  "phone": "444444444",
+  "street": "789 Admin Own Business Rd",
+  "city": "Admin Own Businesstown",
+  "state": "Admin Own Businessland",
+  "country": "Admin Own BUSA",
+  "zip_code": "44444"
+}
+
+###
+
+# Get all businesses (Administrator) - Should only see own business
+GET {{api}}/businesses
+Authorization: Bearer {{token}}
+
+###
+
+# Get business by ID (Administrator) - Own business UUID: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+GET {{api}}/businesses/1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+Authorization: Bearer {{token}}
+
+###
+
+# Update business (Administrator) - Own business UUID: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+PUT {{api}}/businesses/1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "phone": "987654321",
+  "description": "An updated test business description by Admin Own."
+}
+
+###
+
+# Update business image (Administrator) - Own business UUID: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+# Note: Create a test.jpg file in the root directory for this to work.
+PUT {{api}}/businesses/1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer {{token}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+# Delete business (Administrator) - Own business UUID: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d - Should be restricted
+DELETE {{api}}/businesses/1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+Authorization: Bearer {{token}}

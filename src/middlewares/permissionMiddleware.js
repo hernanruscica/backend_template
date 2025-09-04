@@ -9,12 +9,19 @@ export const permissionMiddleware = async (req, res, next) => {
   const method = req.method;
   let entity = req.baseUrl.split('/').pop();
 
-  // Handle special cases like 'alarms/acknowledge'
-  if (req.route.path.includes('acknowledge')) {
-    entity = 'alarms/acknowledge';
+  
+  // Differentiate between soft and hard delete
+  if (method === 'DELETE') {
+    const isOwner = userRoles.includes('owner');
+    if (isOwner) {
+      req.hardDelete = true;
+    }
   }
 
   try {
+    if (!userRoles || userRoles.length === 0) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
     const connection = await pool.getConnection();
     try {
       const placeholders = userRoles.map(() => '?').join(',');

@@ -17,9 +17,18 @@ export const createUserService = async (userData, businessUuid, roleName, adminU
     throw new CustomError('Role not found', 404);
   }
 
-  const adminRolesNames = adminUser.roles;
-  const adminRoles = await Promise.all(adminRolesNames.map(roleName => RoleModel.findByName(roleName)));
-  const adminHierarchy = Math.min(...adminRoles.map(r => r.hierarchy_level));
+
+  const adminRoles = adminUser.businesses_roles.map(br => br.role);
+  const adminIsOwner = adminRoles.includes('owner');
+
+  if (!adminIsOwner) {
+    const adminBusinesses = adminUser.businesses_roles.map(br => br.uuid);
+    if (!adminBusinesses.includes(businessUuid)) {
+      throw new CustomError('Administrators can only create users in their own business.', 403);
+    }
+  }
+
+  const adminHierarchy = Math.min(...adminUser.businesses_roles.map(br => br.hierarchy_level));
 
   if (roleObject.hierarchy_level >= adminHierarchy) {
     throw new CustomError('Administrators can only create users with a lower hierarchy level.', 403);
@@ -37,8 +46,17 @@ export const createUserService = async (userData, businessUuid, roleName, adminU
   return UserModel.findByUuid(newUser.uuid);
 };
 
-export const getAllUsersService = async () => {
-  return UserModel.findAll();
+export const getAllUsersService = async (user) => {
+  const userRoles = user.businesses_roles.map(br => br.role);
+  if (userRoles.includes('owner')) {
+    return UserModel.findAll();
+  }
+
+  const business = await BusinessModel.findBusinessByUserId(user.uuid);
+  if (!business) {
+    throw new CustomError('User is not associated with any business', 404);
+  }
+  return UserModel.findAllByBusinessUuid(business.uuid);
 };
 
 export const getUserByUuidService = async (uuid) => {
@@ -50,11 +68,17 @@ export const getUserByUuidService = async (uuid) => {
 };
 
 export const updateUserByUuidService = async (uuid, updateData, updatedBy, file) => {
+  // console.log(updateData);
+  
   const { street, city, state, country, zip_code, ...otherFields } = updateData;
   const fieldsToUpdate = { ...otherFields };
 
   if (street || city || state || country || zip_code) {
     fieldsToUpdate.address = { street, city, state, country, zip_code };
+  }
+  
+  if (typeof updateData.is_active === 'boolean') {
+    fieldsToUpdate.is_active = updateData.is_active;
   }
 
   if (file) {
@@ -70,14 +94,26 @@ export const updateUserByUuidService = async (uuid, updateData, updatedBy, file)
   return UserModel.findByUuid(uuid);
 };
 
-export const deleteUserByUuidService = async (uuid) => {
+export const deleteUserByUuidService = async (uuid, adminUser) => {
   const user = await UserModel.findByUuid(uuid);
   if (!user) {
     throw new CustomError('User not found', 404);
   }
-  const result = await UserModel.delete(uuid);
+  const result = await UserModel.delete(uuid, adminUser.uuid);
   if (result.affectedRows === 0) {
     throw new CustomError('User not found', 404);
   }
-  return { message: 'User deleted successfully' };
+  return { message: 'User deleted successfully', user: {...user, is_active: false} };
+};
+
+export const hardDeleteUserByUuidService = async (uuid) => {
+  const user = await UserModel.findByUuid(uuid);
+  if (!user) {
+    throw new CustomError('User not found', 404);
+  }
+  const result = await UserModel.hardDelete(uuid);
+  if (result.affectedRows === 0) {
+    throw new CustomError('User not found', 404);
+  }
+  return { message: 'User permanently deleted successfully', user };
 };

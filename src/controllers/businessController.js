@@ -19,7 +19,11 @@ export const createBusiness = async (req, res) => {
 
 export const getAllBusinesses = async (req, res) => {
   try {
-    const businesses = await BusinessModel.findAll();
+    const business = await BusinessModel.findBusinessByUserId(req.user.uuid);
+    if (!business) {
+      return res.status(404).json({ success: false, message: 'User is not associated with any business' });
+    }
+    const businesses = await BusinessModel.findAllByBusinessUuid(business.uuid);
     res.status(200).json({
       success: true,
       businesses,
@@ -87,7 +91,12 @@ export const deleteBusinessByUuid = async (req, res) => {
     if (!business) {
       return res.status(200).json({ success: false, message: 'Business not found' });
     }
-    const result = await BusinessModel.delete(business.uuid);
+    let result;
+    if (req.hardDelete) {
+      result = await BusinessModel.hardDelete(business.uuid);
+    } else {
+      result = await BusinessModel.delete(business.uuid, req.user.uuid);
+    }
     if (result.affectedRows === 0) {
       return res.status(200).json({ success: false, message: 'Business not found' });
     }

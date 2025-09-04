@@ -77,8 +77,27 @@ export const UserModel = {
     }));
   },
 
+  async findAllByBusinessUuid(businessUuid) {
+    const sql = `
+      SELECT u.*
+      FROM users u
+      JOIN business_users bu ON u.uuid = bu.user_uuid
+      WHERE bu.business_uuid = ?
+    `;
+    const [rows] = await pool.query(sql, [businessUuid]);
+    return Promise.all(rows.map(async row => {
+      const { street, city, state, country, zip_code, ...userData } = row;
+      const businesses_roles = await this.findUserBusinessesAndRoles(row.uuid);
+      return {
+        ...userData,
+        address: { street, city, state, country, zip_code },
+        businesses_roles
+      };
+    }));
+  },
+
   async update(uuid, fields, updatedBy) {
-    const { address, ...otherFields } = fields;
+    const { address, is_active, ...otherFields } = fields;
     const allowedFields = ['first_name', 'last_name', 'email', 'password', 'phone', 'dni', 'avatar_url'];
     
     const fieldEntries = Object.entries(otherFields);
@@ -86,6 +105,14 @@ export const UserModel = {
     
     let setClause = validFields.map(([key]) => `${key} = ?`).join(', ');
     const values = validFields.map(([, value]) => value);
+
+    if (typeof is_active === 'boolean') {
+      if (setClause) {
+        setClause += ', ';
+      }
+      setClause += 'is_active = ?';
+      values.push(is_active);
+    }
 
     if (address) {
       const addressFields = Object.entries(address);
@@ -117,7 +144,13 @@ export const UserModel = {
     return result;
   },
 
-  async delete(uuid) {
+  async delete(uuid, updatedBy) {
+    const sql = 'UPDATE users SET is_active = false, updated_by = ? WHERE uuid = ?';
+    const [result] = await pool.query(sql, [updatedBy, uuid]);
+    return result;
+  },
+
+  async hardDelete(uuid) {
     const sql = 'DELETE FROM users WHERE uuid = ?';
     try {
       const [result] = await pool.query(sql, [uuid]);
@@ -150,5 +183,6 @@ export const UserModel = {
         role: role_name
       };
     });
-  }
+  },
+  
 };

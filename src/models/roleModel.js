@@ -76,5 +76,16 @@ export const RoleModel = {
     const sql = 'DELETE FROM roles WHERE uuid = ?';
     const [result] = await pool.query(sql, [uuid]);
     return result;
+  },
+
+  async hardDelete(uuid) {
+    const sql = 'DELETE FROM roles WHERE uuid = ?';
+    const [result] = await pool.query(sql, [uuid]);
+    return result;
+  },
+
+  async truncate() {
+    const sql = 'TRUNCATE TABLE roles';
+    await pool.query(sql);
   }
 };
