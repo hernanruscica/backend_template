@@ -21,7 +21,7 @@ export const verifySameBusiness = (action) => catchAsync(async (req, res, next) 
 
   if (requesterBusinessUuid !== userToAffectBusinessUuid) {
     throw new CustomError(`You can only ${action} users within your own business.`, 403);
-  }else if(requester.businesses_roles[0].role == 'Administrator' && action == 'hard_delete'){    
+  }else if(requester.businesses_roles[0].role == 'Administrator' || requester.businesses_roles[0].role == 'Owner'  && action == 'hard_delete'){    
     //From the same business and the actio is to Hard delete
     req.hardDelete = true; 
   }
@@ -40,7 +40,13 @@ export const verifyBusinessAccess = (requiredRole) => catchAsync(async (req, res
 
   let hasAccess = false;
   let isAdministrator = false;
+  const requesterUserIsOwner = requester.businesses_roles[0]?.role || false;
 
+  if (requesterUserIsOwner){
+    //console.log(req.route.path.includes('hard'))
+    req.hardDelete = req.route.path.includes('hard'); 
+    return next();
+  }
   for (const businessRole of requester.businesses_roles) {
     if (businessRole.business_uuid === businessUuid) {
       hasAccess = true;

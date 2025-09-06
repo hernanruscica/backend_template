@@ -22,11 +22,11 @@ router.route('/')
   .get(permissionMiddleware, getAllBusinesses);
 
 router.route('/:uuid')
-  .get(permissionMiddleware, verifyBusinessAccess('user'), getBusinessByUuid)
-  .put(permissionMiddleware, verifyBusinessAccess('admin'), upload.single('image'), updateBusinessByUuid)
-  .delete(permissionMiddleware, verifyBusinessAccess('admin'), deleteBusinessByUuid);
+  .get(permissionMiddleware, verifyBusinessAccess('Technician'), getBusinessByUuid)
+  .put(permissionMiddleware, verifyBusinessAccess('Administrator'), upload.single('image'), updateBusinessByUuid)
+  .delete(permissionMiddleware, verifyBusinessAccess('Administrator'), deleteBusinessByUuid);
 
 router.route('/:uuid/hard')
-  .delete(permissionMiddleware, verifyBusinessAccess('admin'), deleteBusinessByUuid);
+  .delete(permissionMiddleware, verifyBusinessAccess('Administrator'), deleteBusinessByUuid);
 
 export default router;

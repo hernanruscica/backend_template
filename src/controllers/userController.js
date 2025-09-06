@@ -55,6 +55,7 @@ export const updateUserByUuid = catchAsync(async (req, res, next) => {
 export const deleteUserByUuid = catchAsync(async (req, res, next) => {
   const { uuid } = req.params;
   let response = [];
+  console.log(req.hardDelete)
   if (req.hardDelete) {
     response = await hardDeleteUserByUuidService(uuid);    
   } else {

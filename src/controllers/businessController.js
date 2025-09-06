@@ -18,13 +18,22 @@ export const createBusiness = async (req, res) => {
 };
 
 export const getAllBusinesses = async (req, res) => {
+  const requiererUserIsOwner = req.user.roles[0] == 'Owner';
   try {
+    if (requiererUserIsOwner){
+      const businesses = await BusinessModel.findAll();
+      return res.status(200).json({
+        success:true,
+        count: businesses.length,
+        businesses,                
+      });
+    };
     const business = await BusinessModel.findBusinessByUserId(req.user.uuid);
     if (!business) {
       return res.status(404).json({ success: false, message: 'User is not associated with any business' });
-    }
+    };
     const businesses = await BusinessModel.findAllByBusinessUuid(business.uuid);
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       businesses,
     });
@@ -102,7 +111,8 @@ export const deleteBusinessByUuid = async (req, res) => {
     }
     res.status(200).json({
       success: true,
-      message: 'Business deleted successfully',
+      message: `Business ${(req.hardDelete)?'permanently':''} deleted successfull`,
+      business: {...business, is_active: false},
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

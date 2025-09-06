@@ -87,13 +87,20 @@ The project follows a feature-oriented, layered architecture to ensure a clean s
     # ... other variables
     ```
 
+4. **Reset the database**
+    Run on root folder:
+    ```bash
+    npm run db:reset
+    ```
+    This action reset the database, making migrations and seeders.
+
 ## Available Scripts
 
 -   **`npm start`**: Starts the application in production mode.
 -   **`npm run dev`**: Starts the application in development mode with `nodemon`, which automatically restarts the server on file changes.
--   **`npm test`**: Runs the test suite using Jest.
+-   **`npm test`**: Runs the test suite using Jest. No working yet. (September 6, 25)
 -   **`npm run db:reset`**: Resets the database by running all migrations and seeders.
--   **`npm run hash:password`**: A utility script to hash a password from the command line.
+-   **`npm run hash:password`**: A utility script to hash a password from the command line. Usefull to create a new user into the migrations file.
 
 ## API Endpoints
 
@@ -114,3 +121,15 @@ The project uses Jest for testing. To run the tests, use the following command:
 ```bash
 npm test
 ```
+
+## Testing with the .http file
+
+### Owner user - Control all entities of the database
+
+Working Ok: ✅  -  Failure: ❌
+
+#### Test:
+    - Login: ✅
+    - Own Business : 
+        - GET ✅, POST ✅, PUT ✅, DELETE ✅, HARDDELETE Users ✅
+        - GET ✅, POST ✅, PUT ✅, DELETE ✅, HARDDELETE Business ✅
