@@ -15,7 +15,7 @@ Content-Type: application/json
 
 {
   "dni": "12345677",
-  "password": "Password1232"
+  "password": "Password1234"
 }
 
 ###

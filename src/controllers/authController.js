@@ -20,10 +20,19 @@ export const AuthController = {
       if (!isMatch) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
+      const businessesUserIsOwner = user.businesses_roles.filter(br=>br.role == 'Owner');
+      const isOwner = businessesUserIsOwner.length > 0;
 
       const payload = {
         uuid: user.uuid,
-        roles: user.businesses_roles.map(br => br.role)
+        roles: user.businesses_roles.map((br) => {
+          return {
+            role: br.role,
+            businessUuid: br.uuid,
+            businessName: br.name,
+            }
+        }),
+        isOwner: isOwner,        
       };
 
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });

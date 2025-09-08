@@ -14,8 +14,8 @@ POST {{api}}/auth/login
 Content-Type: application/json
 
 {
-  "dni": "12345677",
-  "password": "Password1232"
+  "dni": "28470361",
+  "password": "Password1234"
 }
 
 ###
