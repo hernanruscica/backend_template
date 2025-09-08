@@ -1,0 +1,77 @@
+@api = http://localhost:5000/api
+@token = 
+
+###
+# Technicia Own Business Tests
+# This file tests actions for an 'Technician' user within their own business.
+# An Technician should be able to perform permitted actions on users and businesses within their assigned business.
+###
+
+# Login as Technician
+# dni: 28470350 password: 1298 Technician in 'Tech Corp', UUID: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+# @name login_admin_own
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{
+  "dni": "28470350",
+  "password": "1298"
+}
+
+###
+@token = {{login_admin_own.response.body.token}}
+
+###
+
+# Get all users within own business (Technician)
+GET {{api}}/users/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
+
+###
+
+# Get an user by his uuid within own business (Technician)
+PUT {{api}}/users/e1b4c3d6-e5f6-1d7c-3c9d-0e1f2a5b4c3c
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
+
+
+###
+# Get all businesses within own business (Technician)
+GET {{api}}/businesses/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
+
+###
+
+# PUT an businesses by his uuid within own business (Technician)
+PUT {{api}}/businesses/e1b4c3d6-e5f6-1d7c-3c9d-0e1f2a5b4c3c
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
+
+###
+# Get all businesses within own business (Technician)
+DELETE {{api}}/businesses/2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
+
+###
+# own business uuid: 2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e another: e1b4c3d6-e5f6-1d7c-3c9d-0e1f2a5b4c3c
+# Get an business by his uuid within own business (Technician)
+PUT {{api}}/businesses/2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
+
+###

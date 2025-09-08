@@ -14,7 +14,7 @@ POST {{api}}/auth/login
 Content-Type: application/json
 
 {
-  "dni": "12345677",
+  "dni": "28470361",
   "password": "Password1234"
 }
 
@@ -49,14 +49,20 @@ Authorization: Bearer {{token}}
 ###
 
 # Get all users within own business (Administrator)
-GET {{api}}/users
+GET {{api}}/users/
 Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
 
 ###
 
 # Get user by ID within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
 GET {{api}}/users/cc3d63f0-84d7-4cff-a6b3-85029241d5ec
 Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
 
 ###
 
@@ -69,7 +75,8 @@ Authorization: Bearer {{token}}
   "phone": "0987654321",
   "street": "456 Admin Own Ave",
   "city": "Admin Own City Updated",
-  "is_active": true
+  "is_active": true,
+  "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"
 }
 
 ###

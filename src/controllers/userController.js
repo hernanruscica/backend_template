@@ -27,6 +27,7 @@ export const getAllUsers = catchAsync(async (req, res, next) => {
   const users = await getAllUsersService(user);
   res.status(200).json({
     success: true,
+    count: users.length,
     users,
   });
 });
@@ -43,7 +44,7 @@ export const getUserByUuid = catchAsync(async (req, res, next) => {
 
 export const updateUserByUuid = catchAsync(async (req, res, next) => {
   const { uuid } = req.params;
-  console.log(req)
+  //console.log(req)
   const updatedUser = await updateUserByUuidService(uuid, req.body, req.user.uuid, req.file);
   res.status(200).json({
     success: true,
