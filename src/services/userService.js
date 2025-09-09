@@ -71,6 +71,8 @@ export const getUserByUuidService = async (uuid) => {
 };
 
 export const updateUserByUuidService = async (uuid, updateData, updatedBy, file) => {
+
+  console.log('updatedBy', updatedBy);
   const user = await UserModel.findByUuid(uuid);
   if (!user) {
     throw new CustomError('User not found', 404);

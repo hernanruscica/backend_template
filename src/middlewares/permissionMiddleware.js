@@ -61,6 +61,7 @@ export const permissionMiddleware = async (req, res, next) => {
   const currentPermissions = permissions[currentRole?.role][entity];
   const hasPermission = currentPermissions.includes(method);
   
+  /*
   console.log('currenrole', currentRole.role)
   console.log('businessUuidRequested',businessUuidRequested);  
   console.log('entity', entity);  
@@ -70,7 +71,7 @@ export const permissionMiddleware = async (req, res, next) => {
   
   console.log('canGetBusiness', canGetBusiness);  
   console.log('user belongs to bussines?', userBelongsToBusiness);
-
+*/
   
   //console.log(currentPermissions, hasPermission);
   
