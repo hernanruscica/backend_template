@@ -66,3 +66,27 @@ export const updateBusinessByUuidService = async (uuid, updateData, updatedBy, f
   await BusinessModel.update(uuid, fieldsToUpdate, updatedBy);
   return BusinessModel.findByUuid(uuid);
 };
+
+export const deleteBusinessByUuidService = async (uuid, updatedBy) => {
+  const business = await BusinessModel.findByUuid(uuid);
+  if (!business) {
+    throw new CustomError('Business not found', 404);
+  }
+  const result = await BusinessModel.delete(uuid, updatedBy);
+  if (result.affectedRows === 0) {
+    throw new CustomError('Business not found', 404);
+  }
+  return { message: 'Business deleted successfully', business: { ...business, is_active: false } };
+};
+
+export const hardDeleteBusinessByUuidService = async (uuid) => {
+  const business = await BusinessModel.findByUuid(uuid);
+  if (!business) {
+    throw new CustomError('Business not found', 404);
+  }
+  const result = await BusinessModel.hardDelete(uuid);
+  if (result.affectedRows === 0) {
+    throw new CustomError('Business not found', 404);
+  }
+  return { message: 'Business permanently deleted successfully' };
+};

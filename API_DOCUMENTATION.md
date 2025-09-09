@@ -152,6 +152,7 @@ All endpoints (except for `/auth/login`) are protected and require a JSON Web To
       "success": false,
       "message": "User not found"
     }
+    ```
 
 ### Update User by UUID
 
@@ -195,6 +196,7 @@ All endpoints (except for `/auth/login`) are protected and require a JSON Web To
       "success": false,
       "message": "User not found"
     }
+    ```
 
 ### Hard Delete User by UUID
 
@@ -214,6 +216,7 @@ All endpoints (except for `/auth/login`) are protected and require a JSON Web To
       "success": false,
       "message": "User not found"
     }
+    ```
 ---
 
 ## Business Endpoints
@@ -335,6 +338,7 @@ All endpoints (except for `/auth/login`) are protected and require a JSON Web To
       "success": false,
       "message": "Business not found"
     }
+    ```
 
 ### Hard Delete Business by UUID
 
@@ -355,3 +359,120 @@ All endpoints (except for `/auth/login`) are protected and require a JSON Web To
       "message": "Business not found"
     }
     ```
+
+---
+
+## Product Endpoints
+
+-   **Base Path:** `/products`
+
+### Get All Products
+
+-   **Endpoint:** `GET /products`
+-   **Description:** Retrieves a list of all products.
+-   **Permissions:** Requires a role with `GET` permission on the `products` entity.
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "success": true,
+      "products": [
+        {
+          "uuid": "...",
+          "name": "Product Name",
+          // ... other product fields
+        }
+      ]
+    }
+    ```
+
+### Create a New Product
+
+-   **Endpoint:** `POST /products`
+-   **Description:** Creates a new product.
+-   **Permissions:** Requires a role with `POST` permission on the `products` entity.
+-   **Request Body:**
+    ```json
+    {
+      "name": "New Product",
+      "description": "Product description",
+      "price": 99.99,
+      "stock": 100
+    }
+    ```
+-   **Success Response (201 Created):**
+    ```json
+    {
+      "success": true,
+      "message": "Product created successfully",
+      "product": {
+        "uuid": "new-product-uuid",
+        // ... full product object
+      }
+    }
+    ```
+
+### Get Product by UUID
+
+-   **Endpoint:** `GET /products/:uuid`
+-   **Description:** Retrieves a single product by its unique identifier.
+-   **Permissions:** Requires a role with `GET` permission on the `products` entity.
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "success": true,
+      "product": {
+        "uuid": "product-uuid-to-fetch",
+        // ... full product object
+      }
+    }
+    ```
+-   **Error Response (404 Not Found):**
+    ```json
+    {
+      "success": false,
+      "message": "Product not found"
+    }
+    ```
+
+### Update Product by UUID
+
+-   **Endpoint:** `PUT /products/:uuid`
+-   **Description:** Updates a product's information.
+-   **Permissions:** Requires a role with `PUT` permission on the `products` entity.
+-   **Request Body:**
+    ```json
+    {
+      "name": "Updated Product Name",
+      "price": 129.99
+    }
+    ```
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "success": true,
+      "message": "Product updated successfully",
+      "product": {
+        "uuid": "updated-product-uuid",
+        // ... full updated product object
+      }
+    }
+    ```
+
+### Delete Product by UUID
+
+-   **Endpoint:** `DELETE /products/:uuid`
+-   **Description:** Deletes a product from the system.
+-   **Permissions:** Requires a role with `DELETE` permission on the `products` entity.
+-   **Success Response (200 OK):**
+    ```json
+    {
+      "success": true,
+      "message": "Product deleted successfully"
+    }
+    ```
+-   **Error Response (404 Not Found):**
+    ```json
+    {
+      "success": false,
+      "message": "Product not found"
+    }

@@ -31,6 +31,9 @@ router.route('/:uuid/image')
   .put(permissionMiddleware, upload.single('image'), updateBusinessByUuid); // For image updates
 
 router.route('/:uuid/hard')
-  .delete(permissionMiddleware, deleteBusinessByUuid);
+  .delete(permissionMiddleware, (req, res, next) => {
+    req.hardDelete = true;
+    next();
+  }, deleteBusinessByUuid);
 
 export default router;

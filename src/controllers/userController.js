@@ -44,23 +44,7 @@ export const getUserByUuid = catchAsync(async (req, res, next) => {
 
 export const updateUserByUuid = catchAsync(async (req, res, next) => {
   const { uuid } = req.params;
-  const { uuidOrigin } = req.body
-  const userRolesOriginBusiness = req.user.roles.find(ur => ur.businessUuid === uuidOrigin);
-  const isTechnician = userRolesOriginBusiness?.role === 'Technician';
-  // console.log('isTechnician', isTechnician);
-  // console.log('uuid', uuid);
-  // console.log('user.uuid', req.user.uuid);
-  
-  
-  //'Technician' users only can update his own user
-  if (isTechnician && uuid !==  req.user.uuid){
-    return res.status(400).json({
-      success: false,
-      message: 'This user role only can UPDATE his own user'
-    })
-  }
-
-  const updatedUser = await updateUserByUuidService(uuid, req.body, req.user.uuid, req.file);
+  const updatedUser = await updateUserByUuidService(uuid, req.body, req.user, req.file);
   res.status(200).json({
     success: true,
     message: 'User updated successfully',
@@ -70,16 +54,15 @@ export const updateUserByUuid = catchAsync(async (req, res, next) => {
 
 export const deleteUserByUuid = catchAsync(async (req, res, next) => {
   const { uuid } = req.params;
-  let response = [];
-  console.log(req.hardDelete)
+  let response;
   if (req.hardDelete) {
-    response = await hardDeleteUserByUuidService(uuid);    
+    response = await hardDeleteUserByUuidService(uuid);
   } else {
     response = await deleteUserByUuidService(uuid, req.user);
   }
   res.status(200).json({
     success: true,
     message: response.message,
-    user: response.user
+    user: response.user,
   });
 });

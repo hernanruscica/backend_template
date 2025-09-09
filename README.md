@@ -8,7 +8,7 @@ Cesar Hernan Ruscica
 
 ## Project Overview
 
-This project is the generic backend service for many uses. It's a robust and scalable RESTful API built with Node.js and Express. It handles user management, business logic, authentication, and permissions, providing a solid foundation for the application's needs. The architecture has been refactored to follow best practices, including a service layer, centralized error handling, and enhanced security.
+This project is a generic backend service for many uses. It's a robust and scalable RESTful API built with Node.js and Express. It handles user management, business logic, product management, authentication, and permissions, providing a solid foundation for various application needs. The architecture follows best practices, including a service layer, centralized error handling, and enhanced security.
 
 ## Technologies Used
 
@@ -53,10 +53,23 @@ The project follows a feature-oriented, layered architecture to ensure a clean s
 - **`services/`**: This layer contains the core business logic of the application. It encapsulates complex operations, interacts with the model layer, and ensures that the controllers remain lean.
 - **`models/`**: The data access layer, responsible for all communication with the database. It abstracts away the raw SQL queries.
 
+## Generic and Reusable Architecture
+
+This project is built upon a highly reusable and generic architecture that minimizes boilerplate code and promotes consistency. This is achieved through a set of base classes for controllers, services, and models, which are then extended by specific entities.
+
+- **`baseModel.js`**: Provides a generic data access layer with common CRUD operations (create, find, update, delete). Each entity model (e.g., `productModel.js`) extends this base model, inheriting the standard database interaction logic.
+
+- **`baseService.js`**: A factory function that takes a model and returns a service object with generic business logic for CRUD operations. It also includes permission checks and other business-level concerns. Services for specific entities (e.g., `productService.js`) are created by passing their respective models to this factory.
+
+- **`baseController.js`**: A factory function that takes a service and returns a set of Express.js controllers for handling CRUD requests. This keeps the controllers for different entities extremely lean, as they simply need to be created by passing the corresponding service to this factory.
+
+This approach allows for rapid development of new features and ensures that the codebase remains clean, maintainable, and easy to understand.
+
 ## Business Logic
 
 - **Users**: The core entity of the system. Users can be created, updated, and deleted. They are associated with one or more businesses and have specific roles within each.
 - **Businesses**: Represents a company or organization. Each business can have multiple users associated with it.
+- **Products**: Represents the products or services offered by a business.
 - **Roles & Permissions**: The system uses a role-based access control (RBAC) model.
     - **Roles** (e.g., `SUPER_ADMIN`, `ADMIN`, `OPERATOR`) are defined with a `hierarchy_level`.
     - Administrators can only create or manage users with a role of a lower hierarchy level than their own.
@@ -66,8 +79,8 @@ The project follows a feature-oriented, layered architecture to ensure a clean s
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repository-url>
-    cd mdv-sensores-backend-v2
+    git clone https://github.com/hernanruscica/backend_template.git
+    cd backend_template
     ```
 
 2.  **Install dependencies:**
@@ -76,7 +89,7 @@ The project follows a feature-oriented, layered architecture to ensure a clean s
     ```
 
 3.  **Set up environment variables:**
-    Create a `.env` file in the root of the project and add the necessary environment variables. You can use `.env.example` as a template.
+    Create a `.env` file in the root of the project and add the necessary environment variables. You can use `.env.example` as a a template if one is available.
     ```
     PORT=5000
     DB_HOST=localhost
@@ -92,27 +105,19 @@ The project follows a feature-oriented, layered architecture to ensure a clean s
     ```bash
     npm run db:reset
     ```
-    This action reset the database, making migrations and seeders.
+    This action resets the database, running all migrations and seeders.
 
 ## Available Scripts
 
 -   **`npm start`**: Starts the application in production mode.
 -   **`npm run dev`**: Starts the application in development mode with `nodemon`, which automatically restarts the server on file changes.
--   **`npm test`**: Runs the test suite using Jest. No working yet. (September 6, 25)
+-   **`npm test`**: Runs the test suite using Jest.
 -   **`npm run db:reset`**: Resets the database by running all migrations and seeders.
--   **`npm run hash:password`**: A utility script to hash a password from the command line. Usefull to create a new user into the migrations file.
+-   **`npm run hash:password`**: A utility script to hash a password from the command line. Useful for creating a new user in a migration file.
 
-## API Endpoints
+## API Documentation
 
-The API routes are defined in the `src/routes/` directory.
-
--   **`POST /api/auth/login`**: Authenticate a user and receive a JWT.
--   **`GET /api/users`**: Get a list of all users.
--   **`POST /api/users`**: Create a new user.
--   **`GET /api/users/:uuid`**: Get a user by their UUID.
--   **`PUT /api/users/:uuid`**: Update a user's information.
--   **`DELETE /api/users/:uuid`**: Delete a user.
--   *(Other business-related endpoints are also available)*
+For detailed information about the available API endpoints, please see the [API Documentation](API_DOCUMENTATION.md).
 
 ## Testing
 
@@ -120,21 +125,3 @@ The project uses Jest for testing. To run the tests, use the following command:
 
 ```bash
 npm test
-```
-
-## Testing with the .http file
-
-### - Control all entities of the database
-
-Working Ok: ✅  -  Failure: ❌
-
-####  Owner user - Test:
-    - Login: ✅
-    - Own and other Business : 
-        - GET ✅, POST ✅, PUT ✅, DELETE ✅, HARDDELETE Users ✅
-        - GET ✅, POST ✅, PUT ✅, DELETE ✅, HARDDELETE Business ✅
-
-#### Admin user - Test:
-    - Own and other Business : 
-        - GET ✅, POST ✅, PUT
-        - GET ✅, POST ✅, PUT

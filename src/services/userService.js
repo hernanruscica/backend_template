@@ -70,9 +70,16 @@ export const getUserByUuidService = async (uuid) => {
   return user;
 };
 
-export const updateUserByUuidService = async (uuid, updateData, updatedBy, file) => {
+export const updateUserByUuidService = async (uuid, updateData, requesterUser, file) => {
+  const { uuidOrigin, ...restOfUpdateData } = updateData;
+  const userRolesOriginBusiness = requesterUser.roles.find(ur => ur.businessUuid === uuidOrigin);
+  const isTechnician = userRolesOriginBusiness?.role === 'Technician';
 
-  console.log('updatedBy', updatedBy);
+  // 'Technician' users only can update his own user
+  if (isTechnician && uuid !== requesterUser.uuid) {
+    throw new CustomError('This user role only can UPDATE his own user', 403);
+  }
+
   const user = await UserModel.findByUuid(uuid);
   if (!user) {
     throw new CustomError('User not found', 404);
@@ -81,9 +88,9 @@ export const updateUserByUuidService = async (uuid, updateData, updatedBy, file)
   const fieldsToUpdate = {};
 
   // Copy all non-address fields that are not undefined
-  for (const key in updateData) {
-    if (updateData[key] !== undefined && !['street', 'city', 'state', 'country', 'zip_code'].includes(key)) {
-      fieldsToUpdate[key] = updateData[key];
+  for (const key in restOfUpdateData) {
+    if (restOfUpdateData[key] !== undefined && !['street', 'city', 'state', 'country', 'zip_code'].includes(key)) {
+      fieldsToUpdate[key] = restOfUpdateData[key];
     }
   }
 
@@ -92,8 +99,8 @@ export const updateUserByUuidService = async (uuid, updateData, updatedBy, file)
   const addressFields = ['street', 'city', 'state', 'country', 'zip_code'];
   let hasAddressUpdate = false;
   addressFields.forEach(field => {
-    if (updateData[field] !== undefined) {
-      addressUpdates[field] = updateData[field];
+    if (restOfUpdateData[field] !== undefined) {
+      addressUpdates[field] = restOfUpdateData[field];
       hasAddressUpdate = true;
     }
   });
@@ -110,7 +117,7 @@ export const updateUserByUuidService = async (uuid, updateData, updatedBy, file)
     return user;
   }
 
-  await UserModel.update(uuid, fieldsToUpdate, updatedBy);
+  await UserModel.update(uuid, fieldsToUpdate, requesterUser.uuid);
   return UserModel.findByUuid(uuid);
 };
 

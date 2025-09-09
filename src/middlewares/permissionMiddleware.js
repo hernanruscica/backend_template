@@ -18,7 +18,8 @@ export const permissionMiddleware = async (req, res, next) => {
   const permissions = {
     'Administrator': {
       'businesses': ['GET', 'PUT'],
-      'users': ['POST', 'GET', 'PUT', 'DELETE']
+      'users': ['POST', 'GET', 'PUT', 'DELETE'],
+      'products': ['POST', 'GET', 'PUT', 'DELETE']
     },
     'Technician': {
       'businesses': ['GET'],
@@ -58,7 +59,7 @@ export const permissionMiddleware = async (req, res, next) => {
   const hasRoleOnBusinnes = currentRole.role !== 'Default';
   const canGetBusiness = currentRole.businessUuid === businessUuidOrigin;  
   const userBelongsToBusiness = (entity !== 'businesses') ? hasRoleOnBusinnes : hasRoleOnBusinnes && canGetBusiness;  
-  const currentPermissions = permissions[currentRole?.role][entity];
+  const currentPermissions = permissions[currentRole?.role][entity] || [];
   const hasPermission = currentPermissions.includes(method);
   
   /*

@@ -1,7 +1,6 @@
 import CustomError from '../utils/customError.js';
 import catchAsync from '../utils/catchAsync.js';
 import { UserModel } from '../models/userModel.js';
-import { BusinessModel } from '../models/businessModel.js';
 import { RoleModel } from '../models/roleModel.js';
 
 export const verifySameBusiness = (action) => catchAsync(async (req, res, next) => {

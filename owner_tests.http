@@ -172,3 +172,53 @@ Authorization: Bearer {{token}}
 # HARD Delete business (Owner) - Use a placeholder UUID, replace with an actual business ID
 DELETE {{api}}/businesses/2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e/hard
 Authorization: Bearer {{token}}
+
+###
+# Product endpoints (Owner)
+###
+
+# Create a new product (Owner)
+# @name create_product
+POST {{api}}/products
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "New Product",
+  "description": "A brand new product.",
+  "price": 99.99,
+  "business_uuid": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
+}
+
+###
+@product_uuid = {{create_product.response.body.item.uuid}}
+
+###
+
+# Get all products (Owner)
+GET {{api}}/products
+Authorization: Bearer {{token}}
+
+###
+
+# Get product by ID (Owner)
+GET {{api}}/products/{{product_uuid}}
+Authorization: Bearer {{token}}
+
+###
+
+# Update product (Owner)
+PUT {{api}}/products/{{product_uuid}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "price": 109.99,
+  "description": "An updated product description."
+}
+
+###
+
+# Delete product (Owner)
+DELETE {{api}}/products/{{product_uuid}}
+Authorization: Bearer {{token}}

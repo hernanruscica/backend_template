@@ -10,7 +10,6 @@ import {
 import { validateCreateUser, validateUpdateUser } from '../middlewares/userValidation.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { permissionMiddleware } from '../middlewares/permissionMiddleware.js';
-import { verifySameBusiness } from '../middlewares/businessVerificationMiddleware.js';
 
 const router = Router();
 
@@ -32,6 +31,9 @@ router.route('/:uuid/image')
   .put(permissionMiddleware, upload.single('image'), updateUserByUuid); // For image updates
 
 router.route('/:uuid/hard')
-  .delete(permissionMiddleware, deleteUserByUuid);
+  .delete(permissionMiddleware, (req, res, next) => {
+    req.hardDelete = true;
+    next();
+  }, deleteUserByUuid);
 
 export default router;
