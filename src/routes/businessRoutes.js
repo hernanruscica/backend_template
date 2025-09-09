@@ -28,7 +28,7 @@ router.route('/:uuid')
   .delete(permissionMiddleware, deleteBusinessByUuid);
 
 router.route('/:uuid/image')
-  .put(permissionMiddleware, upload.single('image'), validateUpdateBusiness, updateBusinessByUuid); // For image updates
+  .put(permissionMiddleware, upload.single('image'), updateBusinessByUuid); // For image updates
 
 router.route('/:uuid/hard')
   .delete(permissionMiddleware, deleteBusinessByUuid);

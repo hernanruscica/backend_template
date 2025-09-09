@@ -53,14 +53,25 @@ export const permissionMiddleware = async (req, res, next) => {
   
   let currentRole = userRoles.find( role => role.businessUuid === businessUuidOrigin);
   if (currentRole === undefined){
-    currentRole = {role: 'Default'}
+    currentRole = {role: 'Default', businessUuid:''}
   }; 
-  //console.log(currentRole)
-  const userBelongsToBusiness = currentRole.role !== 'Default';  
+  const hasRoleOnBusinnes = currentRole.role !== 'Default';
+  const canGetBusiness = currentRole.businessUuid === businessUuidOrigin;  
+  const userBelongsToBusiness = (entity !== 'businesses') ? hasRoleOnBusinnes : hasRoleOnBusinnes && canGetBusiness;  
   const currentPermissions = permissions[currentRole?.role][entity];
   const hasPermission = currentPermissions.includes(method);
   
-  //console.log('user belongs to bussines?', userBelongsToBusiness);
+  console.log('currenrole', currentRole.role)
+  console.log('businessUuidRequested',businessUuidRequested);  
+  console.log('entity', entity);  
+  console.log('hasRoleOnBusinnes', hasRoleOnBusinnes);
+  console.log('currentRole.uuid', currentRole.businessUuid);
+  console.log('businessUuidOrigin', businessUuidOrigin);  
+  
+  console.log('canGetBusiness', canGetBusiness);  
+  console.log('user belongs to bussines?', userBelongsToBusiness);
+
+  
   //console.log(currentPermissions, hasPermission);
   
   if (!userBelongsToBusiness){

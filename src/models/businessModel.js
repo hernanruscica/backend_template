@@ -82,7 +82,7 @@ export const BusinessModel = {
 
   async update(uuid, fields, updatedBy) {
     const { address, ...otherFields } = fields;
-    const allowedFields = ['name', 'description', 'phone', 'email', 'logo_url'];
+    const allowedFields = ['name', 'description', 'phone', 'email', 'logo_url', 'is_active'];
     
     const fieldEntries = Object.entries(otherFields);
     const validFields = fieldEntries.filter(([key]) => allowedFields.includes(key));
@@ -92,7 +92,7 @@ export const BusinessModel = {
 
     if (address) {
       const addressFields = Object.entries(address);
-      const validAddressFields = addressFields.filter(([key]) => ['street', 'city', 'state', 'country', 'zip_code'].includes(key));
+      const validAddressFields = addressFields.filter(([key]) => ['street', 'city', 'state', 'country', 'zip_code', 'is_active'].includes(key));
       if (validAddressFields.length > 0) {
         const addressSetClause = validAddressFields.map(([key]) => `${key} = ?`).join(', ');
         if (setClause) {

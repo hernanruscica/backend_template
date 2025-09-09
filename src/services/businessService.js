@@ -28,28 +28,31 @@ export const updateBusinessByUuidService = async (uuid, updateData, updatedBy, f
 
   const fieldsToUpdate = {};
 
-  console.log(updateData)
+  //console.log('From businessService', file);
 
-  // Copy all non-address fields that are not undefined
-  for (const key in updateData) {
-    if (updateData[key] !== undefined && !['street', 'city', 'state', 'country', 'zip_code'].includes(key)) {
-      fieldsToUpdate[key] = updateData[key];
+  
+  if (updateData !== undefined){  
+    // Copy all non-address fields that are not undefined
+    for (const key in updateData) {
+      if (updateData[key] !== undefined && !['street', 'city', 'state', 'country', 'zip_code'].includes(key)) {
+        fieldsToUpdate[key] = updateData[key];
+      }
     }
-  }
 
-  // Handle address fields
-  const addressUpdates = {};
-  const addressFields = ['street', 'city', 'state', 'country', 'zip_code'];
-  let hasAddressUpdate = false;
-  addressFields.forEach(field => {
-    if (updateData[field] !== undefined) {
-      addressUpdates[field] = updateData[field];
-      hasAddressUpdate = true;
+    // Handle address fields
+    const addressUpdates = {};
+    const addressFields = ['street', 'city', 'state', 'country', 'zip_code'];
+    let hasAddressUpdate = false;
+    addressFields.forEach(field => {
+      if (updateData[field] !== undefined) {
+        addressUpdates[field] = updateData[field];
+        hasAddressUpdate = true;
+      }
+    });
+
+    if (hasAddressUpdate) {
+      fieldsToUpdate.address = { ...(business.address || {}), ...addressUpdates };
     }
-  });
-
-  if (hasAddressUpdate) {
-    fieldsToUpdate.address = { ...(business.address || {}), ...addressUpdates };
   }
 
   if (file) {

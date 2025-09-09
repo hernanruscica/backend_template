@@ -130,19 +130,19 @@ Authorization: Bearer {{token}}
 ###
 
 # Get business by ID (Owner) - Use a placeholder UUID, replace with an actual business ID
-GET {{api}}/businesses/82b34b4e-0fde-4685-944e-14234dbea22f
+GET {{api}}/businesses/87174422-7126-43a3-8b01-56d22fd31a12
 Authorization: Bearer {{token}}
 
 ###
 
 # Update business (Owner) - Use a placeholder UUID, replace with an actual business ID
-PUT {{api}}/businesses/82b34b4e-0fde-4685-944e-14234dbea22f
+PUT {{api}}/businesses/87174422-7126-43a3-8b01-56d22fd31a12
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "phone": "131313sdf",
-  "description": "una updated test business description by Owner.",
+  "phone": "131313",
+  "description": "An updated test business description by Owner.",
   "is_active": true
 }
 
@@ -150,7 +150,7 @@ Authorization: Bearer {{token}}
 
 # Update business image (Owner) - Use a placeholder UUID, replace with an actual business ID
 # Note: Create a test.jpg file in the root directory for this to work.
-PUT {{api}}/businesses/{{own_business_uuid}}
+PUT {{api}}/businesses/87174422-7126-43a3-8b01-56d22fd31a12/image
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 Authorization: Bearer {{token}}
 
@@ -164,11 +164,11 @@ Content-Type: image/jpeg
 ###
 
 # Delete business (Owner) - Use a placeholder UUID, replace with an actual business ID
-DELETE {{api}}/businesses/82b34b4e-0fde-4685-944e-14234dbea22f
+DELETE {{api}}/businesses/87174422-7126-43a3-8b01-56d22fd31a12
 Authorization: Bearer {{token}}
 
 ###
 
 # HARD Delete business (Owner) - Use a placeholder UUID, replace with an actual business ID
-DELETE {{api}}/businesses/82b34b4e-0fde-4685-944e-14234dbea22f/hard
+DELETE {{api}}/businesses/2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e/hard
 Authorization: Bearer {{token}}

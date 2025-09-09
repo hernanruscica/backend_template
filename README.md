@@ -124,12 +124,17 @@ npm test
 
 ## Testing with the .http file
 
-### Owner user - Control all entities of the database
+### - Control all entities of the database
 
 Working Ok: ✅  -  Failure: ❌
 
-#### Test:
+####  Owner user - Test:
     - Login: ✅
-    - Own Business : 
+    - Own and other Business : 
         - GET ✅, POST ✅, PUT ✅, DELETE ✅, HARDDELETE Users ✅
-        - GET ✅, POST ✅, PUT ❌, DELETE ✅, HARDDELETE Business ✅
+        - GET ✅, POST ✅, PUT ✅, DELETE ✅, HARDDELETE Business ✅
+
+#### Admin user - Test:
+    - Own and other Business : 
+        - GET ✅, POST ✅, PUT
+        - GET ✅, POST ✅, PUT

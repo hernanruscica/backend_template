@@ -20,6 +20,7 @@ Content-Type: application/json
 
 ###
 @token = {{login_admin_own.response.body.token}}
+@own_business_uuid = 2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
 
 ###
 # User endpoints (Administrator - Own Business)
@@ -42,8 +43,9 @@ Authorization: Bearer {{token}}
   "state": "Admin Own State",
   "country": "Admin Own Country",
   "zipCode": "33333",
-  "business_uuid": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
-  "role": "Technician"
+  "business_uuid": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e",
+  "role": "Technician",
+  "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6d" 
 }
 
 ###
@@ -58,7 +60,7 @@ Content-Type: application/json
 ###
 
 # Get user by ID within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
-GET {{api}}/users/cc3d63f0-84d7-4cff-a6b3-85029241d5ec
+GET {{api}}/users/2a086b9a-245a-4199-ab8a-44f8728b676c
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -67,7 +69,7 @@ Content-Type: application/json
 ###
 
 # Update user within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
-PUT {{api}}/users/cc3d63f0-84d7-4cff-a6b3-85029241d5ec
+PUT {{api}}/users/2a086b9a-245a-4199-ab8a-44f8728b676c
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -83,7 +85,7 @@ Authorization: Bearer {{token}}
 
 # Update user image within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
 # Note: Create a test.jpg file in the root directory for this to work.
-PUT {{api}}/users/e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d/image
+PUT {{api}}/users/cf87da21-397a-406e-ab18-ef637800fd05/image
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 Authorization: Bearer {{token}}
 
@@ -92,18 +94,29 @@ Content-Disposition: form-data; name="image"; filename="test.jpg"
 Content-Type: image/jpeg
 
 < ./test.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="uuidOrigin"
+
+2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
 
 ###
 
 # Delete user within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
-DELETE {{api}}/users/cc3d63f0-84d7-4cff-a6b3-85029241d5ec
+DELETE {{api}}/users/2a086b9a-245a-4199-ab8a-44f8728b676c
 Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
 
 ### Delete user Hard (Owner) -  Use a placeholder UUID, replace with an actual user ID
 
-DELETE {{api}}/users/cc3d63f0-84d7-4cff-a6b3-85029241d5ec/hard
+DELETE {{api}}/users/2a086b9a-245a-4199-ab8a-44f8728b676c/hard
 Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
 
 ###
 # Business endpoints (Administrator - Own Business)
@@ -123,7 +136,8 @@ Authorization: Bearer {{token}}
   "city": "Admin Own Businesstown",
   "state": "Admin Own Businessland",
   "country": "Admin Own BUSA",
-  "zip_code": "44444"
+  "zip_code": "44444",
+  "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"
 }
 
 ###
@@ -131,12 +145,18 @@ Authorization: Bearer {{token}}
 # Get all businesses (Administrator) - Should only see own business
 GET {{api}}/businesses
 Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
 
 ###
 
 # Get business by ID (Administrator) - Own business UUID: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
 GET {{api}}/businesses/1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
 Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
 
 ###
 
