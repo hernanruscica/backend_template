@@ -19,7 +19,7 @@ export const createUserService = async (userData, businessUuid, roleName, adminU
 
 
   const adminRoles = adminUser.businesses_roles.map(br => br.role);
-  const adminIsOwner = adminRoles.includes('owner');
+  const adminIsOwner = adminRoles.includes('Owner');
 
   if (!adminIsOwner) {
     const adminBusinesses = adminUser.businesses_roles.map(br => br.uuid);
@@ -47,16 +47,19 @@ export const createUserService = async (userData, businessUuid, roleName, adminU
 };
 
 export const getAllUsersService = async (user) => {
-  const userRoles = user.businesses_roles.map(br => br.role);
-  if (userRoles.includes('owner')) {
-    return UserModel.findAll();
+  
+  if (user.isOwner) {
+    const users = await UserModel.findAll();
+    return users;
   }
 
   const business = await BusinessModel.findBusinessByUserId(user.uuid);
   if (!business) {
     throw new CustomError('User is not associated with any business', 404);
   }
-  return UserModel.findAllByBusinessUuid(business.uuid);
+  
+  const users = await UserModel.findAllByBusinessUuid(business.uuid);
+  return users;
 };
 
 export const getUserByUuidService = async (uuid) => {
@@ -68,26 +71,41 @@ export const getUserByUuidService = async (uuid) => {
 };
 
 export const updateUserByUuidService = async (uuid, updateData, updatedBy, file) => {
-  // console.log(updateData);
-  
-  const { street, city, state, country, zip_code, ...otherFields } = updateData;
-  const fieldsToUpdate = { ...otherFields };
-
-  if (street || city || state || country || zip_code) {
-    fieldsToUpdate.address = { street, city, state, country, zip_code };
+  const user = await UserModel.findByUuid(uuid);
+  if (!user) {
+    throw new CustomError('User not found', 404);
   }
-  
-  if (typeof updateData.is_active === 'boolean') {
-    fieldsToUpdate.is_active = updateData.is_active;
+
+  const fieldsToUpdate = {};
+
+  // Copy all non-address fields that are not undefined
+  for (const key in updateData) {
+    if (updateData[key] !== undefined && !['street', 'city', 'state', 'country', 'zip_code'].includes(key)) {
+      fieldsToUpdate[key] = updateData[key];
+    }
+  }
+
+  // Handle address fields
+  const addressUpdates = {};
+  const addressFields = ['street', 'city', 'state', 'country', 'zip_code'];
+  let hasAddressUpdate = false;
+  addressFields.forEach(field => {
+    if (updateData[field] !== undefined) {
+      addressUpdates[field] = updateData[field];
+      hasAddressUpdate = true;
+    }
+  });
+
+  if (hasAddressUpdate) {
+    fieldsToUpdate.address = { ...(user.address || {}), ...addressUpdates };
   }
 
   if (file) {
     fieldsToUpdate.avatar_url = file.path;
   }
 
-  const user = await UserModel.findByUuid(uuid);
-  if (!user) {
-    throw new CustomError('User not found', 404);
+  if (Object.keys(fieldsToUpdate).length === 0 && !file) {
+    return user;
   }
 
   await UserModel.update(uuid, fieldsToUpdate, updatedBy);

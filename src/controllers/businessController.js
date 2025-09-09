@@ -1,4 +1,6 @@
 import { BusinessModel } from '../models/businessModel.js';
+import { getAllBusinessesService, updateBusinessByUuidService } from '../services/businessService.js';
+import catchAsync from '../utils/catchAsync.js';
 
 export const createBusiness = async (req, res) => {
   try {
@@ -17,30 +19,15 @@ export const createBusiness = async (req, res) => {
   }
 };
 
-export const getAllBusinesses = async (req, res) => {
-  const requiererUserIsOwner = req.user.roles[0] == 'Owner';
-  try {
-    if (requiererUserIsOwner){
-      const businesses = await BusinessModel.findAll();
-      return res.status(200).json({
-        success:true,
-        count: businesses.length,
-        businesses,                
-      });
-    };
-    const business = await BusinessModel.findBusinessByUserId(req.user.uuid);
-    if (!business) {
-      return res.status(404).json({ success: false, message: 'User is not associated with any business' });
-    };
-    const businesses = await BusinessModel.findAllByBusinessUuid(business.uuid);
+export const getAllBusinesses = catchAsync(async (req, res) => {
+  const { user } = req;  
+    const businesses = await getAllBusinessesService(user);
     return res.status(200).json({
-      success: true,
-      businesses,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
+      success:true,
+      count: businesses.length,
+      businesses,                
+    }); 
+});
 
 export const getBusinessByUuid = async (req, res) => {
   try {
@@ -58,40 +45,16 @@ export const getBusinessByUuid = async (req, res) => {
   }
 };
 
-export const updateBusinessByUuid = async (req, res) => {
-  try {
-    const { uuid } = req.params;
-    const updated_by = req.user.uuid;
-    const { street, city, state, country, zip_code, ...otherFields } = req.body;
-    const fieldsToUpdate = { ...otherFields };
-
-    if (street || city || state || country || zip_code) {
-      fieldsToUpdate.address = { street, city, state, country, zip_code };
-    }
-
-    if (req.file) {
-      fieldsToUpdate.logo_url = req.file.path;
-    }
-
-    const business = await BusinessModel.findByUuid(uuid);
-
-    if (!business) {
-      return res.status(200).json({ success: false, message: 'Business not found' });
-    }
-
-    await BusinessModel.update(business.uuid, fieldsToUpdate, updated_by);
-
-    const updatedBusiness = await BusinessModel.findByUuid(business.uuid);
-
-    res.status(200).json({
-      success: true,
-      message: 'Business updated successfully',
-      business: updatedBusiness,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
+export const updateBusinessByUuid = catchAsync(async (req, res, next) => {
+  const { uuid } = req.params;
+  //console.log(req.body)
+  const updatedBusiness = await updateBusinessByUuidService(uuid, req.body, req.user.uuid, req.file);
+  res.status(200).json({
+    success: true,
+    message: 'Business updated successfully',
+    business: updatedBusiness,
+  });
+});
 
 export const deleteBusinessByUuid = async (req, res) => {
   try {

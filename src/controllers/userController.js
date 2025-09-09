@@ -22,8 +22,8 @@ export const createUser = catchAsync(async (req, res, next) => {
   });
 });
 
-export const getAllUsers = catchAsync(async (req, res, next) => {
-  const user = await UserModel.findByUuid(req.user.uuid);
+export const getAllUsers = catchAsync(async (req, res, next) => {  
+  const { user } = req;  
   const users = await getAllUsersService(user);
   res.status(200).json({
     success: true,

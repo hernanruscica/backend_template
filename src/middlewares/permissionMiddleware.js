@@ -32,6 +32,9 @@ export const permissionMiddleware = async (req, res, next) => {
 
   const { user, method, baseUrl, params } = req;
   const { roles: userRoles, isOwner } = user;
+  
+  //console.log(req.route.path.includes('hard'));
+  req.hardDelete = req.route.path.includes('hard');
 
   // If requester user is owner can do all.
   if (isOwner) {

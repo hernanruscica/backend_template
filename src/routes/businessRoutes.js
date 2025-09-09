@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import upload from '../middlewares/uploadMiddleware.js';
+import { validateCreateBusiness, validateUpdateBusiness} from '../middlewares/businessValidation.js';
 import {
   createBusiness,
   getAllBusinesses,
@@ -9,7 +10,7 @@ import {
 } from '../controllers/businessController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { permissionMiddleware } from '../middlewares/permissionMiddleware.js';
-import { verifyBusinessAccess } from '../middlewares/businessVerificationMiddleware.js';
+
 
 const router = Router();
 
@@ -18,15 +19,18 @@ router.use(authMiddleware);
 
 // Apply permission middleware to each route individually
 router.route('/')
-  .post(permissionMiddleware, createBusiness)
+  .post(permissionMiddleware, validateCreateBusiness, createBusiness)
   .get(permissionMiddleware, getAllBusinesses);
 
 router.route('/:uuid')
-  .get(permissionMiddleware, /*verifyBusinessAccess('Technician'), getBusinessByUuid*/)
-  .put(permissionMiddleware, /*verifyBusinessAccess('Administrator'), upload.single('image'), updateBusinessByUuid*/)
-  .delete(permissionMiddleware, /*verifyBusinessAccess('Administrator'), deleteBusinessByUuid*/);
+  .get(permissionMiddleware, getBusinessByUuid)
+  .put(permissionMiddleware, validateUpdateBusiness, updateBusinessByUuid)
+  .delete(permissionMiddleware, deleteBusinessByUuid);
+
+router.route('/:uuid/image')
+  .put(permissionMiddleware, upload.single('image'), validateUpdateBusiness, updateBusinessByUuid); // For image updates
 
 router.route('/:uuid/hard')
-  .delete(permissionMiddleware, /*verifyBusinessAccess('Administrator'), deleteBusinessByUuid*/);
+  .delete(permissionMiddleware, deleteBusinessByUuid);
 
 export default router;

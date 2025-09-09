@@ -132,4 +132,4 @@ Working Ok: ✅  -  Failure: ❌
     - Login: ✅
     - Own Business : 
         - GET ✅, POST ✅, PUT ✅, DELETE ✅, HARDDELETE Users ✅
-        - GET ✅, POST ✅, PUT ✅, DELETE ✅, HARDDELETE Business ✅
+        - GET ✅, POST ✅, PUT ❌, DELETE ✅, HARDDELETE Business ✅

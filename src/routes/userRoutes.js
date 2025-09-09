@@ -19,7 +19,7 @@ router.use(authMiddleware);
 
 // Apply permission middleware to each route individually
 router.route('/')
-  .post(permissionMiddleware, /*validateCreateUser, createUser*/)
+  .post(permissionMiddleware, validateCreateUser, createUser)
   .get(permissionMiddleware, getAllUsers);
 
   
