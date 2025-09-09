@@ -60,7 +60,7 @@ Content-Type: application/json
 ###
 
 # Get user by ID within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
-GET {{api}}/users/2a086b9a-245a-4199-ab8a-44f8728b676c
+GET {{api}}/users/f2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -69,7 +69,7 @@ Content-Type: application/json
 ###
 
 # Update user within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
-PUT {{api}}/users/2a086b9a-245a-4199-ab8a-44f8728b676c
+PUT {{api}}/users/f2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -152,7 +152,7 @@ Content-Type: application/json
 ###
 
 # Get business by ID (Administrator) - Own business UUID: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
-GET {{api}}/businesses/1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+GET {{api}}/businesses/2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -161,13 +161,14 @@ Content-Type: application/json
 ###
 
 # Update business (Administrator) - Own business UUID: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
-PUT {{api}}/businesses/1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+PUT {{api}}/businesses/2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
   "phone": "987654321",
-  "description": "An updated test business description by Admin Own."
+  "description": "An updated test business description by Admin Own.",
+  "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e" 
 }
 
 ###
@@ -188,5 +189,8 @@ Content-Type: image/jpeg
 ###
 
 # Delete business (Administrator) - Own business UUID: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d - Should be restricted
-DELETE {{api}}/businesses/1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+DELETE {{api}}/2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
 Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
