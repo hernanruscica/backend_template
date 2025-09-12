@@ -119,9 +119,9 @@ This approach allows for rapid development of new features and ensures that the 
 
 For detailed information about the available API endpoints, please see the [API Documentation](API_DOCUMENTATION.md).
 
-## Testing
+<!-- ## Testing
 
 The project uses Jest for testing. To run the tests, use the following command:
 
 ```bash
-npm test
+npm test -->

@@ -62,7 +62,7 @@ Authorization: Bearer {{token}}
 ###
 
 # Update user (Owner) - Use a placeholder UUID, replace with an actual user ID
-PUT {{api}}/users/e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d
+PUT {{api}}/users/753df90b-5259-4d19-bf96-c75473e75d41
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -77,7 +77,7 @@ Authorization: Bearer {{token}}
 
 # Update user image (Owner) - Use a placeholder UUID, replace with an actual user ID
 # Note: Create a test.jpg file in the root directory for this to work.
-PUT {{api}}/users/cf87da21-397a-406e-ab18-ef637800fd05/image
+PUT {{api}}/users/753df90b-5259-4d19-bf96-c75473e75d41/image
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 Authorization: Bearer {{token}}
 

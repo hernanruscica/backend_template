@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import userRoutes from './routes/userRoutes.js';
@@ -11,6 +12,7 @@ const app = express();
 
 // Set security HTTP headers
 app.use(helmet());
+app.use(cors({ origin: process.env.BASE_URL_FRONT }));
 
 // Limit requests from same API
 const limiter = rateLimit({

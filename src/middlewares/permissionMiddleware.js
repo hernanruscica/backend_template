@@ -23,7 +23,8 @@ export const permissionMiddleware = async (req, res, next) => {
     },
     'Technician': {
       'businesses': ['GET'],
-      'users': ['GET', 'PUT']
+      'users': ['GET', 'PUT'],
+      'products': ['GET']
     },
     'Default': {
       'businesses': [''],

@@ -1,11 +1,13 @@
 import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import cloudinary from '../config/cloudinary.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'mdv-sensores',
+    folder: process.env.CLOUDINARY_FOLDER,
     allowed_formats: ['jpg', 'png', 'jpeg'],
   },
 });
