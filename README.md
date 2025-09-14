@@ -115,13 +115,30 @@ This approach allows for rapid development of new features and ensures that the 
 -   **`npm run db:reset`**: Resets the database by running all migrations and seeders.
 -   **`npm run hash:password`**: A utility script to hash a password from the command line. Useful for creating a new user in a migration file.
 
-## API Documentation
+## Testing
 
-For detailed information about the available API endpoints, please see the [API Documentation](API_DOCUMENTATION.md).
-
-<!-- ## Testing
-
-The project uses Jest for testing. To run the tests, use the following command:
+- Ejecutar toda la suite:
 
 ```bash
-npm test -->
+npm test
+```
+
+- Ejecutar solo tests unitarios (suites estables):
+
+```bash
+npm test -- \
+  __tests__/customError.unit.test.js \
+  __tests__/permissionMiddleware.unit.test.js \
+  __tests__/authMiddleware.unit.test.js \
+  __tests__/errorHandler.unit.test.js \
+  __tests__/baseService.unit.test.js \
+  __tests__/baseModel.unit.test.js \
+  __tests__/catchAsync.unit.test.js \
+  __tests__/dbUtils.unit.test.js
+```
+
+- Desactivar/activar temporalmente la suite de integración:
+  - La suite `__tests__/permissions.test.js` está marcada con `describe.skip(...)`. Para reactivarla, cambia `describe.skip` por `describe`.
+
+- Notas sobre ESM y mocks:
+  - Este proyecto usa ESM (`"type": "module"`). Para mockear módulos (p. ej., `src/config/database.js`) se usa `jest.unstable_mockModule` antes de importar dinámicamente el código bajo prueba.
