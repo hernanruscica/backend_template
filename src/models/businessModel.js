@@ -62,7 +62,7 @@ export const BusinessModel = {
     });
   },
 
-  async findBusinessByUserId(userUuid) {
+  async findBusinessesByUserId(userUuid) {
     const sql = `
       SELECT b.*
       FROM businesses b
@@ -70,15 +70,14 @@ export const BusinessModel = {
       WHERE bu.user_uuid = ?
     `;
     const [rows] = await pool.query(sql, [userUuid]);
-    if (rows[0]) {
-      const { street, city, state, country, zip_code, ...businessData } = rows[0];
+    return rows.map(row => {
+      const { street, city, state, country, zip_code, ...businessData } = row;
       return {
         ...businessData,
         address: { street, city, state, country, zip_code }
       };
-    }
-    return undefined;
-  },
+    });
+  },  
 
   async update(uuid, fields, updatedBy) {
     const { address, ...otherFields } = fields;

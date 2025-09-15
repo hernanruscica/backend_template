@@ -1,0 +1,60 @@
+@api = http://localhost:5000/api
+@admin_email = john.doe@example.com
+@admin_password = password123
+@token = 
+
+###
+# @name login
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{admin_email}}",
+  "password": "{{admin_password}}"
+}
+
+###
+@token = {{login.response.body.token}}
+
+###
+# Get all solutions
+GET {{api}}/solutions
+Authorization: Bearer {{token}}
+
+###
+# Create a new solution
+POST {{api}}/solutions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "New Solution",
+  "description": "A new solution for testing",
+  "alarms_logs_id": 3,
+  "user_id": "e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+}
+
+###
+# Get a solution by UUID
+GET {{api}}/solutions/e5f6a7b8-c9d0-1234-5678-90abcdef1234
+Authorization: Bearer {{token}}
+
+###
+# Update a solution
+PUT {{api}}/solutions/e5f6a7b8-c9d0-1234-5678-90abcdef1234
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Updated Weather Alert"
+}
+
+###
+# Soft delete a solution
+DELETE {{api}}/solutions/e5f6a7b8-c9d0-1234-5678-90abcdef1234
+Authorization: Bearer {{token}}
+
+###
+# Hard delete a solution
+DELETE {{api}}/solutions/f6a7b8c9-d0e1-2345-6789-0abcdef12345/hard
+Authorization: Bearer {{token}}

@@ -2,6 +2,8 @@ import catchAsync from '../utils/catchAsync.js';
 
 const BaseController = (service) => ({
   create: catchAsync(async (req, res, next) => {
+    
+    
     const { business_uuid } = req.body;
     const item = await service.create(req.body, business_uuid, req.user);
     res.status(201).json({
@@ -12,7 +14,10 @@ const BaseController = (service) => ({
   }),
 
   getAll: catchAsync(async (req, res, next) => {
-    const items = await service.getAll(req.user);
+    const { uuidOrigin } = req.body;
+    const { user } = req;            
+    const items = await service.getAll(user, uuidOrigin);    
+    
     res.status(200).json({
       success: true,
       count: items.length,
@@ -22,7 +27,8 @@ const BaseController = (service) => ({
 
   getByUuid: catchAsync(async (req, res, next) => {
     const { uuid } = req.params;
-    const item = await service.getByUuid(uuid);
+    const { uuidOrigin } = req.body;
+    const item = await service.getByUuid(uuid, req.user, uuidOrigin);
     res.status(200).json({
       success: true,
       item,

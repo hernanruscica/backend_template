@@ -1,0 +1,90 @@
+@api = http://localhost:5000/api
+@owner_dni = 28470359
+@owner_password = Password1234
+
+@technician_dni = 28470350
+
+@technician_password = 1298
+
+
+@business_uuid = 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+
+@technician_business_uuid =2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
+
+@other_business_uuid = 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+
+@token = 
+
+###
+# @name login
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{
+  "dni": "{{technician_dni}}",
+  "password": "{{technician_password}}"
+}
+
+###
+@token = {{login.response.body.token}}
+
+###
+# Get all dataloggers
+GET {{api}}/dataloggers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   "uuidOrigin": "{{technician_business_uuid}}"    }
+
+###
+# Create a new datalogger
+POST {{api}}/dataloggers
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "New Datalogger",
+  "description": "A new datalogger for testing",
+  "mac_address": "00:1B:44:11:3A:B9",
+  "img": "http://example.com/datalogger3.jpg",
+  "table_name": "test_data_1",
+  "business_uuid": "{{business_uuid}}",
+  "uuidOrigin": "{{technician_business_uuid}}"
+}
+
+### c3d4e5f6-a7b8-9012-3456-7890abcdef12
+# Get a datalogger by UUID
+GET {{api}}/dataloggers/c3d4e5f6-a7b8-9012-3456-7890abcdef1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "uuidOrigin": "{{technician_business_uuid}}"
+}
+
+###
+# Update a datalogger
+PUT {{api}}/dataloggers/a1b2c3d4-e5f6-7890-1234-567890abcdef
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Weather Station 1",
+  "uuidOrigin": "{{technician_business_uuid}}",
+  "is_active": true
+}
+
+###
+# Soft delete a datalogger
+DELETE {{api}}/dataloggers/a1b2c3d4-e5f6-7890-1234-567890abcdef
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "uuidOrigin": "{{technician_business_uuid}}"
+}
+
+###
+# Hard delete a datalogger
+DELETE {{api}}/dataloggers/b2c3d4e5-f6a7-8901-2345-67890abcdef1/hard
+Authorization: Bearer {{token}}

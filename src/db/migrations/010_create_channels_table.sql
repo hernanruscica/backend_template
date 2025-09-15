@@ -1,0 +1,20 @@
+CREATE TABLE channels (
+    uuid CHAR(36) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    datalogger_id CHAR(36) NOT NULL,
+    column_name VARCHAR(255),
+    averaging_period INT,
+    factor FLOAT,
+    img VARCHAR(255),
+    business_uuid CHAR(36) NOT NULL,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by CHAR(36),
+    updated_by CHAR(36),
+    FOREIGN KEY (business_uuid) REFERENCES businesses(uuid) ON DELETE CASCADE,
+    FOREIGN KEY (datalogger_id) REFERENCES dataloggers(uuid) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(uuid),
+    FOREIGN KEY (updated_by) REFERENCES users(uuid)
+);

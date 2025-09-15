@@ -18,24 +18,25 @@ export const permissionMiddleware = async (req, res, next) => {
   const permissions = {
     'Administrator': {
       'businesses': ['GET', 'PUT'],
-      'users': ['POST', 'GET', 'PUT', 'DELETE'],
-      'products': ['POST', 'GET', 'PUT', 'DELETE']
+      'users': ['POST', 'GET', 'PUT', 'DELETE'],      
+      'dataloggers': ['POST', 'GET', 'PUT', 'DELETE'],
     },
     'Technician': {
       'businesses': ['GET'],
-      'users': ['GET', 'PUT'],
-      'products': ['GET']
+      'users': ['GET', 'PUT'],      
+      'dataloggers': ['GET'],
     },
     'Default': {
       'businesses': [''],
-      'users': ['', '']
+      'users': ['', ''],
+      'dataloggers': ['', '', '', '']
     }
   };
 
   const { user, method, baseUrl, params } = req;
   const { roles: userRoles, isOwner } = user;
   
-  //console.log(req.route.path.includes('hard'));
+  //console.log(req.user);
   req.hardDelete = req.route.path.includes('hard');
 
   // If requester user is owner can do all.

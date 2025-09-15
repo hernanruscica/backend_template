@@ -1,0 +1,6 @@
+INSERT INTO dataloggers (uuid, name, description, mac_address, img, table_name, business_uuid, created_by) VALUES
+('a1b2c3d4-e5f6-7890-1234-567890abcdef', 'Weather Station 1', 'Datalogger for weather data', '00:1B:44:11:3A:B7', 'datalogger1.jpg', 'weather_data_1', '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d'),
+('b2c3d4e5-f6a7-8901-2345-67890abcdef1', 'Water Quality Sensor', 'Datalogger for water quality data', '00:1B:44:11:3A:B8', 'datalogger2.jpg', 'water_quality_data_1', '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d'),
+('c3d4e5f6-a7b8-9012-3456-7890abcdef12', 'Air Quality Monitor', 'Datalogger for air quality data', '00:1B:44:11:3A:B9', 'datalogger3.jpg', 'air_quality_data_1', '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d'),
+('d4e5f6a7-b8c9-0123-4567-890abcdef123', 'Soil Moisture Sensor', 'Datalogger for soil moisture data', '00:1B:44:11:3A:BA', 'datalogger4.jpg', 'soil_moisture_data_1', '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d'),
+('e5f6a7b8-c9d0-1234-5678-90abcdef1234', 'Traffic Monitor', 'Datalogger for traffic data', '00:1B:44:11:3A:BB', 'datalogger5.jpg', 'traffic_data_1', '3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d');

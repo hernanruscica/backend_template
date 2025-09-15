@@ -1,6 +1,7 @@
 import pool from '../config/database.js';
 import { randomUUID } from 'crypto';
 import CustomError from '../utils/customError.js';
+import { BusinessModel } from './businessModel.js';
 
 const BaseModel = (tableName, allowedFields = []) => ({
   tableName,
@@ -40,25 +41,64 @@ const BaseModel = (tableName, allowedFields = []) => ({
   },
 
   async findByUuid(uuid) {
-    const sql = `SELECT * FROM ${this.tableName} WHERE uuid = ?`;
-    const [rows] = await pool.query(sql, [uuid]);
-    return rows[0];
+    const allItems = await this.findAll();
+    const item = allItems.find(item => item.uuid === uuid);
+    return item;
   },
 
   async findAll() {
-    const sql = `SELECT * FROM ${this.tableName}`;
+    // NOTE: This implementation assumes the table has a 'business_uuid' column.
+    const sql = `
+      SELECT
+        t.*,
+        JSON_OBJECT(
+          'uuid', b.uuid,
+          'name', b.name,
+          'description', b.description,
+          'email', b.email,
+          'phone', b.phone,
+          'logo_url', b.logo_url,
+          'street', b.street,
+          'city', b.city,
+          'state', b.state,
+          'country', b.country,
+          'zip_code', b.zip_code,
+          'is_active', b.is_active,
+          'created_at', b.created_at,
+          'updated_at', b.updated_at,
+          'created_by', b.created_by,
+          'updated_by', b.updated_by
+        ) AS business
+      FROM ${this.tableName} t
+      LEFT JOIN businesses b ON t.business_uuid = b.uuid
+    `;
     const [rows] = await pool.query(sql);
-    return rows;
+
+    return rows.map(row => {
+      if (typeof row.business === 'string') {        
+        row.business = JSON.parse(row.business);        
+      }      
+      if (row.business && row.business.uuid === null) {
+        row.business = null;
+      }      
+      return row;
+    });
   },
 
   async findAllByBusinessUuid(businessUuid) {
-    const sql = `
-      SELECT t.*
-      FROM ${this.tableName} t
-      WHERE t.business_uuid = ?
-    `;
-    const [rows] = await pool.query(sql, [businessUuid]);
-    return rows;
+    const allItems = await this.findAll();
+    const itemsForBusiness = allItems.filter(item => item.business_uuid === businessUuid);
+
+    if (itemsForBusiness.length === 0) {
+      const business = await BusinessModel.findByUuid(businessUuid);
+      if (!business) {
+        throw new CustomError('Business not found', 404);
+      }
+      // If the business exists but has no items, return an empty array.
+      // This is a valid scenario.
+    }
+
+    return itemsForBusiness;
   },
 
   async update(uuid, fields, updatedBy) {

@@ -1,0 +1,63 @@
+@api = http://localhost:5000/api
+@admin_email = john.doe@example.com
+@admin_password = password123
+@token = 
+
+###
+# @name login
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{admin_email}}",
+  "password": "{{admin_password}}"
+}
+
+###
+@token = {{login.response.body.token}}
+
+###
+# Get all channels
+GET {{api}}/channels
+Authorization: Bearer {{token}}
+
+###
+# Create a new channel
+POST {{api}}/channels
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "New Channel",
+  "description": "A new channel for testing",
+  "datalogger_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+  "column_name": "test_col",
+  "averaging_period": 30,
+  "factor": 2.5,
+  "img": "http://example.com/channel3.jpg"
+}
+
+###
+# Get a channel by UUID
+GET {{api}}/channels/c3d4e5f6-a7b8-9012-3456-7890abcdef12
+Authorization: Bearer {{token}}
+
+###
+# Update a channel
+PUT {{api}}/channels/c3d4e5f6-a7b8-9012-3456-7890abcdef12
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Updated Temperature"
+}
+
+###
+# Soft delete a channel
+DELETE {{api}}/channels/c3d4e5f6-a7b8-9012-3456-7890abcdef12
+Authorization: Bearer {{token}}
+
+###
+# Hard delete a channel
+DELETE {{api}}/channels/d4e5f6a7-b8c9-0123-4567-890abcdef123/hard
+Authorization: Bearer {{token}}
