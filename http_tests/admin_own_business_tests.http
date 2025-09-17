@@ -20,7 +20,7 @@ Content-Type: application/json
 
 ###
 @token = {{login_admin_own.response.body.token}}
-@own_business_uuid = 2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
+@own_business_uuid = 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
 
 ###
 # User endpoints (Administrator - Own Business)
@@ -51,20 +51,15 @@ Authorization: Bearer {{token}}
 ###
 
 # Get all users within own business (Administrator)
-GET {{api}}/users/
+GET {{api}}/businesses/{{own_business_uuid}}/users/
 Authorization: Bearer {{token}}
-Content-Type: application/json
 
-{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
 
 ###
 
 # Get user by ID within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
-GET {{api}}/users/f2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e
+GET {{api}}/businesses/{{own_business_uuid}}/users/f2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e
 Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
 
 ###
 
@@ -136,8 +131,8 @@ Authorization: Bearer {{token}}
   "city": "Admin Own Businesstown",
   "state": "Admin Own Businessland",
   "country": "Admin Own BUSA",
-  "zip_code": "44444",
-  "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"
+  "zip_code": "44444"
+  
 }
 
 ###
@@ -145,18 +140,12 @@ Authorization: Bearer {{token}}
 # Get all businesses (Administrator) - Should only see own business
 GET {{api}}/businesses
 Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
 
 ###
 
 # Get business by ID (Administrator) - Own business UUID: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
 GET {{api}}/businesses/2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
 Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
 
 ###
 

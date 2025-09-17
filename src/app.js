@@ -27,8 +27,8 @@ app.use('/api', limiter);
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/businesses', businessRoutes);
+app.use('/api', businessRoutes);
+app.use('/api', userRoutes);
 app.use('/api/dataloggers', dataloggerRoutes);
 app.use('/api/channels', channelRoutes);
 app.use('/api/solutions', solutionRoutes);

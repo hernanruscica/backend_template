@@ -1,5 +1,6 @@
 import pool from '../config/database.js';
 import { randomUUID } from 'crypto';
+import DataloggerModel from './DataloggerModel.js';
 
 export const BusinessModel = {
   async create({ name, description, phone, email, address, createdBy }) {
@@ -12,19 +13,6 @@ export const BusinessModel = {
     await pool.query(sql, [uuid, name, description, phone, email, street, city, state, country, zip_code, createdBy]);
     const newBusiness = await this.findByUuid(uuid);
     return newBusiness;
-  },
-
-  async findByUuid(uuid) {
-    const sql = 'SELECT * FROM businesses WHERE uuid = ?';
-    const [rows] = await pool.query(sql, [uuid]);
-    if (rows[0]) {
-      const { street, city, state, country, zip_code, ...businessData } = rows[0];
-      return {
-        ...businessData,
-        address: { street, city, state, country, zip_code }
-      };
-    }
-    return undefined;
   },
 
   async addUser(businessUuid, userUuid, roleUuid, createdBy) {
@@ -41,14 +29,59 @@ export const BusinessModel = {
   async findAll() {
     const sql = 'SELECT * FROM businesses';
     const [rows] = await pool.query(sql);
-    return rows.map(row => {
+    
+    const businesses = await Promise.all(rows.map(async row => {
       const { street, city, state, country, zip_code, ...businessData } = row;
+      const dataloggers = await DataloggerModel.findAllByBusinessUuid(row.uuid);
+      
       return {
         ...businessData,
-        address: { street, city, state, country, zip_code }
+        address: { street, city, state, country, zip_code },
+        dataloggers
       };
-    });
+    }));
+    
+    return businesses;
   },
+
+  async findByUuid(uuid) {
+    const sql = 'SELECT * FROM businesses WHERE uuid = ?';
+    const [rows] = await pool.query(sql, [uuid]);
+    
+    if (rows[0]) {
+      const { street, city, state, country, zip_code, ...businessData } = rows[0];
+      const dataloggers = await DataloggerModel.findAllByBusinessUuid(rows[0]['uuid']);
+      return {
+        ...businessData,
+        address: { street, city, state, country, zip_code },
+        dataloggers
+      };
+    }
+    return undefined;
+  },
+  
+  async findBusinessesByUserId(userUuid) {
+    const sql = `
+      SELECT b.*
+      FROM businesses b
+      JOIN business_users bu ON b.uuid = bu.business_uuid
+      WHERE bu.user_uuid = ?
+    `;
+    const [rows] = await pool.query(sql, userUuid);
+
+    const businesses = await Promise.all(rows.map(async row => {
+      const { street, city, state, country, zip_code, ...businessData } = row;
+      const dataloggers = await DataloggerModel.findAllByBusinessUuid(row.uuid);
+      
+      return {
+        ...businessData,
+        address: { street, city, state, country, zip_code },
+        dataloggers
+      };
+    }));
+    
+    return businesses;
+  },  
 
   async findAllByBusinessUuid(businessUuid) {
     const sql = 'SELECT * FROM businesses WHERE uuid = ?';
@@ -62,22 +95,6 @@ export const BusinessModel = {
     });
   },
 
-  async findBusinessesByUserId(userUuid) {
-    const sql = `
-      SELECT b.*
-      FROM businesses b
-      JOIN business_users bu ON b.uuid = bu.business_uuid
-      WHERE bu.user_uuid = ?
-    `;
-    const [rows] = await pool.query(sql, [userUuid]);
-    return rows.map(row => {
-      const { street, city, state, country, zip_code, ...businessData } = row;
-      return {
-        ...businessData,
-        address: { street, city, state, country, zip_code }
-      };
-    });
-  },  
 
   async update(uuid, fields, updatedBy) {
     const { address, ...otherFields } = fields;

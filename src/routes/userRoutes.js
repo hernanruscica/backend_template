@@ -17,20 +17,20 @@ const router = Router();
 router.use(authMiddleware);
 
 // Apply permission middleware to each route individually
-router.route('/')
+router.route('/businesses/:businessUuid/users/')
   .post(permissionMiddleware, validateCreateUser, createUser)
   .get(permissionMiddleware, getAllUsers);
 
   
-router.route('/:uuid')
+router.route('/businesses/:businessUuid/users/:uuid')
   .get(permissionMiddleware,  getUserByUuid)
   .put(permissionMiddleware,  validateUpdateUser, updateUserByUuid) // For JSON data updates
   .delete(permissionMiddleware, deleteUserByUuid);
 
-router.route('/:uuid/image')
+router.route('/businesses/:businessUuid/users/:uuid/image')
   .put(permissionMiddleware, upload.single('image'), updateUserByUuid); // For image updates
 
-router.route('/:uuid/hard')
+router.route('/businesses/:businessUuid/users/:uuid/hard')
   .delete(permissionMiddleware, (req, res, next) => {
     req.hardDelete = true;
     next();

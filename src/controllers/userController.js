@@ -24,7 +24,9 @@ export const createUser = catchAsync(async (req, res, next) => {
 
 export const getAllUsers = catchAsync(async (req, res, next) => {  
   const { user } = req;  
-  const users = await getAllUsersService(user);
+  const { businessUuid } = req.params;
+  //console.log('Business UUID from params:', businessUuid);  
+  const users = await getAllUsersService(user, businessUuid);
   res.status(200).json({
     success: true,
     count: users.length,

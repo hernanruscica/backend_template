@@ -1,6 +1,7 @@
 import pool from '../config/database.js';
 import { randomUUID } from 'crypto';
 import CustomError from '../utils/customError.js';
+import DataloggerModel from '../models/DataloggerModel.js';
 
 export const UserModel = {
   async create({ firstName, lastName, email, password, phone, dni, avatarUrl, address, createdBy }) {
@@ -51,13 +52,29 @@ export const UserModel = {
   async findByUuid(uuid) {
     const sql = 'SELECT * FROM users WHERE uuid = ?';
     const [rows] = await pool.query(sql, [uuid]);
-    if (rows[0]) {
-      const { street, city, state, country, zip_code, ...userData } = rows[0];
-      const businesses_roles = await this.findUserBusinessesAndRoles(rows[0].uuid);
+    const currentUser = rows[0];
+    if (currentUser) {
+      const { street, city, state, country, zip_code, ...userData } = currentUser;
+      const businesses_roles = await this.findUserBusinessesAndRoles(currentUser.uuid);
+      //const dataloggers = await DataloggerModel.findAllByBusinessUuid(      
+      //por cada negocio del usuario, obtener los dataloggers. 
+      // y que esos dataloggers los ponga dentro de cada negocio en un array
+      const dataloggers = await Promise.all(businesses_roles.map(async (br) => {
+        const dataloggersForBusiness = await DataloggerModel.findAllByBusinessUuid(br.uuid);
+        return {
+          business_uuid: br.uuid,
+          dataloggers: dataloggersForBusiness
+        };
+      }));
+      userData.businesses_roles = businesses_roles.map(br => ({
+        ...br,
+        dataloggers: dataloggers.find(d => d.business_uuid === br.uuid)?.dataloggers || []
+      }));
+               
+      
       return {
         ...userData,
-        address: { street, city, state, country, zip_code },
-        businesses_roles
+        address: { street, city, state, country, zip_code },           
       };
     }
     return undefined;

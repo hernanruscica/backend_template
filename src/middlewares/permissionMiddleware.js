@@ -33,7 +33,7 @@ export const permissionMiddleware = async (req, res, next) => {
     }
   };
 
-  const { user, method, baseUrl, params } = req;
+  const { user, method, originalUrl } = req;
   const { roles: userRoles, isOwner } = user;
   
   //console.log(req.user);
@@ -43,15 +43,20 @@ export const permissionMiddleware = async (req, res, next) => {
   if (isOwner) {
     return next();
   }
+  const urlArray = originalUrl.split('/');
+  const entity = (urlArray.length > 4) ? urlArray[4] : urlArray[2];
+  
+  //console.log('urlArray:', urlArray);
+  
+  console.log('entity:', entity);
 
-  const entity = baseUrl.split('/').pop();
-  const businessUuidRequested = params?.uuid || '';
+  // const businessUuidRequested = params?.uuid || '';
   let businessUuidOrigin = '';
 
-  if (!req.body?.uuidOrigin){
-    return res.status(400).json({success: false, message: "'uuidOrigin' atribute required on body"});
+  if (!req.params?.businessUuid && entity !== 'businesses'){
+    return res.status(400).json({success: false, message: "'businessUuid' parameter required on URL"});
   }else{
-    businessUuidOrigin = req.body?.uuidOrigin;
+    businessUuidOrigin = req.params?.businessUuid;
   }  
   
   let currentRole = userRoles.find( role => role.businessUuid === businessUuidOrigin);
@@ -64,19 +69,9 @@ export const permissionMiddleware = async (req, res, next) => {
   const currentPermissions = permissions[currentRole?.role][entity] || [];
   const hasPermission = currentPermissions.includes(method);
   
-  /*
-  console.log('currenrole', currentRole.role)
-  console.log('businessUuidRequested',businessUuidRequested);  
-  console.log('entity', entity);  
-  console.log('hasRoleOnBusinnes', hasRoleOnBusinnes);
-  console.log('currentRole.uuid', currentRole.businessUuid);
-  console.log('businessUuidOrigin', businessUuidOrigin);  
-  
-  console.log('canGetBusiness', canGetBusiness);  
-  console.log('user belongs to bussines?', userBelongsToBusiness);
-*/
-  
-  //console.log(currentPermissions, hasPermission);
+  if (entity === 'businesses' && method === 'GET' && !req.params?.businessUuid){
+    return next(); // Allow getting all businesses if no specific businessUuid is requested 
+  }
   
   if (!userBelongsToBusiness){
     return res.status(400).json({ success: false, message: 'User dont belongs to the business' });

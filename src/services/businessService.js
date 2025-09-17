@@ -6,18 +6,17 @@ export const getAllBusinessesService = async (user) => {
     const users = await BusinessModel.findAll();
     return users;
   }else{
-    const users = await BusinessModel.findBusinessByUserId(user.uuid);
+    const users = await BusinessModel.findBusinessesByUserId(user.uuid);
     return users;
   }
-/*
-  const business = await BusinessModel.findBusinessByUserId(user.uuid);
+};
+
+export const getBusinessByUuidService = async (uuid) => {
+  const business = await BusinessModel.findByUuid(uuid);
   if (!business) {
-    throw new CustomError('User is not associated with any business', 404);
+    throw new CustomError('Business not found', 404);
   }
-  
-  const users = await UserModel.findAllByBusinessUuid(business.uuid);
-  return users;
-  */
+  return business;      
 };
 
 export const updateBusinessByUuidService = async (uuid, updateData, updatedBy, file) => {

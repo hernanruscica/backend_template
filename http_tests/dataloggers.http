@@ -21,8 +21,8 @@ POST {{api}}/auth/login
 Content-Type: application/json
 
 {
-  "dni": "{{technician_dni}}",
-  "password": "{{technician_password}}"
+  "dni": "{{owner_dni}}",
+  "password": "{{owner_password}}"
 }
 
 ###
@@ -54,7 +54,7 @@ Authorization: Bearer {{token}}
 
 ### c3d4e5f6-a7b8-9012-3456-7890abcdef12
 # Get a datalogger by UUID
-GET {{api}}/dataloggers/c3d4e5f6-a7b8-9012-3456-7890abcdef1
+GET {{api}}/dataloggers/c3d4e5f6-a7b8-9012-3456-7890abcdef12
 Authorization: Bearer {{token}}
 Content-Type: application/json
 

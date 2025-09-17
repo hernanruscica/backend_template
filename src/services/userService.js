@@ -46,19 +46,14 @@ export const createUserService = async (userData, businessUuid, roleName, adminU
   return UserModel.findByUuid(newUser.uuid);
 };
 
-export const getAllUsersService = async (user) => {
-  
+export const getAllUsersService = async (user, businessUuid = null) => {
+  /*
   if (user.isOwner) {
     const users = await UserModel.findAll();
     return users;
-  }
-
-  const business = await BusinessModel.findBusinessByUserId(user.uuid);
-  if (!business) {
-    throw new CustomError('User is not associated with any business', 404);
-  }
-  
-  const users = await UserModel.findAllByBusinessUuid(business.uuid);
+  }  
+*/
+  const users = await UserModel.findAllByBusinessUuid(businessUuid);
   return users;
 };
 

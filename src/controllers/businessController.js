@@ -1,5 +1,6 @@
 import {
   getAllBusinessesService,
+  getBusinessByUuidService,
   updateBusinessByUuidService,
   deleteBusinessByUuidService,
   hardDeleteBusinessByUuidService
@@ -31,8 +32,9 @@ export const getAllBusinesses = catchAsync(async (req, res) => {
 });
 
 export const getBusinessByUuid = catchAsync(async (req, res, next) => {
-  const { uuid } = req.params;
-  const business = await BusinessModel.findByUuid(uuid);
+  const { businessUuid } = req.params;
+  //const business = await BusinessModel.findByUuid(uuid);
+  const business = await getBusinessByUuidService(businessUuid);
   if (!business) {
     return next(new CustomError('Business not found', 404));
   }
