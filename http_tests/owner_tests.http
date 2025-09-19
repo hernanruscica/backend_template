@@ -123,14 +123,14 @@ Authorization: Bearer {{token}}
 
 ###
 
-# Get all businesses (Owner)
+# Get all businesses (Owner) 
 GET {{api}}/businesses
 Authorization: Bearer {{token}}
 
 ###
 
-# Get business by ID (Owner) - Use a placeholder UUID, replace with an actual business ID
-GET {{api}}/businesses/87174422-7126-43a3-8b01-56d22fd31a12
+# Get business by ID (Owner) - Use a placeholder UUID, replace with an actual business ID 
+GET {{api}}/businesses/1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
 Authorization: Bearer {{token}}
 
 ###

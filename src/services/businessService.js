@@ -1,4 +1,7 @@
 import { BusinessModel } from '../models/businessModel.js';
+import DataloggerModel from '../models/DataloggerModel.js';
+import AlarmModel from '../models/AlarmModel.js';
+import ChannelModel from '../models/ChannelModel.js';
 import CustomError from '../utils/customError.js';
 
 export const getAllBusinessesService = async (user) => {  
@@ -13,7 +16,18 @@ export const getAllBusinessesService = async (user) => {
 
 export const getBusinessByUuidService = async (uuid) => {
   const business = await BusinessModel.findByUuid(uuid);
-  if (!business) {
+  const dataloggers = await DataloggerModel.findAllByBusinessUuid(uuid);
+  const channels = await ChannelModel.findAllByBusinessUuid(uuid);  
+  const alarms = await AlarmModel.findAllByBusinessUuid(uuid);
+  //console.log('alarms', alarms);  
+    
+  dataloggers.forEach(datalogger => {
+    datalogger.channels = channels.filter(channel => channel.datalogger_id === datalogger.uuid);
+    datalogger.alarms = alarms.filter(alarm => alarm.channel_uuid && datalogger.channels.some(channel => channel.uuid === alarm.channel_uuid));
+  }); 
+  if (business) {
+    business.dataloggers = dataloggers;    
+  }else{
     throw new CustomError('Business not found', 404);
   }
   return business;      

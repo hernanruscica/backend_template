@@ -32,12 +32,12 @@ export const BusinessModel = {
     
     const businesses = await Promise.all(rows.map(async row => {
       const { street, city, state, country, zip_code, ...businessData } = row;
-      const dataloggers = await DataloggerModel.findAllByBusinessUuid(row.uuid);
+      //const dataloggers = await DataloggerModel.findAllByBusinessUuid(row.uuid);
       
       return {
         ...businessData,
         address: { street, city, state, country, zip_code },
-        dataloggers
+        //dataloggers
       };
     }));
     
@@ -49,12 +49,10 @@ export const BusinessModel = {
     const [rows] = await pool.query(sql, [uuid]);
     
     if (rows[0]) {
-      const { street, city, state, country, zip_code, ...businessData } = rows[0];
-      const dataloggers = await DataloggerModel.findAllByBusinessUuid(rows[0]['uuid']);
+      const { street, city, state, country, zip_code, ...businessData } = rows[0];      
       return {
         ...businessData,
-        address: { street, city, state, country, zip_code },
-        dataloggers
+        address: { street, city, state, country, zip_code },        
       };
     }
     return undefined;

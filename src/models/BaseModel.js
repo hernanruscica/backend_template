@@ -88,13 +88,13 @@ const BaseModel = (tableName, allowedFields = []) => ({
   async findAllByBusinessUuid(businessUuid) {
     const allItems = await this.findAll();
     const itemsForBusiness = allItems.filter(item => item.business_uuid === businessUuid);
-
+    
     if (itemsForBusiness.length === 0) {
       const business = await BusinessModel.findByUuid(businessUuid);
       if (!business) {
         throw new CustomError('Business not found', 404);
       }
-      // If the business exists but has no items, return an empty array.
+      // If the business exists but has no items, return an empty array. 
       // This is a valid scenario.
     }
 
