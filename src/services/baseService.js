@@ -13,11 +13,11 @@ const BaseService = (model) => ({
     return this.model.create(newData, user.uuid);
   },
 
-  async getAll(user, businessUuid) {    
+  async getAll(user, businessUuid, userId) {    
     if (user.isOwner) {
       const items = await this.model.findAll();
       return items;
-    }    
+    }        
     
     if (!businessUuid) {
       throw new CustomError('Business UUID is required', 400);

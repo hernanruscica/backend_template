@@ -9,6 +9,7 @@ import dataloggerRoutes from './routes/dataloggerRoutes.js';
 import channelRoutes from './routes/channelRoutes.js';
 import solutionRoutes from './routes/solutionRoutes.js';
 import alarmRoutes from './routes/alarmRoutes.js';
+import userAlarmRoutes from './routes/userAlarmRoutes.js'; // Import new userAlarm routes
 import errorHandler from './middlewares/errorHandler.js';
 
 const app = express();
@@ -30,10 +31,11 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api', businessRoutes);
 app.use('/api', userRoutes);
-app.use('/api/dataloggers', dataloggerRoutes);
+app.use('/api', dataloggerRoutes);
 app.use('/api/channels', channelRoutes);
 app.use('/api/solutions', solutionRoutes);
-app.use('/api/alarms', alarmRoutes);
+app.use('/api', alarmRoutes);
+app.use('/api', userAlarmRoutes); // Use new userAlarm routes
 
 app.get('/', (req, res) => {
   res.send('API is running...');

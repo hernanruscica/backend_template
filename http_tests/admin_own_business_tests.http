@@ -55,9 +55,7 @@ GET {{api}}/businesses/{{own_business_uuid}}/users/
 Authorization: Bearer {{token}}
 
 
-###
-
-# Get user by ID within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
+### Get user by ID within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
 GET {{api}}/businesses/{{own_business_uuid}}/users/f2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e
 Authorization: Bearer {{token}}
 
@@ -180,22 +178,16 @@ Content-Type: image/jpeg
 # Delete business (Administrator) - Own business UUID: 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d - Should be restricted
 DELETE {{api}}/2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
 Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
 
 ###
-# Get all products (Administrator)
-GET {{api}}/products/
+# Get all dataloggers (Administrator) /businesses/:businessUuid
+GET {{api}}/businesses/{{own_business_uuid}}/dataloggers
 Authorization: Bearer {{token}}
-Content-Type: application/json
 
-{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
-
-###
-# Get a product (Administrator)
-GET {{api}}/products/c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f
+### Get user by ID within own business (Administrator) - Use a placeholder UUID, replace with an actual user ID from 'Tech Corp'
+GET {{api}}/businesses/{{own_business_uuid}}/alarms
 Authorization: Bearer {{token}}
-Content-Type: application/json
 
-{   "uuidOrigin": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"    }
+### /businesses/:businessUuid/usuarios/:userId/alarms
+GET {{api}}/businesses/{{own_business_uuid}}/users/f2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e/alarms
+Authorization: Bearer {{token}}

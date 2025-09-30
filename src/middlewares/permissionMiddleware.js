@@ -20,11 +20,13 @@ export const permissionMiddleware = async (req, res, next) => {
       'businesses': ['GET', 'PUT'],
       'users': ['POST', 'GET', 'PUT', 'DELETE'],      
       'dataloggers': ['POST', 'GET', 'PUT', 'DELETE'],
+      'alarms': ['POST', 'GET', 'PUT', 'DELETE']
     },
     'Technician': {
       'businesses': ['GET'],
       'users': ['GET', 'PUT'],      
       'dataloggers': ['GET'],
+      'alarms': ['GET'],
     },
     'Default': {
       'businesses': [''],
@@ -48,7 +50,7 @@ export const permissionMiddleware = async (req, res, next) => {
   
   //console.log('urlArray:', urlArray);
   
-  console.log('entity:', entity);
+  //console.log('entity:', entity);
 
   // const businessUuidRequested = params?.uuid || '';
   let businessUuidOrigin = '';

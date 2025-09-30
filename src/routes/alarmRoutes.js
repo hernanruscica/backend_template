@@ -9,16 +9,19 @@ const router = Router();
 router.use(authMiddleware);
 
 // Apply permission middleware to each route individually
-router.route('/')
+router.route('/businesses/:businessUuid/alarms/')
   .post(permissionMiddleware, AlarmController.create)
   .get(permissionMiddleware, AlarmController.getAll);
 
-router.route('/:uuid')
+router.route('/businesses/:businessUuid/alarms/:uuid')
   .get(permissionMiddleware, AlarmController.getByUuid)
   .put(permissionMiddleware, AlarmController.updateByUuid)
   .delete(permissionMiddleware, AlarmController.deleteByUuid);
 
-router.route('/:uuid/hard')
+router.route('/businesses/:businessUuid/users/:userId/alarms')
+  .get(permissionMiddleware, AlarmController.getAll)
+
+router.route('/businesses/:businessUuid/alarms/:uuid/hard')
   .delete(permissionMiddleware, (req, res, next) => {
     req.hardDelete = true;
     next();

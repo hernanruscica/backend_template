@@ -1,0 +1,7 @@
+INSERT INTO users_alarms (uuid, alarm_uuid, user_uuid, business_uuid, created_by, updated_by) VALUES
+('b0eebc99-9c0b-4ef8-bb6d-6bb9bd380b01', '11111111-1111-1111-1111-111111111111', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d'),
+('b0eebc99-9c0b-4ef8-bb6d-6bb9bd380b02', '22222222-2222-2222-2222-222222222222', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d'),
+('b0eebc99-9c0b-4ef8-bb6d-6bb9bd380b03', '44444444-4444-4444-4444-444444444444', 'f2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e', 'f2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', 'f2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e'),
+('b0eebc99-9c0b-4ef8-bb6d-6bb9bd380b04', '33333333-3333-3333-3333-333333333333', 'f2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d', 'f2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', 'f2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e'),
+('b0eebc99-9c0b-4ef8-bb6d-6bb9bd380b05', '55555555-5555-5555-5555-555555555555', 'e1b4c3d6-e5f6-1d7c-3c9d-0e1f2a5b4c3c', '3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f', 'e1b4c3d6-e5f6-1d7c-3c9d-0e1f2a5b4c3c', 'e1b4c3d6-e5f6-1d7c-3c9d-0e1f2a5b4c3c'),
+('b0eebc99-9c0b-4ef8-bb6d-6bb9bd380b06', '33333333-3333-3333-3333-333333333333', 'e1b4c3d6-e5f6-1d7c-3c9d-0e1f2a5b4c3c', '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d', 'e1b4c3d6-e5f6-1d7c-3c9d-0e1f2a5b4c3c', 'e1b4c3d6-e5f6-1d7c-3c9d-0e1f2a5b4c3c');

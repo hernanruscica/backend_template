@@ -1,11 +1,16 @@
 import catchAsync from '../utils/catchAsync.js';
 
 const BaseController = (service) => ({
-  create: catchAsync(async (req, res, next) => {
+  create: catchAsync(async (req, res, next) => {       
     
-    
-    const { business_uuid } = req.body;
-    const item = await service.create(req.body, business_uuid, req.user);
+    const { businessUuid } = req.params;
+    if (!businessUuid) {
+      return res.status(400).json({
+        success: false,
+        message: 'businessUuid is required',
+      });
+    }
+    const item = await service.create(req.body, businessUuid, req.user);
     res.status(201).json({
       success: true,
       message: `${service.model.tableName.slice(0, -1)} created successfully`,
@@ -14,9 +19,16 @@ const BaseController = (service) => ({
   }),
 
   getAll: catchAsync(async (req, res, next) => {
-    const { uuidOrigin } = req.body;
+    const { businessUuid, userId } = req.params;
+    if (!businessUuid) {
+      return res.status(400).json({
+        success: false,
+        message: 'businessUuid is required',
+      });
+    }
+    
     const { user } = req;            
-    const items = await service.getAll(user, uuidOrigin);    
+    const items = await service.getAll(user, businessUuid, userId);    
     
     res.status(200).json({
       success: true,
@@ -26,9 +38,8 @@ const BaseController = (service) => ({
   }),
 
   getByUuid: catchAsync(async (req, res, next) => {
-    const { uuid } = req.params;
-    const { uuidOrigin } = req.body;
-    const item = await service.getByUuid(uuid, req.user, uuidOrigin);
+    const { uuid, businessUuid } = req.params;    
+    const item = await service.getByUuid(uuid, req.user, businessUuid);
     res.status(200).json({
       success: true,
       item,

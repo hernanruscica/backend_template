@@ -9,16 +9,16 @@ const router = Router();
 router.use(authMiddleware);
 
 // Apply permission middleware to each route individually
-router.route('/')
+router.route('/businesses/:businessUuid/dataloggers')
   .post(permissionMiddleware, DataloggerController.create)
   .get(permissionMiddleware, DataloggerController.getAll);
 
-router.route('/:uuid')
+router.route('/businesses/:businessUuid/dataloggers/:uuid')
   .get(permissionMiddleware, DataloggerController.getByUuid)
   .put(permissionMiddleware, DataloggerController.updateByUuid)
   .delete(permissionMiddleware, DataloggerController.deleteByUuid);
 
-router.route('/:uuid/hard')
+router.route('/businesses/:businessUuid/dataloggers/:uuid/hard')
   .delete(permissionMiddleware, (req, res, next) => {
     req.hardDelete = true;
     next();

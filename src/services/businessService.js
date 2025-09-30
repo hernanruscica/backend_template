@@ -22,8 +22,10 @@ export const getBusinessByUuidService = async (uuid) => {
   //console.log('alarms', alarms);  
     
   dataloggers.forEach(datalogger => {
-    datalogger.channels = channels.filter(channel => channel.datalogger_id === datalogger.uuid);
-    datalogger.alarms = alarms.filter(alarm => alarm.channel_uuid && datalogger.channels.some(channel => channel.uuid === alarm.channel_uuid));
+    datalogger.channels = channels
+      .filter(channel => channel.datalogger_id === datalogger.uuid);
+    datalogger.alarms = alarms
+      .filter(alarm => alarm.channel_uuid && datalogger.channels.some(channel => channel.uuid === alarm.channel_uuid));
   }); 
   if (business) {
     business.dataloggers = dataloggers;    
