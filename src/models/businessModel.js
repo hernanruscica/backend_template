@@ -2,6 +2,7 @@ import pool from '../config/database.js';
 import { randomUUID } from 'crypto';
 import DataloggerModel from './DataloggerModel.js';
 
+
 export const BusinessModel = {
   async create({ name, description, phone, email, address, createdBy }) {
     const { street, city, state, country, zip_code } = address;
@@ -30,18 +31,20 @@ export const BusinessModel = {
     const sql = 'SELECT * FROM businesses';
     const [rows] = await pool.query(sql);
     
+    const dataloggers = await DataloggerModel.findAll();
     const businesses = await Promise.all(rows.map(async row => {
-      const { street, city, state, country, zip_code, ...businessData } = row;
-      //const dataloggers = await DataloggerModel.findAllByBusinessUuid(row.uuid);
+      const { street, city, state, country, zip_code, ...businessData } = row;      
+      //console.log('business Uuid', row.uuid);
+      //console.log('dataloggers', dataloggers);
       
+      const currentDataloggers =  dataloggers.filter(dl => dl.business_uuid === row.uuid);
       return {
         ...businessData,
         address: { street, city, state, country, zip_code },
-        //dataloggers
+        dataloggers: currentDataloggers        
       };
-    }));
-    
-    return businesses;
+    }));    
+    return businesses
   },
 
   async findByUuid(uuid) {

@@ -6,11 +6,11 @@ import CustomError from '../utils/customError.js';
 
 export const getAllBusinessesService = async (user) => {  
   if (user.isOwner) {
-    const users = await BusinessModel.findAll();
-    return users;
+    const businesses = await BusinessModel.findAll();
+    return businesses;
   }else{
-    const users = await BusinessModel.findBusinessesByUserId(user.uuid);
-    return users;
+    const businesses = await BusinessModel.findBusinessesByUserId(user.uuid);
+    return businesses;
   }
 };
 
