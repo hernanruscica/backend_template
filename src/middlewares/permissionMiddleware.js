@@ -1,18 +1,5 @@
 export const permissionMiddleware = async (req, res, next) => {
-  /*req.user example object
-    {
-    uuid: 'f2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e',
-    roles: [
-      {
-        role: 'Administrator',
-        businessUuid: '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e',
-        businessName: 'Innovate LLC'
-      }
-    ],
-    isOwner: false,
-    iat: 1757288811,
-    exp: 1757292411
-  }*/
+ 
 
   // 'POST', 'GET', 'PUT', 'DELETE'
   const permissions = {
@@ -38,7 +25,6 @@ export const permissionMiddleware = async (req, res, next) => {
   const { user, method, originalUrl } = req;
   const { roles: userRoles, isOwner } = user;
   
-  //console.log(req.user);
   req.hardDelete = req.route.path.includes('hard');
 
   // If requester user is owner can do all.

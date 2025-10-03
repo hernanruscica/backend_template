@@ -8,35 +8,33 @@ const baseAlarmService = BaseService(AlarmModel);
 const AlarmService = {
     ...baseAlarmService,
     async getAll(user, businessUuid, userId) {    
-    if (user.isOwner) {
-      const items = await this.model.findAll();
-      return items;
-    }    
 
-    //If not owner and receive userId
-    if (userId){
-        //console.log('userId en AlarmService: ', userId);
-        const userAlarms = await UserAlarmModel.findAllByBusinessUuid(businessUuid);
-        const alarmsAll = await AlarmModel.findAll();
-        const currentUser = await UserModel.findByUuid(userId);
-        console.log(currentUser)
-        const filteredUserAlarms = userAlarms.filter(ua => ua.user_uuid === userId);
-        const filteredAlarmUuids = filteredUserAlarms.map(ua => ua.alarm_uuid);
-        
-        const finalAlarms = alarmsAll.filter(alarm => filteredAlarmUuids.includes(alarm.uuid));
-
-        const alarmsWithUsername = finalAlarms.map(alarm => ({
-            ...alarm,
-            username: `${currentUser.first_name} ${currentUser.last_name}`
-        }));
-        
-        return alarmsWithUsername;
-    }
-    
-    
     if (!businessUuid) {
       throw new CustomError('Business UUID is required', 400);
-    }      
+    } 
+
+    if (user.isOwner) {
+      //If not owner and receive userId
+      if (userId){
+          //console.log('userId en AlarmService: ', userId);
+          const userAlarms = await UserAlarmModel.findAllByBusinessUuid(businessUuid);
+          const alarmsAll = await AlarmModel.findAll();
+          const currentUser = await UserModel.findByUuid(userId);
+          //console.log(currentUser)
+          const filteredUserAlarms = userAlarms.filter(ua => ua.user_uuid === userId);
+          const filteredAlarmUuids = filteredUserAlarms.map(ua => ua.alarm_uuid);
+          
+          const finalAlarms = alarmsAll.filter(alarm => filteredAlarmUuids.includes(alarm.uuid));
+
+          const alarmsWithUsername = finalAlarms.map(alarm => ({
+              ...alarm,
+              username: `${currentUser.first_name} ${currentUser.last_name}`
+          }));          
+          return alarmsWithUsername;
+      }
+      const items = await this.model.findAll();
+      return items;
+    }
     
     const isUserInBusiness = user.roles.some(ur => ur.businessUuid === businessUuid);
     if (!isUserInBusiness) {

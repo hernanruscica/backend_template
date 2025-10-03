@@ -13,7 +13,6 @@ export const validateCreateBusiness = [
   body('description').optional().trim().isString(),
   body('email').optional().isEmail().withMessage('Must be a valid email').normalizeEmail().isLength({ max: 100 }).withMessage('Email must be 100 characters or less'),
   body('phone').optional().trim().isString().isLength({ max: 20 }).withMessage('Phone must be 20 characters or less'),
-  body('logo_url').optional().trim().isURL().withMessage('Logo URL must be a valid URL').isLength({ max: 255 }).withMessage('Logo URL must be 255 characters or less'),
   body('street').optional().trim().isString().isLength({ max: 100 }).withMessage('Street must be 100 characters or less'),
   body('city').optional().trim().isString().isLength({ max: 50 }).withMessage('City must be 50 characters or less'),
   body('state').optional().trim().isString().isLength({ max: 50 }).withMessage('State must be 50 characters or less'),

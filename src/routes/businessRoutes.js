@@ -19,7 +19,12 @@ router.use(authMiddleware);
 
 // Apply permission middleware to each route individually
 router.route('/businesses/')
-  .post(permissionMiddleware, validateCreateBusiness, createBusiness)
+  .post(
+    upload.single('image'), // Multer should run first to parse multipart/form-data
+    permissionMiddleware, // Then permissionMiddleware
+    validateCreateBusiness,
+    createBusiness
+  )
   .get(permissionMiddleware, getAllBusinesses);
 
 router.route('/businesses/:businessUuid')

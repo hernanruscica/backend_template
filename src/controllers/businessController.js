@@ -1,3 +1,4 @@
+import { BusinessModel } from '../models/businessModel.js';
 import {
   getAllBusinessesService,
   getBusinessByUuidService,
@@ -13,6 +14,11 @@ export const createBusiness = catchAsync(async (req, res, next) => {
   const created_by = req.user.uuid;
   const address = { street, city, state, country, zip_code };
   const businessPayload = { ...businessData, address, createdBy: created_by };
+
+  if (req.file) {
+    businessPayload.logo_url = req.file.path; // Cloudinary URL
+  }
+  
   const business = await BusinessModel.create(businessPayload);
   res.status(201).json({
     success: true,

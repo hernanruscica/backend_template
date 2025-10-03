@@ -4,14 +4,14 @@ import DataloggerModel from './DataloggerModel.js';
 
 
 export const BusinessModel = {
-  async create({ name, description, phone, email, address, createdBy }) {
+  async create({ name, description, phone, email, logo_url, address, createdBy }) {
     const { street, city, state, country, zip_code } = address;
     const uuid = randomUUID();
     const sql = `
-      INSERT INTO businesses (uuid, name, description, phone, email, street, city, state, country, zip_code, created_by)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO businesses (uuid, name, description, phone, email, logo_url, street, city, state, country, zip_code, created_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    await pool.query(sql, [uuid, name, description, phone, email, street, city, state, country, zip_code, createdBy]);
+    await pool.query(sql, [uuid, name, description, phone, email, logo_url, street, city, state, country, zip_code, createdBy]);
     const newBusiness = await this.findByUuid(uuid);
     return newBusiness;
   },

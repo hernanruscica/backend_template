@@ -8,7 +8,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: process.env.CLOUDINARY_FOLDER,
-    allowed_formats: ['jpg', 'png', 'jpeg'],
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
   },
 });
 
@@ -18,11 +18,11 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024, // 10 MB
   },
   fileFilter: (req, file, cb) => {
-    const allowedMimes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Only JPG, PNG, and JPEG are allowed.'), false);
+      cb(new Error('Invalid file type. Only JPG, PNG, WEBP and JPEG are allowed.'), false);
     }
   },
 });
