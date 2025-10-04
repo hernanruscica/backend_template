@@ -18,13 +18,13 @@ router.use(authMiddleware);
 
 // Apply permission middleware to each route individually
 router.route('/businesses/:businessUuid/users/')
-  .post(permissionMiddleware, validateCreateUser, createUser)
+  .post(upload.single('image'), permissionMiddleware, validateCreateUser, createUser)
   .get(permissionMiddleware, getAllUsers);
 
   
 router.route('/businesses/:businessUuid/users/:uuid')
   .get(permissionMiddleware,  getUserByUuid)
-  .put(permissionMiddleware,  validateUpdateUser, updateUserByUuid) // For JSON data updates
+  .put(upload.single('image'), permissionMiddleware,  validateUpdateUser, updateUserByUuid) // For JSON data updates
   .delete(permissionMiddleware, deleteUserByUuid);
 
 router.route('/businesses/:businessUuid/users/:uuid/image')

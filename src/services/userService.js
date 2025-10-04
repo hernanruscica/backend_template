@@ -39,6 +39,8 @@ export const createUserService = async (userData, businessUuid, roleName, adminU
 
   const address = { street, city, state, country, zipCode };
   const userPayload = { ...restOfUserData, password: hashedPassword, address, createdBy: adminUser.uuid };
+  console.log('userPayload on userService', userPayload);
+  
   const newUser = await UserModel.create(userPayload);
 
   await BusinessModel.addUser(business.uuid, newUser.uuid, roleObject.uuid, adminUser.uuid);
@@ -75,7 +77,11 @@ export const updateUserByUuidService = async (uuid, updateData, requesterUser, f
     throw new CustomError('This user role only can UPDATE his own user', 403);
   }
 
+  console.log('uuid', uuid);
+  
   const user = await UserModel.findByUuid(uuid);
+  console.log('user', user);
+  
   if (!user) {
     throw new CustomError('User not found', 404);
   }

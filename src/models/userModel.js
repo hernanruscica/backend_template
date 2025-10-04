@@ -4,7 +4,7 @@ import CustomError from '../utils/customError.js';
 import DataloggerModel from '../models/DataloggerModel.js';
 
 export const UserModel = {
-  async create({ firstName, lastName, email, password, phone, dni, avatarUrl, address, createdBy }) {
+  async create({ firstName, lastName, email, password, phone, dni, avatar_url, address, createdBy }) {
     const { street, city, state, country, zipCode } = address;
     const uuid = randomUUID();
     const sql = `
@@ -12,7 +12,7 @@ export const UserModel = {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     try {
-      await pool.query(sql, [uuid, firstName, lastName, email, password, phone, dni, avatarUrl, street, city, state, country, zipCode, createdBy]);
+      await pool.query(sql, [uuid, firstName, lastName, email, password, phone, dni, avatar_url, street, city, state, country, zipCode, createdBy]);
       const newUser = await this.findByUuid(uuid);
       return newUser;
     } catch (error) {
@@ -53,6 +53,8 @@ export const UserModel = {
     const sql = 'SELECT * FROM users WHERE uuid = ?';
     const [rows] = await pool.query(sql, [uuid]);
     const currentUser = rows[0];
+    console.log('uuid', uuid);
+    
     if (currentUser) {
       const { street, city, state, country, zip_code, ...userData } = currentUser;
       const businesses_roles = await this.findUserBusinessesAndRoles(currentUser.uuid);
@@ -115,12 +117,20 @@ export const UserModel = {
 
   async update(uuid, fields, updatedBy) {
     const { address, is_active, ...otherFields } = fields;
-    const allowedFields = ['first_name', 'last_name', 'email', 'password', 'phone', 'dni', 'avatar_url'];
+    const fieldMapping = {
+      firstName: 'first_name',
+      lastName: 'last_name',
+      email: 'email',
+      password: 'password',
+      phone: 'phone',
+      dni: 'dni',
+      avatar_url: 'avatar_url',
+    };
     
     const fieldEntries = Object.entries(otherFields);
-    const validFields = fieldEntries.filter(([key]) => allowedFields.includes(key));
+    const validFields = fieldEntries.filter(([key]) => fieldMapping[key]);
     
-    let setClause = validFields.map(([key]) => `${key} = ?`).join(', ');
+    let setClause = validFields.map(([key]) => `${fieldMapping[key]} = ?`).join(', ');
     const values = validFields.map(([, value]) => value);
 
     if (typeof is_active === 'boolean') {

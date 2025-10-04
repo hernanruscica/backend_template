@@ -51,8 +51,8 @@ export const getBusinessByUuid = catchAsync(async (req, res, next) => {
 });
 
 export const updateBusinessByUuid = catchAsync(async (req, res, next) => {
-  const { uuid } = req.params;
-  const updatedBusiness = await updateBusinessByUuidService(uuid, req.body, req.user.uuid, req.file);
+  const { businessUuid } = req.params;
+  const updatedBusiness = await updateBusinessByUuidService(businessUuid, req.body, req.user.uuid, req.file);
   res.status(200).json({
     success: true,
     message: 'Business updated successfully',

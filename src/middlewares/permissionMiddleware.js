@@ -34,7 +34,7 @@ export const permissionMiddleware = async (req, res, next) => {
   const urlArray = originalUrl.split('/');
   const entity = (urlArray.length > 4) ? urlArray[4] : urlArray[2];
   
-  //console.log('urlArray:', urlArray);
+  //console.log('urlArray:', urlArray);  
   
   //console.log('entity:', entity);
 

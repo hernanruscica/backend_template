@@ -13,6 +13,12 @@ import { UserModel } from '../models/userModel.js';
 export const createUser = catchAsync(async (req, res, next) => {
   const { business_uuid, role, ...userData } = req.body;
   const adminUser = await UserModel.findByUuid(req.user.uuid);
+
+
+  if (req.file) {
+    userData.avatar_url = req.file.path; // Cloudinary URL
+  }
+
   const userWithDetails = await createUserService(userData, business_uuid, role, adminUser);
 
   res.status(201).json({

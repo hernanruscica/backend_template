@@ -36,6 +36,10 @@ export const getBusinessByUuidService = async (uuid) => {
 };
 
 export const updateBusinessByUuidService = async (uuid, updateData, updatedBy, file) => {
+  console.log('from update business service');
+  console.log(uuid, updateData, updatedBy, file);
+  
+  
   const business = await BusinessModel.findByUuid(uuid);
   if (!business) {
     throw new CustomError('Business not found', 404);
