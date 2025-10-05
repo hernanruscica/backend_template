@@ -2,7 +2,6 @@ import catchAsync from '../utils/catchAsync.js';
 
 const BaseController = (service) => ({
   create: catchAsync(async (req, res, next) => {       
-    
     const { businessUuid } = req.params;
     if (!businessUuid) {
       return res.status(400).json({
@@ -10,6 +9,11 @@ const BaseController = (service) => ({
         message: 'businessUuid is required',
       });
     }
+
+    if (req.file) {
+      req.body.img = req.file.path;
+    }
+    
     const item = await service.create(req.body, businessUuid, req.user);
     res.status(201).json({
       success: true,
@@ -47,7 +51,12 @@ const BaseController = (service) => ({
   }),
 
   updateByUuid: catchAsync(async (req, res, next) => {
-    const { uuid } = req.params;
+    const { uuid, businessUuid } = req.params;
+    req.body.businessUuid = businessUuid;
+    if (req.file) {
+      req.body.img = req.file.path;
+    }
+
     const updatedItem = await service.updateByUuid(uuid, req.body, req.user);
     res.status(200).json({
       success: true,

@@ -13,6 +13,8 @@ const BaseModel = (tableName, allowedFields = []) => ({
     const values = [uuid];
     const placeholders = ['?'];
 
+    console.log('data from basemodel',data);
+    
     for (const key in data) {
       if (this.allowedFields.includes(key)) {
         fields.push(key.replace(/([A-Z])/g, '_$1').toLowerCase());

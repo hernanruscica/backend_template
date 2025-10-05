@@ -59,12 +59,14 @@ const BaseService = (model) => ({
   },
 
   async updateByUuid(uuid, updateData, user) {
+    console.log('updateData', updateData);
+    const {businessUuid} = updateData;
     const item = await this.model.findByUuid(uuid);
     if (!item) {
       throw new CustomError(`${this.model.tableName.slice(0, -1)} not found`, 404);
     }
 
-    const isUserInBusiness = user.roles.some(ur => ur.businessUuid === businessUuid);
+    const isUserInBusiness = user.roles.some(ur => ur?.businessUuid === businessUuid);
     if (!isUserInBusiness) {
       throw new CustomError('User is not authorized to access this business', 403);
     }

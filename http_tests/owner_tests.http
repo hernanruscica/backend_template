@@ -299,54 +299,125 @@ Authorization: Bearer {{token}}
 DELETE {{api}}/businesses/2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e/hard
 Authorization: Bearer {{token}}
 
+
 ###
-# Product endpoints (Owner)
+# Datalogger endpoints (Owner)
 ###
 
-# Create a new product (Owner)
-# @name create_product
-POST {{api}}/products
+# Create a new datalogger (Owner)
+# @name create_datalogger
+POST {{api}}/businesses/{{own_business_uuid}}/dataloggers
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "New Product",
-  "description": "A brand new product.",
-  "price": 99.99,
-  "business_uuid": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
+  "name": "Owner Test Datalogger",
+  "description": "A test datalogger created by Owner.",
+  "mac_address": "00:11:22:33:44:55",
+  "table_name": "datalogger_owner_test_table",
+  "is_active": true
 }
 
 ###
-@product_uuid = {{create_product.response.body.item.uuid}}
+@datalogger_uuid = {{create_datalogger.response.body.item.uuid}}
 
 ###
 
-# Get all products (Owner)
-GET {{api}}/products
+# Create a new datalogger with image (Owner)
+# Note: Create a test.jpg file in the root directory for this to work.
+POST {{api}}/businesses/{{own_business_uuid}}/dataloggers
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer {{token}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="name"
+
+Owner Test Datalogger With Image
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
+
+A test datalogger with image created by Owner.
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="mac_address"
+
+AA:BB:CC:DD:EE:FF
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="table_name"
+
+datalogger_owner_image_test_table
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="is_active"
+
+true
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+# Get all dataloggers (Owner)
+GET {{api}}/businesses/{{own_business_uuid}}/dataloggers
 Authorization: Bearer {{token}}
 
 ###
 
-# Get product by ID (Owner)
-GET {{api}}/products/{{product_uuid}}
+# Get datalogger by ID (Owner)
+GET {{api}}/businesses/{{own_business_uuid}}/dataloggers/{{datalogger_uuid}}
 Authorization: Bearer {{token}}
 
 ###
 
-# Update product (Owner)
-PUT {{api}}/products/{{product_uuid}}
+# Update datalogger (Owner)
+PUT {{api}}/businesses/{{own_business_uuid}}/dataloggers/{{datalogger_uuid}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "price": 109.99,
-  "description": "An updated product description."
+  "name": "Updated Owner Test Datalogger",
+  "description": "An updated test datalogger description by Owner.",
+  "is_active": false
 }
 
 ###
 
-# Delete product (Owner)
-DELETE {{api}}/products/{{product_uuid}}
+# Update datalogger with image (Owner)
+# Note: Create a test.jpg file in the root directory for this to work.
+PUT {{api}}/businesses/{{own_business_uuid}}/dataloggers/a1b2c3d4-e5f6-7890-1234-567890abcdef
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer {{token}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="name"
+
+Updated Owner Test Datalogger With Image
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
+
+An updated test datalogger with image by Owner.
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="is_active"
+
+false
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+# Delete datalogger (Owner)
+DELETE {{api}}/businesses/{{own_business_uuid}}/dataloggers/{{datalogger_uuid}}
+Authorization: Bearer {{token}}
+
+###
+
+# HARD Delete datalogger (Owner)
+DELETE {{api}}/businesses/{{own_business_uuid}}/dataloggers/{{datalogger_uuid}}/hard
 Authorization: Bearer {{token}}
 
 ###
