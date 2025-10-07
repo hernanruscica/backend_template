@@ -66,7 +66,7 @@ const BaseService = (model) => ({
       throw new CustomError(`${this.model.tableName.slice(0, -1)} not found`, 404);
     }
 
-    const isUserInBusiness = user.roles.some(ur => ur?.businessUuid === businessUuid);
+    const isUserInBusiness = !user.isOwner ? user.roles.some(ur => ur?.businessUuid === businessUuid) : user.isOwner;
     if (!isUserInBusiness) {
       throw new CustomError('User is not authorized to access this business', 403);
     }

@@ -7,12 +7,14 @@ export const permissionMiddleware = async (req, res, next) => {
       'businesses': ['GET', 'PUT'],
       'users': ['POST', 'GET', 'PUT', 'DELETE'],      
       'dataloggers': ['POST', 'GET', 'PUT', 'DELETE'],
+      'channels': ['POST', 'GET', 'PUT', 'DELETE'],
       'alarms': ['POST', 'GET', 'PUT', 'DELETE']
     },
     'Technician': {
       'businesses': ['GET'],
       'users': ['GET', 'PUT'],      
       'dataloggers': ['GET'],
+      'channels': ['GET'],
       'alarms': ['GET'],
     },
     'Default': {
@@ -25,7 +27,8 @@ export const permissionMiddleware = async (req, res, next) => {
   const { user, method, originalUrl } = req;
   const { roles: userRoles, isOwner } = user;
   
-  req.hardDelete = req.route.path.includes('hard');
+  req.hardDelete = req.route.path.includes('hard');  
+  
 
   // If requester user is owner can do all.
   if (isOwner) {
@@ -34,9 +37,8 @@ export const permissionMiddleware = async (req, res, next) => {
   const urlArray = originalUrl.split('/');
   const entity = (urlArray.length > 4) ? urlArray[4] : urlArray[2];
   
-  //console.log('urlArray:', urlArray);  
+  //console.log('urlArray:', urlArray);   
   
-  //console.log('entity:', entity);
 
   // const businessUuidRequested = params?.uuid || '';
   let businessUuidOrigin = '';

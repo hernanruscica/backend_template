@@ -8,6 +8,7 @@ const allowedFields = [
   'averaging_period',
   'factor',
   'img',
+  'business_uuid',
   'is_active',
 ];
 

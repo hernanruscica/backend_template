@@ -13,7 +13,7 @@ CREATE TABLE channels (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by CHAR(36),
     updated_by CHAR(36),
-    FOREIGN KEY (business_uuid) REFERENCES businesses(uuid) ON DELETE CASCADE,
+    FOREIGN KEY (business_uuid) REFERENCES businesses(uuid) ON DELETE CASCADE,    
     FOREIGN KEY (datalogger_id) REFERENCES dataloggers(uuid) ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES users(uuid),
     FOREIGN KEY (updated_by) REFERENCES users(uuid)

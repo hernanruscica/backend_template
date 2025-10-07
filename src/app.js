@@ -20,7 +20,7 @@ app.use(cors({ origin: process.env.BASE_URL_FRONT }));
 
 // Limit requests from same API
 const limiter = rateLimit({
-  max: 1000, // 100 requests from the same IP in 15 minutes
+  max: 100, // 100 requests from the same IP in 15 minutes
   windowMs: 15 * 60 * 1000,
   message: 'Too many requests from this IP, please try again in 15 minutes!',
 });
@@ -28,14 +28,14 @@ app.use('/api', limiter);
 
 app.use(express.json());
 
-app.use('/api/auth', authRoutes);
-app.use('/api', businessRoutes);
-app.use('/api', userRoutes);
-app.use('/api', dataloggerRoutes);
-app.use('/api/channels', channelRoutes);
-app.use('/api/solutions', solutionRoutes);
+app.use('/api/auth', authRoutes);//done
+app.use('/api', businessRoutes);//done
+app.use('/api', userRoutes);//done
+app.use('/api', dataloggerRoutes);//done
+app.use('/api', channelRoutes);//on progress
 app.use('/api', alarmRoutes);
-app.use('/api', userAlarmRoutes); // Use new userAlarm routes
+app.use('/api/solutions', solutionRoutes);
+app.use('/api', userAlarmRoutes); // Maybe don't need it
 
 app.get('/', (req, res) => {
   res.send('API is running...');

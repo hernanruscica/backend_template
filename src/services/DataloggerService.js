@@ -2,7 +2,7 @@ import BaseService from './baseService.js';
 import DataloggerModel from '../models/DataloggerModel.js';
 import ChannelModel from '../models/ChannelModel.js';
 import AlarmModel from '../models/AlarmModel.js';
-
+import CustomError from '../utils/customError.js';
 
 const baseDataloggerService = BaseService(DataloggerModel);
 

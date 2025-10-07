@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { channelController } from '../controllers/ChannelController.js';
+import channelController from '../controllers/ChannelController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { permissionMiddleware } from '../middlewares/permissionMiddleware.js';
+import upload from '../middlewares/uploadMiddleware.js';
 
 const router = Router();
 
@@ -9,16 +10,16 @@ const router = Router();
 router.use(authMiddleware);
 
 // Apply permission middleware to each route individually
-router.route('/')
-  .post(permissionMiddleware, channelController.create)
+router.route('/businesses/:businessUuid/channels/')
+  .post(upload.single('image'), permissionMiddleware, channelController.create)
   .get(permissionMiddleware, channelController.getAll);
 
-router.route('/:uuid')
+router.route('/businesses/:businessUuid/channels/:uuid')
   .get(permissionMiddleware, channelController.getByUuid)
-  .put(permissionMiddleware, channelController.updateByUuid)
+  .put(upload.single('image'), permissionMiddleware, channelController.updateByUuid)
   .delete(permissionMiddleware, channelController.deleteByUuid);
 
-router.route('/:uuid/hard')
+router.route('/businesses/:businessUuid/channels/:uuid/hard')
   .delete(permissionMiddleware, (req, res, next) => {
     req.hardDelete = true;
     next();
