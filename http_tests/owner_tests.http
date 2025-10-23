@@ -510,3 +510,9 @@ Content-Type: image/jpeg
 ###Get all channels  /api/businesses/2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e/channels/f6a7b8c9-d0e1-2345-6789-0abcdef12345
 GET {{api}}/businesses/2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e/channels/f6a7b8c9-d0e1-2345-6789-0abcdef12345
 Authorization: Bearer {{token}}
+
+
+### '/getporcentages/:tableName/:columnPrefix/:timePeriod/:rangePorcentage' time and ranges in minutes /api/data/getporcentages/cocina/d1/7200/60
+GET {{api}}/data/getporcentages/cocina/d3/7200/720 
+Content-Type: application/json
+Authorization: Bearer {{token}}

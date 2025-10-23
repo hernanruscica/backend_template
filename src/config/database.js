@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 let pool;
+let poolData;
 
 try {
   pool = mysql.createPool({
@@ -20,5 +21,24 @@ try {
   process.exit(1);
 }
 
+try {
+  poolData = mysql.createPool({
+      host: process.env.DB_HOST_DATA,
+      user: process.env.DB_USER_DATA,
+      password: process.env.DB_PASSWORD_DATA,
+      database: process.env.DB_NAME_DATA,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0
+  });
+  console.log('Database poolData created successfully');
+} catch (error) {
+  console.error('Error creating database poolData:', error);
+  process.exit(1);
+}
 
-export default pool;
+
+
+
+
+export { pool, poolData };

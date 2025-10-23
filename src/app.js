@@ -9,7 +9,8 @@ import dataloggerRoutes from './routes/dataloggerRoutes.js';
 import channelRoutes from './routes/channelRoutes.js';
 import solutionRoutes from './routes/solutionRoutes.js';
 import alarmRoutes from './routes/alarmRoutes.js';
-import userAlarmRoutes from './routes/userAlarmRoutes.js'; // Import new userAlarm routes
+import userAlarmRoutes from './routes/userAlarmRoutes.js'; 
+import dataRoutes from './routes/dataRoutes.js';
 import errorHandler from './middlewares/errorHandler.js';
 
 const app = express();
@@ -28,11 +29,12 @@ app.use('/api', limiter);
 
 app.use(express.json());
 
-app.use('/api/auth', authRoutes);//done
-app.use('/api', businessRoutes);//done
-app.use('/api', userRoutes);//done
-app.use('/api', dataloggerRoutes);//done
-app.use('/api', channelRoutes);//on progress
+app.use('/api/auth', authRoutes);
+app.use('/api', businessRoutes);
+app.use('/api', userRoutes);
+app.use('/api', dataloggerRoutes);
+app.use('/api', channelRoutes);
+app.use('/api', dataRoutes);
 app.use('/api', alarmRoutes);
 app.use('/api/solutions', solutionRoutes);
 app.use('/api', userAlarmRoutes); // Maybe don't need it

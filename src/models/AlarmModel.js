@@ -1,5 +1,5 @@
 import BaseModel from './BaseModel.js';
-import pool from '../config/database.js';
+import {pool} from '../config/database.js';
 import ChannelModel from './ChannelModel.js';
 import DataloggerModel from './DataloggerModel.js';
 

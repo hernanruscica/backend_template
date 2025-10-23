@@ -1,4 +1,4 @@
-import pool from '../config/database.js';
+import {pool} from '../config/database.js';
 import { randomUUID } from 'crypto';
 import DataloggerModel from './DataloggerModel.js';
 

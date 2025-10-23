@@ -1,4 +1,4 @@
-import pool from '../config/database.js';
+import {pool} from '../config/database.js';
 import { randomUUID } from 'crypto';
 import CustomError from '../utils/customError.js';
 import { BusinessModel } from './businessModel.js';

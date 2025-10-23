@@ -1,4 +1,4 @@
-@api = http://localhost:3000/api
+@api = http://localhost:5000/api
 @business_uuid_tech_corp = 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
 @business_uuid_innovate_llc = 2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
 @alarm_uuid_tech_corp = 11111111-1111-1111-1111-111111111111
@@ -39,51 +39,53 @@ Content-Type: application/json
 
 ###
 # Get all alarms as Owner
-GET {{api}}/alarms
+GET {{api}}/businesses/{{business_uuid_innovate_llc}}/alarms
 Authorization: Bearer {{ownerLogin.response.body.token}}
-business-uuid: {{business_uuid_tech_corp}}
+
 
 ###
 # Get all alarms as Admin
-GET {{api}}/alarms
+GET {{api}}/businesses/{{business_uuid_tech_corp}}/alarms
 Authorization: Bearer {{adminLogin.response.body.token}}
-business-uuid: {{business_uuid_innovate_llc}}
+
 
 ###
 # Get all alarms as Technician
-GET {{api}}/alarms
+GET {{api}}/businesses/{{business_uuid_tech_corp}}/alarms
 Authorization: Bearer {{technicianLogin.response.body.token}}
-business-uuid: {{business_uuid_innovate_llc}}
+
 
 ###
 # Get alarm by UUID as Owner
 GET {{api}}/alarms/{{alarm_uuid_tech_corp}}
 Authorization: Bearer {{ownerLogin.response.body.token}}
-business-uuid: {{business_uuid_tech_corp}}
+
 
 ###
 # Create a new alarm as Owner
-POST {{api}}/alarms
+POST {{api}}/businesses/{{business_uuid_tech_corp}}/alarms
 Authorization: Bearer {{ownerLogin.response.body.token}}
-business-uuid: {{business_uuid_tech_corp}}
 Content-Type: application/json
 
 {
-    "channel_uuid": "{{channel_uuid_tech_corp}}",
     "name": "New Test Alarm",
     "description": "A test alarm created by the owner.",
+    "channel_uuid": "{{channel_uuid_tech_corp}}",
+    "table_name": "cocina",
+    "column_name": "d1",
     "time_range": 300,
     "condition_logic": "value > 50",
     "condition_show": "Value > 50",
     "alarm_type": "upper_threshold",
-    "var01": 50
+    "var01": 50,
+    "is_active": true,
+    "triggered": false
 }
 
 ###
 # Update an alarm as Owner
 PUT {{api}}/alarms/{{alarm_uuid_tech_corp}}
 Authorization: Bearer {{ownerLogin.response.body.token}}
-business-uuid: {{business_uuid_tech_corp}}
 Content-Type: application/json
 
 {
@@ -94,4 +96,21 @@ Content-Type: application/json
 # Delete an alarm as Owner
 DELETE {{api}}/alarms/{{alarm_uuid_tech_corp}}
 Authorization: Bearer {{ownerLogin.response.body.token}}
-business-uuid: {{business_uuid_tech_corp}}
+
+
+###
+# Create a new alarm as Admin
+POST {{api}}/alarms
+Authorization: Bearer {{adminLogin.response.body.token}}
+Content-Type: application/json
+
+{
+    "channel_uuid": "a1b2c3d4-e5f6-a7b8-c9d0-e1f2a3b4c5d6",
+    "name": "Admin Test Alarm",
+    "description": "A test alarm created by the admin.",
+    "time_range": 600,
+    "condition_logic": "value < 10",
+    "condition_show": "Value < 10",
+    "alarm_type": "lower_threshold",
+    "var01": 10
+}
