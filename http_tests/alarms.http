@@ -55,14 +55,13 @@ GET {{api}}/businesses/{{business_uuid_tech_corp}}/alarms
 Authorization: Bearer {{technicianLogin.response.body.token}}
 
 
-###
-# Get alarm by UUID as Owner
-GET {{api}}/alarms/{{alarm_uuid_tech_corp}}
+### //`/api/businesses/${businessUuid}/alarms/${alarmId}`
+GET {{api}}/businesses/{{business_uuid_innovate_llc}}/alarms/0f2dc95d-e605-4635-9e41-eb1ededb6686
 Authorization: Bearer {{ownerLogin.response.body.token}}
 
 
 ###
-# Create a new alarm as Owner
+# Create a new alarm as Owner /api/businneses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c/alarms
 POST {{api}}/businesses/{{business_uuid_tech_corp}}/alarms
 Authorization: Bearer {{ownerLogin.response.body.token}}
 Content-Type: application/json
