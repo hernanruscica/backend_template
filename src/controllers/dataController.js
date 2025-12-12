@@ -27,7 +27,7 @@ export const getPorcentagesOn = async (req, res, next) => {
         const {tableName, columnPrefix, timePeriod, rangePorcentage } = req.params;
         
         const currentData = await dataModel.findDataFromDigitalChannel(tableName, columnPrefix, timePeriod);
-        console.log(currentData);
+        //console.log(currentData);
         if (currentData?.length > 0){
             const rangePorcentageSecs = rangePorcentage * 60;
             const dataPorcentagesOn = calculatePorcentageOn(currentData, rangePorcentageSecs)
@@ -36,7 +36,7 @@ export const getPorcentagesOn = async (req, res, next) => {
             return res.status(200).json({success: false, message: 'Data Not Found'});
         }
     } catch (error) {
-        next(error);
+        next(error); 
     }
 }
 export const getAnalogData = async (req, res, next) => {
