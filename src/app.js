@@ -13,6 +13,7 @@ import userAlarmRoutes from './routes/userAlarmRoutes.js';
 import dataRoutes from './routes/dataRoutes.js';
 import errorHandler from './middlewares/errorHandler.js';
 
+
 const app = express();
 
 // Set security HTTP headers

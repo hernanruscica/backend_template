@@ -44,5 +44,65 @@ export const AuthController = {
       token,
       user
     });
+  }),
+  activateUser: catchAsync(async (req, res, next) => {
+    const { token } = req.params;
+
+  if (!token) {
+    return res.status(400).json({ 
+      success: false,
+      message: 'Token de activación no proporcionado'
+    });
+  }
+
+  try {
+    // Verificar si el token es válido
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (tokenError) {
+      if (tokenError.name === 'TokenExpiredError') {
+        return res.status(401).json({
+          success: false,
+          message: 'El token de activación ha expirado'
+        });
+      }
+      return res.status(401).json({
+        success: false,
+        message: 'Token de activación inválido'
+      });
+    }
+
+    const { uuid, userName, dni } = decodedToken;
+
+    
+    // Actualizar estado del usuario 
+    const response = await UserModel.update(uuid, {is_active: true}, uuid );   
+    
+    if (response?.affectedRows < 1) {
+      return res.status(500).json({
+        success: false,
+        message: 'Error al activar el usuario'
+      });
+    }
+
+    const userWithDetails = await UserModel.findByUuid(uuid);
+    if (!userWithDetails) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuario no encontrado después de la activación'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Usuario activado exitosamente',
+      user: userWithDetails
+    });
+
+  } catch (error) {
+    console.error('Error en activación de usuario:', error);
+    next(error);
+  }
   })
 };

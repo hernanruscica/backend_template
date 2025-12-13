@@ -4,5 +4,6 @@ import { AuthController } from '../controllers/authController.js';
 const router = Router();
 
 router.post('/login', AuthController.login);
+router.get('/users/activate/:token', AuthController.activateUser); 
 
 export default router;

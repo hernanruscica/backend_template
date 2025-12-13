@@ -3,6 +3,8 @@ import { BusinessModel } from '../models/businessModel.js';
 import { RoleModel } from '../models/roleModel.js';
 import CustomError from '../utils/customError.js';
 import bcrypt from 'bcryptjs';
+import { sendActivation } from '../utils/mail.js';
+import jwt from 'jsonwebtoken';
 
 export const createUserService = async (userData, businessUuid, roleName, adminUser) => {
   const { street, city, state, country, zipCode, ...restOfUserData } = userData;
@@ -39,13 +41,38 @@ export const createUserService = async (userData, businessUuid, roleName, adminU
 
   const address = { street, city, state, country, zipCode };
   const userPayload = { ...restOfUserData, password: hashedPassword, address, createdBy: adminUser.uuid };
-  console.log('userPayload on userService', userPayload);
+  //console.log('userPayload on userService', userPayload);
   
   const newUser = await UserModel.create(userPayload);
 
   await BusinessModel.addUser(business.uuid, newUser.uuid, roleObject.uuid, adminUser.uuid);
   
-  return UserModel.findByUuid(newUser.uuid);
+  const userWithDetails = await UserModel.findByUuid(newUser.uuid);
+
+  const businessesUserIsOwner = userWithDetails.businesses_roles.filter(br => br.role == 'Owner');
+  const isOwner = businessesUserIsOwner.length > 0;
+  const payload = {
+        uuid: userWithDetails.uuid,
+        userName: userWithDetails.name,
+        dni: userWithDetails.dni,
+        roles: userWithDetails.businesses_roles.map((br) => {
+          return {
+            role: br.role,
+            businessUuid: br.uuid,
+            businessName: br.name,
+          }
+        }),
+        isOwner: isOwner,
+      };
+  
+  const activation_token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24h' });
+
+  const emailSentOk = await sendActivation(activation_token, userWithDetails);
+  if (!emailSentOk) {
+    throw new CustomError('User created but failed to send activation email.', 500);
+  }
+  
+  return userWithDetails
 };
 
 export const getAllUsersService = async (user, businessUuid = null) => {

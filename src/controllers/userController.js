@@ -23,7 +23,7 @@ export const createUser = catchAsync(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    message: 'User created successfully',
+    message: 'User created successfully and activation email sent',
     user: userWithDetails,
   });
 });

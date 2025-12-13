@@ -27,7 +27,7 @@ Content-Type: application/json
 ###
 
 # Create a new user (Owner)
-POST {{api}}/businesses/1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d/users
+POST {{api}}/businesses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c/users
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -43,7 +43,7 @@ Authorization: Bearer {{token}}
   "state": "Technician State",
   "country": "Technician Country",
   "zipCode": "11111",
-  "business_uuid": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+  "business_uuid": "4e329ada-8511-4bfa-8d44-57a0ca4fd80c",
   "role": "Technician"
 }
 
@@ -51,7 +51,7 @@ Authorization: Bearer {{token}}
 
 # Create a new user with image (Owner)
 # Note: Create a test.jpg file in the root directory for this to work.
-POST {{api}}/businesses/1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d/users
+POST {{api}}/businesses/5f430bdb-9622-4c1b-9e55-68b1db5ae91d/users
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 Authorization: Bearer {{token}}
 
@@ -66,7 +66,7 @@ User With Image
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="email"
 
-wdcddh2ician.user.image1unique@example.com
+ventas@impulsainternet.com
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="password"
 
@@ -78,7 +78,7 @@ Content-Disposition: form-data; name="phone"
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="dni"
 
-4247114
+42475114
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="street"
 
@@ -102,7 +102,7 @@ Content-Disposition: form-data; name="zipCode"
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="business_uuid"
 
-1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+5f430bdb-9622-4c1b-9e55-68b1db5ae91d
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="role"
 
@@ -516,3 +516,8 @@ Authorization: Bearer {{token}}
 GET {{api}}/data/getporcentages/cocina/d3/7200/720 
 Content-Type: application/json
 Authorization: Bearer {{token}}
+
+
+### Activate User Account
+GET {{api}}/auth/users/activate/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dWlkIjoiY2I5OGExMTYtNjA5Ni00YTIzLWI1YjYtYjJlZjE0MTk4MmJmIiwicm9sZXMiOlt7InJvbGUiOiJUZWNobmljaWFuIiwiYnVzaW5lc3NVdWlkIjoiNWY0MzBiZGItOTYyMi00YzFiLTllNTUtNjhiMWRiNWFlOTFkIiwiYnVzaW5lc3NOYW1lIjoiUXVpbG1lcyJ9XSwiaXNPd25lciI6ZmFsc2UsImlhdCI6MTc2NTU4MTMxMSwiZXhwIjoxNzY1NjY3NzExfQ.idzBU3kGZm9Z5D-m341pt3PmmWOt4HBpEV49AO7ttG0
+Content-Type: application/json

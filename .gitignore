@@ -1,3 +1,4 @@
 node_modules
 mdv_DB-Backup
 .env
+.env.bac

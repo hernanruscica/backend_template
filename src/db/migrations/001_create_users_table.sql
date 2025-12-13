@@ -12,7 +12,7 @@ CREATE TABLE users (
     state VARCHAR(50),
     country VARCHAR(50),
     zip_code VARCHAR(20),
-    is_active BOOLEAN DEFAULT true,
+    is_active BOOLEAN DEFAULT false,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by CHAR(36),
