@@ -1,9 +1,11 @@
 import { UserModel } from '../models/userModel.js';
+import {sendActivationEmailByUuid} from '../services/userService.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import catchAsync from '../utils/catchAsync.js';
 import CustomError from '../utils/customError.js';
+
 
 dotenv.config();
 
@@ -104,5 +106,49 @@ export const AuthController = {
     console.error('Error en activación de usuario:', error);
     next(error);
   }
-  })
+  }),
+  sendActivationEmail: catchAsync(async (req, res, next) => {    
+    const { email } = req.params;
+    //console.log('sendactivation email', email);    
+
+    if (!email) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Email no proporcionado'
+      });
+    }
+
+    try {
+      const user = await UserModel.findByEmail(email);
+            
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Usuario no encontrado'
+        });
+      }
+
+      const sendEmailResults = await sendActivationEmailByUuid(user.uuid);
+
+      if (!sendEmailResults.success) {
+        return res.status(500).json({
+          success: false,
+          message: 'Error al enviar el correo de activación'
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: `Usuario encontrado, correo de activación enviado a ${email}`,   
+        user: sendEmailResults.user     
+      });
+      
+    } catch (error) {
+      console.error('Error al buscar usuario por email:', error);
+      return next(error);
+    }
+
+    // Aquí se implementaría la lógica para enviar el correo de activación
+    // Por ejemplo, generando un nuevo token y enviándolo por email
+  }) 
 };

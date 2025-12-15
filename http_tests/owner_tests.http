@@ -521,3 +521,7 @@ Authorization: Bearer {{token}}
 ### Activate User Account
 GET {{api}}/auth/users/activate/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dWlkIjoiY2I5OGExMTYtNjA5Ni00YTIzLWI1YjYtYjJlZjE0MTk4MmJmIiwicm9sZXMiOlt7InJvbGUiOiJUZWNobmljaWFuIiwiYnVzaW5lc3NVdWlkIjoiNWY0MzBiZGItOTYyMi00YzFiLTllNTUtNjhiMWRiNWFlOTFkIiwiYnVzaW5lc3NOYW1lIjoiUXVpbG1lcyJ9XSwiaXNPd25lciI6ZmFsc2UsImlhdCI6MTc2NTU4MTMxMSwiZXhwIjoxNzY1NjY3NzExfQ.idzBU3kGZm9Z5D-m341pt3PmmWOt4HBpEV49AO7ttG0
 Content-Type: application/json
+
+### Send or Resend Activation Email 
+GET {{api}}/auth/users/sendactivation/ventas@impulsainternet.com
+Content-Type: application/json
