@@ -49,6 +49,9 @@ export const AuthController = {
   }),
   activateUser: catchAsync(async (req, res, next) => {
     const { token } = req.params;
+    const password = req.body.password;
+
+    console.log('body', req.body)
 
   if (!token) {
     return res.status(400).json({ 
@@ -77,9 +80,11 @@ export const AuthController = {
 
     const { uuid, userName, dni } = decodedToken;
 
-    
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     // Actualizar estado del usuario 
-    const response = await UserModel.update(uuid, {is_active: true}, uuid );   
+    const response = await UserModel.update(uuid, {is_active: true, password: hashedPassword}, uuid );   
     
     if (response?.affectedRows < 1) {
       return res.status(500).json({
@@ -95,6 +100,8 @@ export const AuthController = {
         message: 'Usuario no encontrado después de la activación'
       });
     }
+    
+    delete userWithDetails.password;
 
     return res.status(200).json({
       success: true,

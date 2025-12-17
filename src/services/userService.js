@@ -13,7 +13,8 @@ import jwt from 'jsonwebtoken';
     const isOwner = businessesUserIsOwner.length > 0;
     const payload = {
           uuid: userWithDetails.uuid,
-          userName: userWithDetails.name,
+          user_first_name: userWithDetails.first_name,
+          user_last_name: userWithDetails.last_name,
           dni: userWithDetails.dni,
           roles: userWithDetails.businesses_roles.map((br) => {
             return {
