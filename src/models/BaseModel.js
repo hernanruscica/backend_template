@@ -91,6 +91,9 @@ const BaseModel = (tableName, allowedFields = []) => ({
     const allItems = await this.findAll();
     const itemsForBusiness = allItems.filter(item => item.business_uuid === businessUuid);
     
+    console.log('businessUuid', businessUuid);
+    
+
     if (itemsForBusiness.length === 0) {
       const business = await BusinessModel.findByUuid(businessUuid);
       if (!business) {

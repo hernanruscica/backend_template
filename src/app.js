@@ -9,6 +9,7 @@ import dataloggerRoutes from './routes/dataloggerRoutes.js';
 import channelRoutes from './routes/channelRoutes.js';
 import solutionRoutes from './routes/solutionRoutes.js';
 import alarmRoutes from './routes/alarmRoutes.js';
+import alarmLogsRoutes from './routes/alarmLogsRoutes.js';
 import userAlarmRoutes from './routes/userAlarmRoutes.js'; 
 import dataRoutes from './routes/dataRoutes.js';
 import errorHandler from './middlewares/errorHandler.js';
@@ -37,7 +38,8 @@ app.use('/api', dataloggerRoutes);
 app.use('/api', channelRoutes);
 app.use('/api', dataRoutes);
 app.use('/api', alarmRoutes);
-app.use('/api/solutions', solutionRoutes);
+app.use('/api', alarmLogsRoutes);
+app.use('/api', solutionRoutes);
 app.use('/api', userAlarmRoutes); // Maybe don't need it
 
 app.get('/', (req, res) => {

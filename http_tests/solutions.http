@@ -9,52 +9,59 @@ POST {{api}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "{{admin_email}}",
-  "password": "{{admin_password}}"
+  "dni": "28470359",
+  "password": "Pass1234"
 }
 
 ###
 @token = {{login.response.body.token}}
 
 ###
+@business_uuid = {{login.response.body.user.businesses_roles[0].uuid}}
+
+###
+@user_uuid = {{login.response.body.user.uuid}}
+
+###
 # Get all solutions
-GET {{api}}/solutions
+GET {{api}}/businesses/{{business_uuid}}/solutions
 Authorization: Bearer {{token}}
 
 ###
 # Create a new solution
-POST {{api}}/solutions
+POST {{api}}/businesses/{{business_uuid}}/solutions
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
   "name": "New Solution",
   "description": "A new solution for testing",
-  "alarms_logs_id": 3,
-  "user_id": "e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+  "alarms_logs_id": "8482b58d-7848-4389-9a70-87a41499f57d",
+  "user_id": "{{user_uuid}}",
+  "business_uuid": "{{business_uuid}}"
 }
 
 ###
 # Get a solution by UUID
-GET {{api}}/solutions/e5f6a7b8-c9d0-1234-5678-90abcdef1234
+GET {{api}}/businesses/{{business_uuid}}/solutions/708dead5-7bf5-4fb6-8d64-533afd8f67e3
 Authorization: Bearer {{token}}
 
 ###
 # Update a solution
-PUT {{api}}/solutions/e5f6a7b8-c9d0-1234-5678-90abcdef1234
+PUT {{api}}/businesses/{{business_uuid}}/solutions/708dead5-7bf5-4fb6-8d64-533afd8f67e3
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "Updated Weather Alert"
+  "description": "Updated Solution description by HTTP test"
 }
 
 ###
-# Soft delete a solution
-DELETE {{api}}/solutions/e5f6a7b8-c9d0-1234-5678-90abcdef1234
+# Soft delete a solution - NOT WORKING YET 18 DEC 2025
+DELETE {{api}}/businesses/{{business_uuid}}/solutions/708dead5-7bf5-4fb6-8d64-533afd8f67e3
 Authorization: Bearer {{token}}
 
 ###
-# Hard delete a solution
-DELETE {{api}}/solutions/f6a7b8c9-d0e1-2345-6789-0abcdef12345/hard
+# Hard delete a solution - NOT WORKING YET 18 DEC 2025
+DELETE {{api}}/businesses/{{business_uuid}}/solutions/f6a7b8c9-d0e1-2345-6789-0abcdef12345/hard
 Authorization: Bearer {{token}}

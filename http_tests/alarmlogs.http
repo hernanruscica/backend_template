@@ -1,0 +1,71 @@
+@api = http://localhost:5000/api
+@admin_email = john.doe@example.com
+@admin_password = password123
+@token = 
+
+###
+# @name login
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{
+  "dni": "28470359",
+  "password": "Pass1234"
+}
+
+###
+@token = {{login.response.body.token}}
+
+###
+@business_uuid = {{login.response.body.user.businesses_roles[0].uuid}}
+
+###
+@user_uuid = {{login.response.body.user.uuid}}
+
+###
+# Get all alarmlogs
+GET {{api}}/businesses/{{business_uuid}}/alarmlogs
+Authorization: Bearer {{token}}
+
+###
+# Create a new alarmlog
+POST {{api}}/businesses/{{business_uuid}}/alarmlogs
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{  
+  "business_uuid": "{{business_uuid}}",  
+  "alarm_uuid": "b1c2d3e4-0003-4a7b-8c9d-0e1f2a3b4c5d",
+  "user_uuid": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f90",
+  "channel_uuid": "70717273-7475-7677-7879-808182838485",
+  "triggered_at": "2025-12-11T22:15:00.000Z",
+  "seen_at": null,
+  "triggered": false,
+  "email_sent": true,
+  "message": "Alarma para Heladera: Probando el post."
+}
+
+###
+# Get a AlarmLog by UUID
+GET {{api}}/businesses/{{business_uuid}}/alarmlogs/81625590-d9fa-457e-b6fb-1194c45aa37d
+Authorization: Bearer {{token}}
+
+###
+# Update a AlarmLog
+PUT {{api}}/businesses/{{business_uuid}}/alarmlogs/81625590-d9fa-457e-b6fb-1194c45aa37d
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "message": "Updated AlarmLog description by HTTP test"
+}
+
+###
+# Soft delete a alarmlog - NOT WORKING YET 18 DEC 2025
+DELETE {{api}}/businesses/{{business_uuid}}/alarmlogs/81625590-d9fa-457e-b6fb-1194c45aa37d
+Authorization: Bearer {{token}}
+
+###
+# Hard delete a alarmlog - NOT WORKING YET 18 DEC 2025
+DELETE {{api}}/businesses/{{business_uuid}}/alarmlogs/81625590-d9fa-457e-b6fb-1194c45aa37d/hard
+Authorization: Bearer {{token}}

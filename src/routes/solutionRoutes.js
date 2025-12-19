@@ -9,19 +9,19 @@ const router = Router();
 router.use(authMiddleware);
 
 // Apply permission middleware to each route individually
-router.route('/')
+router.route('/businesses/:businessUuid/solutions')
   .post(permissionMiddleware, SolutionController.create)
   .get(permissionMiddleware, SolutionController.getAll);
 
-router.route('/:uuid')
+router.route('/businesses/:businessUuid/solutions/:uuid')
   .get(permissionMiddleware, SolutionController.getByUuid)
   .put(permissionMiddleware, SolutionController.updateByUuid)
-  .delete(permissionMiddleware, SolutionController.deleteByUuid);
+  .delete(permissionMiddleware, SolutionController.deleteByUuid); //NOT WORKING 18 DEC 2025
 
-router.route('/:uuid/hard')
+router.route('/businesses/:businessUuid/solutions/:uuid/hard')
   .delete(permissionMiddleware, (req, res, next) => {
     req.hardDelete = true;
     next();
-  }, SolutionController.deleteByUuid);
+  }, SolutionController.deleteByUuid); //NOT WORKING 18 DEC 2025
 
 export default router;

@@ -6,6 +6,7 @@ const allowedFields = [
   'alarms_logs_id',
   'user_id',
   'is_active',
+  'business_uuid',
 ];
 
 export const SolutionModel = BaseModel('solutions', allowedFields);
