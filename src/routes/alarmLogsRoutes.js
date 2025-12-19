@@ -13,6 +13,9 @@ router.route('/businesses/:businessUuid/alarmlogs')
   .post(permissionMiddleware, AlarmLogController.create)
   .get(permissionMiddleware, AlarmLogController.getAll);
 
+router.route('/businesses/:businessUuid/alarmlogs/alarm/:alarmUuid')
+  .get(permissionMiddleware, AlarmLogController.getByAlarmUuid);
+
 router.route('/businesses/:businessUuid/alarmlogs/:uuid')
   .get(permissionMiddleware, AlarmLogController.getByUuid)
   .put(permissionMiddleware, AlarmLogController.updateByUuid)

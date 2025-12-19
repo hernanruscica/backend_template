@@ -13,7 +13,19 @@ const create = catchAsync(async (req, res, next) => {
   });
 });
 
+const getByAlarmLogsId = catchAsync(async (req, res, next) => { 
+  const { businessUuid, alarmLogsId } = req.params;
+  const items = await SolutionService.getByAlarmLogsId(req.user, businessUuid, alarmLogsId);
+
+  res.status(200).json({
+    success: true,
+    count: items.length,
+    items,
+  });
+});
+
 export const SolutionController = {
   ...genericController,
   create,
+  getByAlarmLogsId,
 };

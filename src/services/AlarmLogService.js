@@ -10,13 +10,20 @@ const create = async (data, user) => {
 
 const getAll = async (user, businessUuid) => {
   // In a real application, you would add permission logic here.
-  console.log('businessUuid', businessUuid);
+  //console.log('businessUuid', businessUuid);
   
   return AlarmLogModel.findAllByBusinessUuid(businessUuid);
 };
+
+const getByAlarmUuid = async (user, businessUuid, alarmUuid) => {
+  const alarmLogsByBusiness = await AlarmLogModel.findAllByBusinessUuid(businessUuid); 
+  
+  return alarmLogsByBusiness.filter(log => log.alarm_uuid === alarmUuid);
+}
 
 export const AlarmLogService = {
   ...genericService,
   create,
   getAll,
+  getByAlarmUuid
 };

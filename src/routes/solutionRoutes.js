@@ -12,6 +12,9 @@ router.use(authMiddleware);
 router.route('/businesses/:businessUuid/solutions')
   .post(permissionMiddleware, SolutionController.create)
   .get(permissionMiddleware, SolutionController.getAll);
+  
+router.route('/businesses/:businessUuid/solutions/alarmlogs/:alarmLogsId')
+  .get(permissionMiddleware, SolutionController.getByAlarmLogsId);
 
 router.route('/businesses/:businessUuid/solutions/:uuid')
   .get(permissionMiddleware, SolutionController.getByUuid)

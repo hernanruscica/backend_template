@@ -36,24 +36,29 @@ Authorization: Bearer {{token}}
 {
   "name": "New Solution",
   "description": "A new solution for testing",
-  "alarms_logs_id": "8482b58d-7848-4389-9a70-87a41499f57d",
+  "alarms_logs_id": "81625590-d9fa-457e-b6fb-1194c45aa37d", 
   "user_id": "{{user_uuid}}",
-  "business_uuid": "{{business_uuid}}"
+  "business_uuid": "4e329ada-8511-4bfa-8d44-57a0ca4fd80c"
 }
+
 
 ###
 # Get a solution by UUID
-GET {{api}}/businesses/{{business_uuid}}/solutions/708dead5-7bf5-4fb6-8d64-533afd8f67e3
+GET {{api}}/businesses/6a541cec-0733-4dfc-8f66-79c2ec6bf02e/solutions/e5f6a7b8-c9d0-1234-5678-90abcdef1234
+Authorization: Bearer {{token}}
+
+### Get solutions by alarms_logs_id
+GET {{api}}/businesses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c/solutions/alarmlogs/81625590-d9fa-457e-b6fb-1194c45aa37d
 Authorization: Bearer {{token}}
 
 ###
 # Update a solution
-PUT {{api}}/businesses/{{business_uuid}}/solutions/708dead5-7bf5-4fb6-8d64-533afd8f67e3
+PUT {{api}}/businesses/{{business_uuid}}/solutions/e5f6a7b8-c9d0-1234-5678-90abcdef1234
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "description": "Updated Solution description by HTTP test"
+  "description": "Updated Solution for weather alerts"
 }
 
 ###

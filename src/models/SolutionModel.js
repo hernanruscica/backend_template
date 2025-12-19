@@ -10,3 +10,4 @@ const allowedFields = [
 ];
 
 export const SolutionModel = BaseModel('solutions', allowedFields);
+
