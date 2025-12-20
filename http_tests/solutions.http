@@ -37,7 +37,7 @@ Authorization: Bearer {{token}}
   "name": "New Solution",
   "description": "A new solution for testing",
   "alarms_logs_id": "81625590-d9fa-457e-b6fb-1194c45aa37d", 
-  "user_id": "{{user_uuid}}",
+  "user_id": "{{user_uuid}}",  
   "business_uuid": "4e329ada-8511-4bfa-8d44-57a0ca4fd80c"
 }
 
@@ -48,7 +48,8 @@ GET {{api}}/businesses/6a541cec-0733-4dfc-8f66-79c2ec6bf02e/solutions/e5f6a7b8-c
 Authorization: Bearer {{token}}
 
 ### Get solutions by alarms_logs_id
-GET {{api}}/businesses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c/solutions/alarmlogs/81625590-d9fa-457e-b6fb-1194c45aa37d
+
+GET {{api}}/businesses/6a541cec-0733-4dfc-8f66-79c2ec6bf02e/solutions/alarmlogs/3b516834-039c-4433-8a39-c5c9e4224c30
 Authorization: Bearer {{token}}
 
 ###

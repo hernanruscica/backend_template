@@ -15,8 +15,13 @@ const getAll = async (user, businessUuid) => {
   return AlarmLogModel.findAllByBusinessUuid(businessUuid);
 };
 
-const getByAlarmUuid = async (user, businessUuid, alarmUuid) => {
+const getByAlarmUuid = async (businessUuid, alarmUuid) => {
+  console.log('businessUuid on alarmlogservice:', businessUuid);
+  console.log('alarmUuid on alarmlogservice:', alarmUuid);
+  
   const alarmLogsByBusiness = await AlarmLogModel.findAllByBusinessUuid(businessUuid); 
+  console.log('alarmLogsByBusiness on AlarmService', alarmLogsByBusiness);
+  
   
   return alarmLogsByBusiness.filter(log => log.alarm_uuid === alarmUuid);
 }

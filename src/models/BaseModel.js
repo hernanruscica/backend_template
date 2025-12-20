@@ -13,7 +13,7 @@ const BaseModel = (tableName, allowedFields = []) => ({
     const values = [uuid];
     const placeholders = ['?'];
 
-    console.log('data from basemodel',data);
+    //console.log('data from basemodel',data);
     
     for (const key in data) {
       if (this.allowedFields.includes(key)) {
@@ -91,7 +91,7 @@ const BaseModel = (tableName, allowedFields = []) => ({
     const allItems = await this.findAll();
     const itemsForBusiness = allItems.filter(item => item.business_uuid === businessUuid);
     
-    console.log('businessUuid', businessUuid);
+    //console.log('businessUuid', businessUuid);
     
 
     if (itemsForBusiness.length === 0) {
