@@ -39,6 +39,8 @@ export const getAllBusinesses = catchAsync(async (req, res) => {
 
 export const getBusinessByUuid = catchAsync(async (req, res, next) => {
   const { businessUuid } = req.params;
+  console.log('businessUuid', businessUuid);
+  
   //const business = await BusinessModel.findByUuid(uuid);
   const business = await getBusinessByUuidService(businessUuid);
   if (!business) {

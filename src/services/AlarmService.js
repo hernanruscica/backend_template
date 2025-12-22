@@ -32,7 +32,7 @@ const AlarmService = {
           }));          
           return alarmsWithUsername;
       }
-      const items = await this.model.findAll();
+      const items = await this.model.findAllByBusinessUuid(businessUuid);
       return items;
     }
     

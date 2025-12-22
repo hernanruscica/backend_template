@@ -19,7 +19,7 @@ export const getBusinessByUuidService = async (uuid) => {
   const dataloggers = await DataloggerModel.findAllByBusinessUuid(uuid);
   const channels = await ChannelModel.findAllByBusinessUuid(uuid);  
   const alarms = await AlarmModel.findAllByBusinessUuid(uuid);
-  //console.log('alarms', alarms);  
+  console.log('alarms', alarms);  
     
   dataloggers.forEach(datalogger => {
     datalogger.channels = channels

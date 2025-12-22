@@ -1,8 +1,8 @@
 @api = http://localhost:5000/api
-@business_uuid_tech_corp = 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
-@business_uuid_innovate_llc = 2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
-@alarm_uuid_tech_corp = 11111111-1111-1111-1111-111111111111
-@channel_uuid_tech_corp = c3d4e5f6-a7b8-9012-3456-7890abcdef12
+@business_mdvsrl = 4e329ada-8511-4bfa-8d44-57a0ca4fd80c
+@business_guemes = 2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
+
+@user_fernando_quilmes = 9c0d1e2f-3a4b-5c6d-7e8f-90a1b2c3d4e5
 
 ###
 # Owner Login (John Doe)
@@ -38,38 +38,28 @@ Content-Type: application/json
 }
 
 ###
-# Get all alarms as Owner
-GET {{api}}/businesses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c/alarms
+# Get all alarms as Owner by user id
+GET {{api}}/businesses/{{business_mdvsrl}}/users/1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d/alarms
 Authorization: Bearer {{ownerLogin.response.body.token}}
 
 
-###
-# Get all alarms as Admin
-GET {{api}}/businesses/{{business_uuid_tech_corp}}/alarms
-Authorization: Bearer {{adminLogin.response.body.token}}
-
-
-###
-# Get all alarms as Technician
-GET {{api}}/businesses/{{business_uuid_tech_corp}}/alarms
-Authorization: Bearer {{technicianLogin.response.body.token}}
 
 
 ### //`/api/businesses/${businessUuid}/alarms/${alarmId}`
-GET {{api}}/businesses/{{business_uuid_innovate_llc}}/alarms/0f2dc95d-e605-4635-9e41-eb1ededb6686
+GET {{api}}/businesses/{{business_guemes}}/alarms/0f2dc95d-e605-4635-9e41-eb1ededb6686
 Authorization: Bearer {{ownerLogin.response.body.token}}
 
 
 ###
 # Create a new alarm as Owner /api/businneses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c/alarms
-POST {{api}}/businesses/{{business_uuid_tech_corp}}/alarms
+POST {{api}}/businesses/{{business_guemes}}/alarms
 Authorization: Bearer {{ownerLogin.response.body.token}}
 Content-Type: application/json
 
 {
     "name": "New Test Alarm",
     "description": "A test alarm created by the owner.",
-    "channel_uuid": "{{channel_uuid_tech_corp}}",
+    "channel_uuid": "{{business_mdvsrl}}",
     "table_name": "cocina",
     "column_name": "d1",
     "time_range": 300,
@@ -83,7 +73,7 @@ Content-Type: application/json
 
 ###
 # Update an alarm as Owner
-PUT {{api}}/alarms/{{alarm_uuid_tech_corp}}
+PUT {{api}}/alarms/{{business_mdvsrl}}
 Authorization: Bearer {{ownerLogin.response.body.token}}
 Content-Type: application/json
 
@@ -93,7 +83,7 @@ Content-Type: application/json
 
 ###
 # Delete an alarm as Owner
-DELETE {{api}}/alarms/{{alarm_uuid_tech_corp}}
+DELETE {{api}}/alarms/{{business_mdvsrl}}
 Authorization: Bearer {{ownerLogin.response.body.token}}
 
 

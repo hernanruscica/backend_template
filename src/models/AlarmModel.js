@@ -27,8 +27,8 @@ const allowedFields = [
 const AlarmModel = {
   ...BaseModel('alarms', allowedFields),
 
-  async findAll() {
-    const alarms = await BaseModel('alarms', allowedFields).findAll();
+  async findAllByBusinessUuid(business_uuid) {
+    const alarms = await BaseModel('alarms', allowedFields).findAllByBusinessUuid(business_uuid);
 
     const alarmsWithDatalogger = await Promise.all(alarms.map(async (alarm) => {
       if (!alarm.channel_uuid) {

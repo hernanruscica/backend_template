@@ -246,7 +246,7 @@ Content-Type: image/jpeg
 ###
 
 # Get all businesses (Owner) 
-GET {{api}}/businesses
+GET {{api}}/businesses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c
 Authorization: Bearer {{token}}
 
 ###

@@ -40,7 +40,7 @@ app.use('/api', dataRoutes);
 app.use('/api', alarmRoutes);
 app.use('/api', alarmLogsRoutes);
 app.use('/api', solutionRoutes);
-app.use('/api', userAlarmRoutes); // Maybe don't need it
+app.use('/api', userAlarmRoutes); 
 
 app.get('/', (req, res) => {
   res.send('API is running...');
