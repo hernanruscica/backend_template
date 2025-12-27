@@ -1,5 +1,25 @@
 import dataModel from "../models/dataModel.js";
 import { calculatePorcentageOn } from '../utils/MathUtils.js';
+import DataService from "../services/DataService.js";
+
+export const getLastPorcentageUsageByChannel = async (req, res, next) => {
+    try {
+        const { channelUuid, timeRange} = req.params;        
+        
+        const responseData = await DataService.getLastPorcentageUsageByChannel(channelUuid, timeRange);
+        
+        //console.log('responseData', responseData);
+        if (responseData && !Array.isArray(responseData) && responseData.total_time_on != 0){
+            return res.status(200).json({success: true, message: 'ok', data: responseData});
+        }
+        
+        return res.status(404).json({success: false, message: 'not found', data: null});     
+
+        
+    } catch (error) {
+        next(error);
+    }
+}
 
 export const getDataByTimePeriod = async (req, res, next) => {    
     try {

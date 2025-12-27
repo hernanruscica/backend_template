@@ -1,0 +1,39 @@
+@api = http://localhost:5000/api
+@token = 
+
+###
+# Owner User Tests
+# This file tests all actions for a user with the 'Owner' role.
+# An Owner should be able to perform all actions on all users and businesses.
+###
+
+# Login as Owner
+# dni: 28470359 password: Pass1234
+# @name login_owner
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{
+  "dni": "28470359",
+  "password": "Pass1234"
+}
+
+###
+@token = {{login_owner.response.body.token}}
+@own_business_uuid = {{login_owner.response.body.user.businesses_roles[0].uuid}}
+
+@channel_cafetera = 25242322-2120-1918-1716-151413121110
+
+@channel_compresor1_guemes = 30313233-3435-3637-3839-404142434445
+
+@channel_compresor1_quilmes = a0a1a2a3-a4a5-a6a7-a8a9-b0b1b2b3b4b5
+
+### '/getporcentages/:tableName/:columnPrefix/:timePeriod/:rangePorcentage' time and ranges in minutes /api/data/getporcentages/cocina/d1/7200/60
+GET {{api}}/data/getporcentages/cocina/d3/7200/720 
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### /data/getPorcentageUsageByChannel/:channelUuid/:timeRange/:lastRegister
+GET {{api}}/data/getLastPorcentageUsageByChannel/{{channel_compresor1_quilmes}}/15
+Content-Type: application/json
+Authorization: Bearer {{token}}

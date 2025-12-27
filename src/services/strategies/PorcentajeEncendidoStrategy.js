@@ -4,11 +4,11 @@ import { evaluate } from 'mathjs';
 
 class PorcentajeEncendidoStrategy {
   async evaluate(alarm) {
-    const { tabla, columna, periodo_tiempo, condicion } = alarm;
+    const { table_name, column_name, time_range, condition_logic, name } = alarm;
     
     // 1. Obtener datos
-    const currentData = await DataModel.findDataFromDigitalChannel(tabla, columna, periodo_tiempo);
-    const rangePorcentageSecs = periodo_tiempo * 60;
+    const currentData = await DataModel.findDataFromDigitalChannel(table_name, column_name, time_range);
+    const rangePorcentageSecs = time_range * 60;
     
     // 2. Calcular lógica de negocio
     const dataPorcentagesOn = calculatePorcentageOn(currentData, rangePorcentageSecs);
@@ -19,14 +19,17 @@ class PorcentajeEncendidoStrategy {
 
     // 3. Preparar variables
     const currentPorcentage = dataPorcentagesOn[dataPorcentagesOn.length - 1].porcentaje_encendido;
-    const variables = { porcentaje_encendido: currentPorcentage };
-
+    const variables = { value: currentPorcentage };
+    //console.log('variables', variables);
+    
     // 4. Evaluar condición matemática
     try {
-      const isTriggered = evaluate(condicion, variables);
+      const isTriggered = evaluate(condition_logic, variables);
+      console.log(`${name} >>> condicion logica : ${condition_logic} - variables: ${variables?.value}`);
+      
       return { triggered: isTriggered, variables };
     } catch (error) {
-      console.error(`Error evaluando condición ${condicion}:`, error);
+      console.error(`Error evaluando condición ${condition_logic}:`, error);
       return { triggered: false, variables, error };
     }
   }

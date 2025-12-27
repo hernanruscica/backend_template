@@ -7,7 +7,7 @@ import startAlarmJob from './src/jobs/alarmJob.js';
 const PORT = process.env.PORT || 5000;
 
 console.log('Starting Alarm Monitor...');
-startAlarmJob();
+//startAlarmJob();
 
 console.log('Starting server...');
 app.listen(PORT, () => {

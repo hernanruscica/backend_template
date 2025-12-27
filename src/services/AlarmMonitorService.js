@@ -25,10 +25,10 @@ class AlarmMonitorService {
   async processSingleAlarm(alarm) {
     try {
       // A. Obtener estrategia
-      const strategy = getStrategy(alarm.tipo_alarma); // O 'alarm_type' según tu DB
+      const strategy = getStrategy(alarm.alarm_type); // O 'alarm_type' según tu DB
       
       if (!strategy) {
-        console.warn(`⚠️ No existe estrategia para el tipo: ${alarm.tipo_alarma} (ID: ${alarm.uuid})`);
+        console.warn(`⚠️ No existe estrategia para el tipo: ${alarm.alarm_type} (ID: ${alarm.uuid})`);
         return;
       }
 

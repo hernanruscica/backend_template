@@ -14,15 +14,15 @@ class AlarmStateService {
     // (Asumiendo que alarm.disparada es 1 o 0)
     const newState = isTriggered ? 1 : 0;
     
-    if (alarm.disparada === newState) {
+    if (alarm.triggered === newState) {
       // El estado no ha cambiado, no hacemos nada (o logueamos debug)
       return; 
     }
 
-    console.log(`🔄 Cambio de estado para alarma ${alarm.nombre}: ${alarm.disparada} -> ${newState}`);
+    console.log(`🔄 Cambio de estado para alarma ${alarm.name}: ${alarm.triggered} -> ${newState}`);
 
     // 2. Actualizar la alarma en DB
-    await AlarmModel.updateTrigger(alarm.uuid, newState); // Ojo: Usar UUID si tu modelo lo pide, o ID.
+    await AlarmModel.update(alarm.uuid, { newState }); // Ojo: Usar UUID si tu modelo lo pide, o ID.
 
     // 3. Obtener usuarios suscritos
     const usersAffected = await UserAlarmModel.findUsersByAlarmId(alarm.uuid);

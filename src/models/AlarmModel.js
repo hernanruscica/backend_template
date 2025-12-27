@@ -1,6 +1,6 @@
 import BaseModel from './BaseModel.js';
 import {pool} from '../config/database.js';
-import ChannelModel from './ChannelModel.js';
+//import ChannelModel from './ChannelModel.js';
 import DataloggerModel from './DataloggerModel.js';
 
 const allowedFields = [
@@ -52,6 +52,11 @@ const AlarmModel = {
 
     return alarmsWithDatalogger;
   },
+  async findAllActive() {
+    const alarms = await this.findAll();
+    const activeAlarms = alarms.filter(al => al.is_active == true);
+    return activeAlarms || [];
+  }
 };
 
 export default AlarmModel;
