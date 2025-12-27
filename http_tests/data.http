@@ -22,6 +22,8 @@ Content-Type: application/json
 @token = {{login_owner.response.body.token}}
 @own_business_uuid = {{login_owner.response.body.user.businesses_roles[0].uuid}}
 
+@datalogger_quilmes = h3d4e5f6-a7b8-9012-3456-7890abcdef12
+
 @channel_cafetera = 25242322-2120-1918-1716-151413121110
 
 @channel_compresor1_guemes = 30313233-3435-3637-3839-404142434445
@@ -34,6 +36,11 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 ### /data/getPorcentageUsageByChannel/:channelUuid/:timeRange/:lastRegister
-GET {{api}}/data/getLastPorcentageUsageByChannel/{{channel_compresor1_quilmes}}/15
+GET {{api}}/data/getLastPorcentageUsageByChannel/{{datalogger_quilmes}}/{{channel_compresor1_quilmes}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### /data/getDataloggerLastData/:dataloggerUuid
+GET {{api}}/data/getDataloggerLastData/{{datalogger_quilmes}}
 Content-Type: application/json
 Authorization: Bearer {{token}}

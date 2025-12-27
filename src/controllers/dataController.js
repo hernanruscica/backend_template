@@ -1,21 +1,41 @@
 import dataModel from "../models/dataModel.js";
 import { calculatePorcentageOn } from '../utils/MathUtils.js';
-import DataService from "../services/DataService.js";
+import DataloggersDataStore from "../stores/DataloggersDataStore.js";
 
-export const getLastPorcentageUsageByChannel = async (req, res, next) => {
+
+export const getLastPorcentageUsageByChannel = (req, res, next) => {
     try {
-        const { channelUuid, timeRange} = req.params;        
+        const { dataloggerUuid, channelUuid } = req.params;    
         
-        const responseData = await DataService.getLastPorcentageUsageByChannel(channelUuid, timeRange);
+        const dataloggerData = DataloggersDataStore.getLoggerData(dataloggerUuid);
+        //const allData = DataloggersDataStore.getAll(); OK
         
-        //console.log('responseData', responseData);
-        if (responseData && !Array.isArray(responseData) && responseData.total_time_on != 0){
-            return res.status(200).json({success: true, message: 'ok', data: responseData});
-        }
-        
-        return res.status(404).json({success: false, message: 'not found', data: null});     
+        //console.log(`data for datalogger with id: ${dataloggerUuid} :`, dataloggerData);
 
+        const currentChannelData = dataloggerData?.channels.find(ch => ch.uuid == channelUuid)
+        //console.log('currentChannelData', currentChannelData);
         
+        if (currentChannelData) {
+            return res.status(200).json({success: true, message: 'ok', data: currentChannelData});
+        }
+        return res.status(404).json({success: false, message: 'not found', data: null});     
+    
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const getDataloggerLastData = (req, res, next) => {
+    try {
+        const { dataloggerUuid } = req.params;    
+        
+        const dataloggerData = DataloggersDataStore.getLoggerData(dataloggerUuid);               
+        
+        if (dataloggerData) {
+            return res.status(200).json({success: true, message: 'ok', data: dataloggerData});
+        }
+        return res.status(404).json({success: false, message: 'not found', data: null});     
+    
     } catch (error) {
         next(error);
     }

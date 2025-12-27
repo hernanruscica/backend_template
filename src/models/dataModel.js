@@ -75,6 +75,15 @@ const dataModel = {
       // Se pasa channelUuid como un elemento en un array para que el driver lo escape automáticamente
       const [rows] = await pool.query(queryString, [channelUuid]);    
       return rows;
+    },
+    
+    //funciona, pero podria probar de traer tambien el texto y energia para ver los cortes de luz.
+    findDataloggerLastConection: async (tableName) => {
+      const tableClean = poolData.escapeId(tableName);
+      const queryString = `SELECT CONVERT_TZ(fecha, '+00:00', '${process.env.UTC_LOCAL}') AS data FROM ${tableClean} ORDER BY fecha DESC LIMIT 1;`
+     
+      const [rows] = await poolData.query(queryString);
+      return rows;
     }
 
     

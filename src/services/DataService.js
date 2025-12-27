@@ -1,3 +1,4 @@
+import DataloggerModel from "../models/DataloggerModel.js";
 import dataModel from "../models/dataModel.js";
 
 const DataService = {
@@ -20,6 +21,22 @@ const DataService = {
             return data;
         } catch (error) {
             console.log(error);
+        }
+    },
+    getDataloggerLastConection: async (dataloggerUuid) => {
+        try {
+            const dataloggerData = await DataloggerModel.findByUuid(dataloggerUuid);
+            //console.log('dataloggerData.table_name', dataloggerData.table_name);
+            if (!dataloggerData)
+                return null;            
+            const lastConection = await dataModel.findDataloggerLastConection(dataloggerData.table_name)
+
+            return lastConection[0]
+            
+            //const lastConectionDate = await dataModel.findDataloggerLastConection(dataloggerUuid);
+        } catch (error) {
+         console.log('error', error);
+            
         }
     }
 }
