@@ -3,17 +3,13 @@ import { calculatePorcentageOn } from '../utils/MathUtils.js';
 import DataloggersDataStore from "../stores/DataloggersDataStore.js";
 
 
-export const getLastPorcentageUsageByChannel = (req, res, next) => {
+export const getLastPorcentageUsageByChannel =  (req, res, next) => {
     try {
         const { dataloggerUuid, channelUuid } = req.params;    
         
-        const dataloggerData = DataloggersDataStore.getLoggerData(dataloggerUuid);
-        //const allData = DataloggersDataStore.getAll(); OK
-        
-        //console.log(`data for datalogger with id: ${dataloggerUuid} :`, dataloggerData);
+        const dataloggerData = DataloggersDataStore.getLoggerData(dataloggerUuid);      
 
-        const currentChannelData = dataloggerData?.channels.find(ch => ch.uuid == channelUuid)
-        //console.log('currentChannelData', currentChannelData);
+        const currentChannelData = dataloggerData?.channels.find(ch => ch.uuid == channelUuid)        
         
         if (currentChannelData) {
             return res.status(200).json({success: true, message: 'ok', data: currentChannelData});
@@ -29,7 +25,7 @@ export const getDataloggerLastData = (req, res, next) => {
     try {
         const { dataloggerUuid } = req.params;    
         
-        const dataloggerData = DataloggersDataStore.getLoggerData(dataloggerUuid);               
+        const dataloggerData = DataloggersDataStore.getLoggerData(dataloggerUuid);    
         
         if (dataloggerData) {
             return res.status(200).json({success: true, message: 'ok', data: dataloggerData});

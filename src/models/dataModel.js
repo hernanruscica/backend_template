@@ -36,13 +36,25 @@ const dataModel = {
       return result; 
     },
     
-    findTotalOnTimeFromColumn: async (tableName, columnName) => {
-      const queryString = `SELECT 
-                          CONVERT_TZ(min(fecha), '+00:00', '${process.env.UTC_LOCAL}') AS fecha_inicio,\
-                          CONVERT_TZ(max(fecha), '+00:00', '${process.env.UTC_LOCAL}') AS fecha_final,\
-                          DATEDIFF(max(fecha), min(fecha)) AS dias_uso,\
-                          SUM(${columnName}_tiempo) / 60 / 60 AS horas_uso\
-                          FROM ${tableName};`;
+    findTotalOnTimeFromChannel: async (tableName, columnPrefix) => {
+      const cleanTableName = poolData.escapeId(tableName);
+      const fullColumnName = `${columnPrefix}_tiempo`;
+      const cleanColumnName = poolData.escapeId(fullColumnName);
+      const queryString = `
+        SELECT 
+            -- Sumas (lo que ya tenías)
+            COALESCE(SUM(tiempo_total), 0) as total_time_period, 
+            COALESCE(SUM(${cleanColumnName}), 0) as total_time_on,
+            COUNT(*) as registers_quantity,
+
+            -- FECHA DE INICIO (El registro más antiguo)
+            MIN(fecha) as first_date,
+
+            -- (Opcional) FECHA FINAL (El registro más nuevo)            
+            -- MAX(fecha) as last_date
+            MAX(CONVERT_TZ(fecha, '+00:00', '${process.env.UTC_LOCAL}')) AS last_date
+
+        FROM ${cleanTableName};`;
                           
       const [rows] = await poolData.query(queryString);    
       return rows;
