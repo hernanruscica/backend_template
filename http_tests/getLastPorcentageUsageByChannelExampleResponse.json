@@ -1,0 +1,54 @@
+{
+  "success": true,
+  "message": "ok",
+  "data": {
+    "uuid": "a0a1a2a3-a4a5-a6a7-a8a9-b0b1b2b3b4b5",
+    "name": "Compresor 1",
+    "description": "Canal que monitorea el Compresor 1 de la sala del Hospital Iriarte.",
+    "datalogger_id": "h3d4e5f6-a7b8-9012-3456-7890abcdef12",
+    "column_name": "d1",
+    "averaging_period": 12,
+    "factor": 1,
+    "img": "1749413906884-137616281.jpg",
+    "business_uuid": "5f430bdb-9622-4c1b-9e55-68b1db5ae91d",
+    "is_active": 1,
+    "created_at": "2024-07-12T20:41:34.000Z",
+    "updated_at": "2025-12-19T03:25:11.000Z",
+    "created_by": "e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+    "updated_by": null,
+    "business": {
+      "uuid": "5f430bdb-9622-4c1b-9e55-68b1db5ae91d",
+      "name": "Quilmes",
+      "description": "Hospital Iriarte",
+      "email": "cesarhernanruscica@gmail.com",
+      "phone": "2345678900",
+      "logo_url": "https://res.cloudinary.com/dlsydbh4h/image/upload/v1751299165/mdv_sensores/lx6m9o8bymseal955yfp.webp",
+      "street": "Allison Bell 800",
+      "city": "Quilmes",
+      "state": "Buenos Aires",
+      "country": "Argentina",
+      "zip_code": "1878",
+      "is_active": 1,
+      "created_at": "2025-12-19 00:25:10",
+      "updated_at": "2025-12-19 00:25:10",
+      "created_by": "e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+      "updated_by": null
+    },
+    "lastData": {
+      "total_time_period": 900,
+      "total_time_on": 900,
+      "registers_quantity": 3,
+      "channelUuid": "a0a1a2a3-a4a5-a6a7-a8a9-b0b1b2b3b4b5",
+      "porcentageUsagePeriod": "100.00",
+      "timeRange": 12
+    },
+    "totalData": {
+      "total_time_period": 1502439900,
+      "total_time_on": 224221725,
+      "registers_quantity": 121970,
+      "first_date": "2024-06-03T18:20:06.000Z",
+      "last_date": "2025-12-29T11:16:51.000Z",
+      "porcentageUsagePeriod": "14.92"
+    }
+  }
+}

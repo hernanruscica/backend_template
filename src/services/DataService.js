@@ -14,7 +14,7 @@ const DataService = {
             const data = await dataModel.findLastDataFromChannel(table_name, column_name, timeRange);   
             data.channelUuid = channelUuid;
             data.porcentageUsagePeriod = data.total_time_period !== 0 
-                ? (( data.total_time_on * 100 ) / data.total_time_period).toFixed(2)
+                ? parseFloat((( data.total_time_on * 100 ) / data.total_time_period).toFixed(2))
                 : 0;   
             data.timeRange = timeRange;     
             

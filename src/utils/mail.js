@@ -16,32 +16,32 @@ let transporter = nodemailer.createTransport({
     }
 }); 
 
-export const sendMessage = async (alarm, variables, email, token) => {
-    console.log('token en sendmessage:', token);
+export const sendMessage = async (alarm, variables, email, token, isTriggered) => {
+    //console.log('token en sendmessage:', token);
     let emailContent = null;
     const baseURL = process.env.BASE_URL_FRONT;
-    switch (alarm.tipo_alarma) {
-        case "PORCENTAJE_ENCENDIDO":
+    switch (alarm.alarm_type) {
+        case "porcentage_on":
             emailContent = `
                 <div style="font-size: 1rem">
-                    <h1 style="color: ${alarm.disparada == 1 ? 'red' : 'green'};">Alarma ${alarm.disparada == 1 ? 'disparada' : 'reseteada'}</h1>
-                    <p >Se registro un cambio en la alarma <strong>'${alarm.nombre}</strong>.'</p>
-                    <p>La condicion de disparo es <strong>${alarm.condicion}</strong> y el valor registrado fue ${variables.porcentaje_encendido}</p>
+                    <h1 style="color: ${isTriggered == 1 ? 'red' : 'green'};">Alarma ${isTriggered == 1 ? 'disparada' : 'reseteada'}</h1>
+                    <p >Se registro un cambio en la alarma <strong>'${alarm.name}</strong>.'</p>
+                    <p>La condicion de disparo es <strong>${alarm.condition_show}</strong> y el valor registrado fue ${variables.value}</p>
                     <p>El periodo de tiempo para promediar es de\
-                        ${alarm.periodo_tiempo < 60 ? alarm.periodo_tiempo + ' minutos.' : alarm.periodo_tiempo / 60 + " horas"} para atras</p>
+                        ${alarm.time_range < 60 ? alarm.time_range + ' minutos.' : alarm.time_range / 60 + " horas"} para atras</p>
                     <a href='${baseURL}/panel/verestadoalarma/${token}' style="font-size: 1.5rem; color: white; background-color: green; padding: 10px;">Ver alarma</a>
-                    <p style="color: DodgerBlue"><strong>MDV SRL</strong> 2024 ©</p>
+                    <p style="color: DodgerBlue"><strong>MDV SRL</strong> 2026 ©</p>
                 </div>
                 `;            
         break;
-        case "FALLO_COMUNICACION":
+        case "comunication_failure":
             emailContent = `
                 <div style="font-size: 1rem">
-                    <h1 style="color: ${alarm.disparada == 1 ? 'red' : 'green'};">Alarma ${alarm.disparada == 1 ? 'disparada' : 'reseteada'}</h1>
-                    <p >Se registro un cambio en la alarma <strong>'${alarm.nombre}</strong>.'</p>
-                    <p>Los últimos datos recibidos desde el datalogger fueron hace ${variables.minutos_sin_conexion} minutos .</p>                    
-                    <p>Enlace para marcar la alarma como vista: EN PROCESO</p>
-                    <p style="color: DodgerBlue"><strong>MDV SRL</strong> 2024 ©</p>
+                    <h1 style="color: ${isTriggered == 1 ? 'red' : 'green'};">Alarma ${isTriggered == 1 ? 'disparada' : 'reseteada'}</h1>
+                    <p >Se registro un cambio en la alarma <strong>'${alarm.name}</strong>.'</p>
+                    <p>Los últimos datos recibidos desde el datalogger fueron hace ${variables.value} minutos .</p>                    
+                    <a href='${baseURL}/panel/verestadoalarma/${token}' style="font-size: 1.5rem; color: white; background-color: green; padding: 10px;">Ver alarma</a>
+                    <p style="color: DodgerBlue"><strong>MDV SRL</strong> 2026 ©</p>
                 </div>
                 `;            
         break;
@@ -52,9 +52,9 @@ export const sendMessage = async (alarm, variables, email, token) => {
     
 
     let mailOptions = {
-        from: 'admin@impulsainternet.com',
+        from: 'info@mdvsrl.com.ar',
         to: email,
-        subject: `Alarma ${alarm.disparada == 1 ? 'disparada' : 'reseteada'} - ${alarm.nombre} - MDV Sensores`,
+        subject: `Alarma ${alarm.triggered == 1 ? 'disparada' : 'reseteada'} - ${alarm.name} - MDV Sensores`,
         html: emailContent
         };  
 

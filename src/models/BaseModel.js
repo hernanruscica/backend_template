@@ -125,8 +125,10 @@ const BaseModel = (tableName, allowedFields = []) => ({
       return { affectedRows: 0 };
     }
 
-    const sql = `UPDATE ${this.tableName} SET ${setClause} WHERE uuid = ?`;
+    const sql = `UPDATE ${this.tableName} SET ${setClause} WHERE uuid = ?`;    
+    
     const [result] = await pool.query(sql, [...values, uuid]);
+    
     return result;
   },
 

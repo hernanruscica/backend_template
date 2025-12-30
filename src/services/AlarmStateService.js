@@ -14,18 +14,22 @@ class AlarmStateService {
     // (Asumiendo que alarm.disparada es 1 o 0)
     const newState = isTriggered ? 1 : 0;
     
-    if (alarm.triggered === newState) {
+    if (alarm.triggered == newState) {
       // El estado no ha cambiado, no hacemos nada (o logueamos debug)
       return; 
     }
 
     console.log(`🔄 Cambio de estado para alarma ${alarm.name}: ${alarm.triggered} -> ${newState}`);
 
-    // 2. Actualizar la alarma en DB
-    await AlarmModel.update(alarm.uuid, { newState }); // Ojo: Usar UUID si tu modelo lo pide, o ID.
+    // 2. Actualizar la alarma en DB - Example: async update(uuid, fields, updatedBy)
+    await AlarmModel.update(alarm.uuid, {triggered: newState}, null); 
+    //console.log('results from alarmStateService', results);
+    
 
     // 3. Obtener usuarios suscritos
-    const usersAffected = await UserAlarmModel.findUsersByAlarmId(alarm.uuid);
+    const usersAffected = await UserAlarmModel.findUsersByAlarmUuid(alarm.uuid);
+    //console.log('usersAffected', usersAffected);
+    
     if (!usersAffected || usersAffected.length === 0) return;
 
     // 4. Procesar notificaciones para cada usuario (Parallel processing)
@@ -37,34 +41,35 @@ class AlarmStateService {
   }
 
   async notifyUser(user, alarm, isTriggered, variables) {
-    try {
-      // A. Crear Log
-      const alarmLog = {
-        alarma_id: alarm.uuid, // O uuid según tu esquema
-        usuario_id: user.uuid,
-        canal_id: alarm.canal_id,
-        business_uuid: alarm.business_uuid, // Agregado por consistencia con tus tablas nuevas
-        variables: JSON.stringify(variables),
-        disparada: isTriggered,
-        triggered_at: new Date() // El seeder mostraba timestamp
-      };
+    try {     
 
-      const logId = await AlarmLogModel.create(alarmLog);
-      
-      if (!logId) throw new Error("No se pudo crear el log");
-
-      // B. Generar Token y Enviar Email
-      const token = generateTokenAlarmLog(logId, user.uuid, alarm.uuid, alarm.canal_id, alarm.datalogger_id);
+        // B. Generar Token y Enviar Email
+      const token = generateTokenAlarmLog(user.uuid, alarm.uuid, alarm.canal_id, alarm.datalogger_id);
       
       // Aquí podrías ajustar el subject/body según si esTriggered es 1 (ALERTA) o 0 (NORMALIZADO)
       const emailSent = await sendMessage(alarm, variables, user.email, token, isTriggered);
-      
-      // Opcional: Actualizar el log indicando si se envió el email (tu tabla alarm_logs tiene email_sent)
-      if (emailSent) {
-          // await AlarmLogModel.updateEmailSent(logId, true);
-      }
 
-      console.log(`📧 Notificación enviada a ${user.email} (Triggered: ${isTriggered})`);
+      if(emailSent){
+        console.log(`📧 Notificación enviada a ${user.email} (Triggered: ${isTriggered})`);
+      }
+     
+       // A. Crear Log
+      const alarmLog = {
+        alarm_uuid: alarm.uuid, // O uuid según tu esquema
+        user_uuid: user.user_uuid,
+        channel_uuid: alarm.channel_uuid,
+        business_uuid: alarm.business_uuid, // Agregado por consistencia con tus tablas nuevas
+        triggered: isTriggered,
+        triggered_at: new Date(),
+        email_sent: emailSent,
+        message:`mensaje de alarma ${(isTriggered) ? 'disparada.' : 'reseteada.'}`        
+      };
+     
+      const logId = await AlarmLogModel.create(alarmLog);
+      
+      if (!logId) throw new Error("No se pudo crear el log");   
+
+      
 
     } catch (error) {
       console.error(`❌ Error notificando usuario ${user.email}:`, error);

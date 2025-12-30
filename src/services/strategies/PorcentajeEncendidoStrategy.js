@@ -1,32 +1,32 @@
-import DataModel from '../../models/dataModel.js';
-import { calculatePorcentageOn } from '../../utils/MathUtils.js';
+import DataloggersDataStore from '../../stores/DataloggersDataStore.js';
 import { evaluate } from 'mathjs';
 
 class PorcentajeEncendidoStrategy {
   async evaluate(alarm) {
-    const { table_name, column_name, time_range, condition_logic, name } = alarm;
+    const { table_name, channel_uuid, condition_logic, name } = alarm;
     
-    // 1. Obtener datos
-    const currentData = await DataModel.findDataFromDigitalChannel(table_name, column_name, time_range);
-    const rangePorcentageSecs = time_range * 60;
-    
-    // 2. Calcular lógica de negocio
-    const dataPorcentagesOn = calculatePorcentageOn(currentData, rangePorcentageSecs);
-    
-    if (!dataPorcentagesOn || dataPorcentagesOn.length === 0) {
-      return { triggered: false, variables: {} };
-    }
+    const currentDatalogger = DataloggersDataStore.getLoggerData(table_name);        
+    const dataloggersChannels =  currentDatalogger?.channels || [];
+    const currentChannel = dataloggersChannels.find(dc => dc.uuid == channel_uuid)
 
-    // 3. Preparar variables
-    const currentPorcentage = dataPorcentagesOn[dataPorcentagesOn.length - 1].porcentaje_encendido;
-    const variables = { value: currentPorcentage };
-    //console.log('variables', variables);
+    //console.log('currentChannel',(typeof currentChannel == 'object') ? currentChannel.name : 'no identificado');    
+    const channelBelongsToDatalogger = typeof currentChannel == 'object';
     
-    // 4. Evaluar condición matemática
+    if (!channelBelongsToDatalogger) {
+      const errorMesagge = "alarm info wrong: Channel dont belongs to the datalogger";      
+      return { triggered: false, errorMesagge: errorMesagge };
+    };
+
+    const porcentageUsagePeriod = currentChannel.lastData.porcentageUsagePeriod;
+    const variables = {value: porcentageUsagePeriod};
+    /*
+    console.log(`Ultimo porcentaje de uso: ${porcentageUsagePeriod}`);
+    console.log('canal:', currentChannel.name);
+    console.log('channel uuid:', currentChannel.uuid);       
+   */
     try {
       const isTriggered = evaluate(condition_logic, variables);
-      console.log(`${name} >>> condicion logica : ${condition_logic} - variables: ${variables?.value}`);
-      
+      console.log(`${name} >>> condicion logica : ${condition_logic} - variables: ${JSON.stringify(variables)} - disparada: ${isTriggered}`);      
       return { triggered: isTriggered, variables };
     } catch (error) {
       console.error(`Error evaluando condición ${condition_logic}:`, error);

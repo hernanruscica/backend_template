@@ -9,7 +9,7 @@ export const getLastPorcentageUsageByChannel =  (req, res, next) => {
         
         const dataloggerData = DataloggersDataStore.getLoggerData(dataloggerUuid);      
 
-        const currentChannelData = dataloggerData?.channels.find(ch => ch.uuid == channelUuid)        
+        const currentChannelData = dataloggerData?.channels?.find(ch => ch.uuid == channelUuid)        
         
         if (currentChannelData) {
             return res.status(200).json({success: true, message: 'ok', data: currentChannelData});

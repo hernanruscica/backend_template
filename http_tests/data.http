@@ -31,6 +31,7 @@ Content-Type: application/json
 @channel_compresor1_quilmes = a0a1a2a3-a4a5-a6a7-a8a9-b0b1b2b3b4b5
 
 ### '/getporcentages/:tableName/:columnPrefix/:timePeriod/:rangePorcentage' time and ranges in minutes /api/data/getporcentages/cocina/d1/7200/60
+### todavia en veremos, tengo que rehacer y optimizar las consultas a la BD (29/12/25)
 GET {{api}}/data/getporcentages/cocina/d3/7200/720 
 Content-Type: application/json
 Authorization: Bearer {{token}}

@@ -1,5 +1,6 @@
 import cron from 'node-cron';
 import DataloggerDataReceiveService from '../services/DataloggerDataReceiveService.js';
+import AlarmMonitorService from '../services/AlarmMonitorService.js';
 
 let isRunning = false;
 
@@ -13,13 +14,18 @@ const startDataloggerDataReceiveJob = () => {
 
     isRunning = true;
     try {
+
       console.log('⏰ Iniciando recepcion de datos de la BD de Hostinger...');
       await DataloggerDataReceiveService.loadData();
+
+      console.log('⏰ Iniciando chequeo de alarmas...');
+      await AlarmMonitorService.checkAlarms();
+
     } catch (error) {
       console.error('❌ Error crítico en el job de Recepcion de datos de dataloggers de hostingers:', error);
     } finally {
       isRunning = false;
-      console.log('🏁 Recepcion de datos de los dataloggers finalizado.');
+      console.log('🏁 Recepcion de datos de los dataloggers y Chequeo de Alarmas finalizado.');
     }
   });
 };

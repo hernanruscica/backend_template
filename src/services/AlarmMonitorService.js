@@ -34,6 +34,7 @@ class AlarmMonitorService {
 
       // B. Evaluar
       const result = await strategy.evaluate(alarm);
+      //console.log('evaluate result: ', result);
       
       // Si hubo un error en la evaluación, no cambiamos estado
       if (result.error) return;

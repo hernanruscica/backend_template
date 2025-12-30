@@ -1,33 +1,33 @@
-import DataModel from '../../models/dataModel.js';
+//import DataModel from '../../models/dataModel.js';
 import { evaluate } from 'mathjs';
+import DataloggersDataStore from '../../stores/DataloggersDataStore.js';
+import { getSecondsSince } from '../../utils/dateUtils.js';
 
 class FalloComunicacionStrategy {
   async evaluate(alarm) {
-    const { tabla, condicion } = alarm;
-
-    // 1. Obtener último dato
-    const currentDataFail = await DataModel.findLastDataFromTable(tabla);
-    if (!currentDataFail || currentDataFail.length === 0) {
-        return { triggered: false, variables: {} };
-    }
-
-    // 2. Calcular tiempos
-    const now = Date.now() - 3 * 60 * 60 * 1000; // Ajuste de zona horaria si aplica
-    const lastDate = new Date(currentDataFail[0].fecha).getTime();
+    const { table_name, condition_logic, name } = alarm;
+    //console.log('FalloComunicacionStrategy - channelUuid:', alarm.channel_uuid);
     
-    // 3. Mapear variables dinámicas (simplificado para legibilidad)
-    // Asumimos que la condición siempre usa 'minutos_sin_conexion' como resultado final
-    const minutosSinConexion = (now - lastDate) / 1000 / 60;
-    
-    const variables = { 
-        fecha: parseInt(lastDate) / 60 / 1000,
-        fecha_actual: parseInt(now) / 60 / 1000,
-        minutos_sin_conexion: parseFloat(minutosSinConexion.toFixed(1))
-    };
+    //para las alarmas de desconexion, guardo en table_name el dataloggerUuid para poder consultar en el dataloggerStore
+    const currentDatalogger = DataloggersDataStore.getLoggerData(table_name);
+    const secondsFromLastConection = getSecondsSince(currentDatalogger.lastConection);
+    const variables = {value: secondsFromLastConection / 60};
+    /* 
+    console.log(`Nombre del datalogger ${currentDatalogger.name}`);    
+    console.log(`Segundos desde la ultima conexion: ${secondsFromLastConection}`);
+    console.log('condition logic:', condition_logic);
+    console.log('Variables:', variables);      
+    ejemplos de datos reales
+    Nombre del datalogger Cocina MDV srl
+    Segundos desde la ultima conexion: 257333
+    condition logic: value < 5
+    Variables: { value: 4288.883333333333 }
+    */
 
-    // 4. Evaluar
+    // Evaluar
     try {
-      const isTriggered = evaluate(condicion, variables);
+      const isTriggered = evaluate(condition_logic, variables);
+      console.log(`${name} >>> condicion logica : ${condition_logic} - variables: ${JSON.stringify(variables)} - disparada: ${isTriggered}`);
       return { triggered: isTriggered, variables };
     } catch (error) {
       console.error(`Error evaluando fallo comunicación:`, error);
