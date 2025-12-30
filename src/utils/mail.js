@@ -16,8 +16,7 @@ let transporter = nodemailer.createTransport({
     }
 }); 
 
-export const sendMessage = async (alarm, variables, email, token, isTriggered) => {
-    //console.log('token en sendmessage:', token);
+export const sendMessage = async (alarm, variables, email, token, isTriggered) => {    
     let emailContent = null;
     const baseURL = process.env.BASE_URL_FRONT;
     switch (alarm.alarm_type) {
@@ -45,6 +44,18 @@ export const sendMessage = async (alarm, variables, email, token, isTriggered) =
                 </div>
                 `;            
         break;
+        case "simultaneous_on":
+            emailContent = `
+                <div style="font-size: 1rem">
+                    <h1 style="color: ${isTriggered == 1 ? 'red' : 'green'};">Alarma ${isTriggered == 1 ? 'disparada' : 'reseteada'}</h1>
+                    <p >Se registro un cambio en la alarma <strong>'${alarm.name}</strong>.'</p>
+                    <p>Se registraron los dos canales encendidos en los ultimos 5 minutos.</p>                    
+                    <p>Canal01: ${variables.value01} segundos encendido.</p>
+                    <p>Canal02: ${variables.value02} segundos encendido.</p>
+                    <a href='${baseURL}/panel/verestadoalarma/${token}' style="font-size: 1.5rem; color: white; background-color: green; padding: 10px;">Ver alarma</a>
+                    <p style="color: DodgerBlue"><strong>MDV SRL</strong> 2026 ©</p>
+                </div>
+            `
     
         default:
             break;

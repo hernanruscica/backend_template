@@ -3,9 +3,9 @@ import { evaluate } from 'mathjs';
 
 class PorcentajeEncendidoStrategy {
   async evaluate(alarm) {
-    const { table_name, channel_uuid, condition_logic, name } = alarm;
+    const { datalogger_uuid, channel_uuid, condition_logic, name } = alarm;
     
-    const currentDatalogger = DataloggersDataStore.getLoggerData(table_name);        
+    const currentDatalogger = DataloggersDataStore.getLoggerData(datalogger_uuid);        
     const dataloggersChannels =  currentDatalogger?.channels || [];
     const currentChannel = dataloggersChannels.find(dc => dc.uuid == channel_uuid)
 

@@ -1,12 +1,6 @@
+
+
 INSERT INTO channels (uuid, name, description, datalogger_id, column_name, averaging_period, factor, img, is_active, created_at, created_by, business_uuid) VALUES
-/*
-('c3d4e5f6-a7b8-9012-3456-7890abcdef12', 'Temperature', 'Temperature sensor', 'a1b2c3d4-e5f6-7890-1234-567890abcdef', 'a1', 60, 1.0, 'channel1.jpg', true, '2023-01-01 00:00:00', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d'),
-('d4e5f6a7-b8c9-0123-4567-890abcdef123', 'pH', 'pH sensor', 'b2c3d4e5-f6a7-8901-2345-67890abcdef1', 'a2', 300, 1.0, 'channel2.jpg', true, '2023-01-01 00:00:00', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d'),
-('e5f6a7b8-c9d0-1234-5678-90abcdef1234', 'CO2 Levels', 'CO2 level sensor', 'b2c3d4e5-f6a7-8901-2345-67890abcdef1', 'd1', 60, 1.0, 'channel3.jpg', true, '2023-01-01 00:00:00', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d'),
-('f6a7b8c9-d0e1-2345-6789-0abcdef12345', 'Soil Moisture', 'Soil moisture sensor', 'd4e5f6a7-b8c9-0123-4567-890abcdef123', 'd2', 600, 1.0, 'channel4.jpg', true, '2023-01-01 00:00:00', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e'),
-('a7b8c9d0-e1f2-3456-7890-abcdef123456', 'Traffic Count', 'Traffic count sensor', 'e5f6a7b8-c9d0-1234-5678-90abcdef1234', 'd3', 300, 1.0, 'channel5.jpg', true, '2023-01-01 00:00:00', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f'),
-4e329ada-8511-4bfa-8d44-57a0ca4fd80c - mdv sensores
-*/
 ('10111213-1415-1617-1819-202122232425', 'Temperatura gabinetes', 'Mide la temperatura interior del gabinete de compresores', 'f1b2c3d4-e5f6-7890-1234-567890abcdef', 'a1', 15, 0.04, 'default_datalogger.webp', true, '2023-12-20 00:00:00', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '6a541cec-0733-4dfc-8f66-79c2ec6bf02e'),
 ('25242322-2120-1918-1716-151413121110', 'Cafetera', 'Mide el porcentaje de funcionamiento en la ultima hora y ultimas 24 Hs.', 'g2c3d4e5-f6a7-8901-2345-67890abcdef1', 'd1', 60, 1, 'https://res.cloudinary.com/dlsydbh4h/image/upload/v1751299165/mdv_sensores/g9ysohjdimvbd5sg6efr.webp', true, '2024-03-15 00:00:00', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '4e329ada-8511-4bfa-8d44-57a0ca4fd80c'),
 ('30313233-3435-3637-3839-404142434445', 'Compresor 1 - Tiempos de servicio', 'Mide el tiempo de funcionamiento, cantidad de encendidos y entradas a la sala.', 'f1b2c3d4-e5f6-7890-1234-567890abcdef', 'd1', 15, 1, 'default_datalogger.webp', true, '2024-03-15 00:00:00', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '6a541cec-0733-4dfc-8f66-79c2ec6bf02e'),

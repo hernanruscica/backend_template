@@ -5,13 +5,13 @@ import { getSecondsSince } from '../../utils/dateUtils.js';
 
 class FalloComunicacionStrategy {
   async evaluate(alarm) {
-    const { table_name, condition_logic, name } = alarm;
+    const { datalogger_uuid, condition_logic, name } = alarm;
     //console.log('FalloComunicacionStrategy - channelUuid:', alarm.channel_uuid);
     
-    //para las alarmas de desconexion, guardo en table_name el dataloggerUuid para poder consultar en el dataloggerStore
-    const currentDatalogger = DataloggersDataStore.getLoggerData(table_name);
+    //para las alarmas de desconexion, guardo en datalogger_uuid el dataloggerUuid para poder consultar en el dataloggerStore
+    const currentDatalogger = DataloggersDataStore.getLoggerData(datalogger_uuid);
     const secondsFromLastConection = getSecondsSince(currentDatalogger.lastConection);
-    const variables = {value: secondsFromLastConection / 60};
+    const variables = {value: parseFloat(secondsFromLastConection / 60).toFixed(2)};
     /* 
     console.log(`Nombre del datalogger ${currentDatalogger.name}`);    
     console.log(`Segundos desde la ultima conexion: ${secondsFromLastConection}`);

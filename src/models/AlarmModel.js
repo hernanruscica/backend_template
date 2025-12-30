@@ -6,8 +6,7 @@ import DataloggerModel from './DataloggerModel.js';
 const allowedFields = [
     'channel_uuid',
     'business_uuid',
-    'table_name',
-    'column_name',
+    'datalogger_uuid',    
     'name',
     'description',
     'time_range',
