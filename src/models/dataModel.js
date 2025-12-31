@@ -139,8 +139,99 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
 
       const [rows] = await poolData.query(query);
       return rows;
-    }
+    },
 
+    getDailyAverageByMonth : async (tableName, columnPrefix, month, year) => {  
+      
+     // Aseguramos que month y year sean enteros
+      const safeMonth = parseInt(month);
+      const safeYear = parseInt(year);
+
+      // Definimos la fecha base: el 1ro del mes elegido
+      const baseDate = `${safeYear}-${safeMonth}-01`;
+
+      const query = `
+        SELECT 
+            -- Eje X del gráfico: El día (formato YYYY-MM-DD)
+            DATE(fecha) as dia,
+            identificador,
+
+            -- Eje Y del gráfico: El porcentaje de uso real del día
+            -- Formula: (Total Segundos Encendido / Total Segundos Disponibles) * 100
+            ROUND(
+                TRUNCATE((SUM(${columnPrefix}_tiempo) / NULLIF(SUM(tiempo_total), 0)) * 100, 2), 
+                2
+            ) AS porcentaje_uso
+
+        FROM ${tableName}
+        
+        -- Filtro optimizado para usar tu índice (Rango de Fechas)
+        -- Construimos la fecha de inicio 'YYYY-MM-01'
+        WHERE fecha >= '${baseDate}' 
+          AND fecha < DATE_ADD('${baseDate}', INTERVAL 1 MONTH)
+        
+        -- Agrupamos por día para tener 1 punto por día
+        GROUP BY DATE(fecha), identificador
+        
+        -- Ordenamos cronológicamente para que el gráfico se dibuje de izq a der
+        ORDER BY dia ASC;
+      `;
+
+      try {
+          const [rows] = await poolData.query(query);
+          return rows;
+      } catch (error) {
+          console.error("Error obteniendo datos mensuales:", error);
+          throw error;
+      }
+    },
+
+    //ByMonth or MonthS
+    getWeeklyStatsByMonth : async (tableName, columnPrefix, month, year, monthIntervalQty) => {
+  
+      const safeMonth = parseInt(month);
+      const safeYear = parseInt(year);
+      const safeInterval = parseInt(monthIntervalQty)
+
+      // Definimos la fecha base: el 1ro del mes elegido
+      const baseDate = `${safeYear}-${safeMonth}-01`;
+
+      const query = `
+            WITH datos_diarios AS (
+                SELECT 
+                    DATE(fecha) as dia,
+                    YEARWEEK(fecha, 1) as numero_semana,
+                    SUM(${columnPrefix}_tiempo) as suma_tiempo_on,
+                    SUM(tiempo_total) as suma_tiempo_total,
+                    (SUM(${columnPrefix}_tiempo) / NULLIF(SUM(tiempo_total), 0)) * 100 as porcentaje_dia
+                FROM ${tableName}
+                
+                -- CORRECCIÓN AQUÍ:
+                -- 1. Mayor o igual al 1ro del mes
+                -- 2. Menor estricto (<) al 1ro del MES SIGUIENTE (calculado por MySQL)
+                WHERE fecha < '${baseDate}' 
+                  AND fecha > DATE_SUB('${baseDate}', INTERVAL ${safeInterval} MONTH)
+
+                GROUP BY DATE(fecha), identificador
+            )
+
+            SELECT 
+                numero_semana,
+                MIN(dia) as inicio_semana,
+                MAX(dia) as fin_semana,
+                ROUND((SUM(suma_tiempo_on) / NULLIF(SUM(suma_tiempo_total), 0)) * 100, 2) as porcentaje_semanal,
+                ROUND(MAX(porcentaje_dia), 2) as max_dia_porcentaje,
+                SUBSTRING_INDEX(GROUP_CONCAT(dia ORDER BY porcentaje_dia DESC SEPARATOR ','), ',', 1) as fecha_del_maximo,
+                ROUND(MIN(porcentaje_dia), 2) as min_dia_porcentaje,
+                SUBSTRING_INDEX(GROUP_CONCAT(dia ORDER BY porcentaje_dia ASC SEPARATOR ','), ',', 1) as fecha_del_minimo
+            FROM datos_diarios
+            GROUP BY numero_semana
+            ORDER BY inicio_semana ASC;
+          `;
+
+          const [rows] = await poolData.query(query);
+          return rows;
+        }
     
 }
 export default dataModel;
