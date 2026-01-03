@@ -1,24 +1,24 @@
 @api = http://localhost:5000/api
-@admin_email = john.doe@example.com
-@admin_password = password123
-@token = 
 
-###
-# @name login
+# Login as Owner
+# dni: 28470359 password: Pass1234
+# @name login_owner
 POST {{api}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "{{admin_email}}",
-  "password": "{{admin_password}}"
+  "dni": "28470359",
+  "password": "Pass1234"
 }
 
+
 ###
-@token = {{login.response.body.token}}
+@token = {{login_owner.response.body.token}}
+@business_user_owner = {{login_owner.response.body.user.businesses_roles[0].uuid}}
 
 ###
 # Get all channels
-GET {{api}}/channels
+GET {{api}}/businesses/{{business_user_owner}}/channels
 Authorization: Bearer {{token}}
 
 ###
@@ -39,7 +39,7 @@ Authorization: Bearer {{token}}
 
 ###
 # Get a channel by UUID
-GET {{api}}/channels/c3d4e5f6-a7b8-9012-3456-7890abcdef12
+GET {{api}}/businesses/{{business_user_owner}}/channels/65646362-6160-5958-5756-555453525150
 Authorization: Bearer {{token}}
 
 ###

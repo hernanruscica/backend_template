@@ -94,7 +94,7 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
     },
     findChannelBasicData: async (channelUuid) => {
       const queryString = `
-        SELECT dataloggers.table_name, channels.column_name, channels.name
+        SELECT dataloggers.table_name, channels.column_name, channels.name, channels.averaging_period
         FROM channels
         INNER JOIN dataloggers ON channels.datalogger_id = dataloggers.uuid
         WHERE channels.uuid = ?;
@@ -115,40 +115,63 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
       return rows;
     },
 
-    getRollingAverageData : async (tableName, columnPrefix, timePeriodMinutes) => {
-      // Convertimos minutos a segundos para la consulta SQL
-      const secondsRange = timePeriodMinutes * 60; 
+    //Enero 2026: devuelve todos los datos por 5 minutos promediados para atras (rollingAverage) por averagingPeriod, dentro de un intervalo de tiempo
+    findRollingAverageData: async (tableName, columnPrefix, averagingPeriod, startInterval, stopInterval) => {
+    
+        const averagingPeriodSeconds = averagingPeriod * 60;       
+        const tableNameClean = poolData.escapeId(tableName);
+        const columnNameClean = poolData.escapeId(`${columnPrefix}_tiempo`);
 
-      const query = `
-        SELECT 
-            fecha,
-            identificador,
-            (
-                SUM(${columnPrefix}_tiempo) OVER w / 
-                NULLIF(SUM(tiempo_total) OVER w, 0)
-            ) * 100 AS porcentaje_promedio
-        FROM ${tableName}
-        WHERE fecha >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
-        WINDOW w AS (
-            PARTITION BY identificador 
-            ORDER BY UNIX_TIMESTAMP(fecha) 
-            RANGE BETWEEN ${secondsRange} PRECEDING AND CURRENT ROW
-        )
-        ORDER BY fecha DESC;
-      `;
+        // --- CORRECCIÓN DE FECHAS ---
+        // Quitamos comillas si vienen en el string (ej: "'2025-12-01'" -> "2025-12-01")
+        let start = startInterval.replace(/['"]/g, ''); 
+        let stop = stopInterval.replace(/['"]/g, '');
 
-      const [rows] = await poolData.query(query);
-      return rows;
+        // Aseguramos que el FINAL incluya todo el día hasta el último segundo
+        // Si el string es corto (ej: "2025-12-31"), le pegamos la hora final.
+        if (stop.length <= 10) {
+            stop = `${stop} 23:59:59`;
+        }
+        // -----------------------------
+
+        const query = `
+          SELECT 
+              CONVERT_TZ(fecha, '+00:00', '${process.env.UTC_LOCAL}') AS fecha,\
+              identificador,            
+              ROUND(
+                  (
+                      SUM(${columnNameClean}) OVER w / 
+                      NULLIF(SUM(tiempo_total) OVER w, 0)
+                  ) * 100, 
+                  2
+              ) AS porcentaje_promedio                
+          FROM ${tableNameClean}
+          
+          -- CORRECCIÓN DE LÓGICA SQL:
+          -- Usamos >= para incluir el inicio exacto
+          -- Usamos <= para incluir el final exacto (ahora que stop tiene hora 23:59:59)
+          WHERE (fecha >= '${start}') AND (fecha <= '${stop}')
+          
+          WINDOW w AS (
+              PARTITION BY identificador 
+              ORDER BY UNIX_TIMESTAMP(fecha) 
+              RANGE BETWEEN ${averagingPeriodSeconds} PRECEDING AND CURRENT ROW
+          )
+          ORDER BY fecha DESC;
+        `;
+        
+        const [rows] = await poolData.query(query);
+        return rows;
     },
 
-    getDailyAverageByMonth : async (tableName, columnPrefix, month, year) => {  
+    findDailyAverageByPeriod : async (tableName, columnPrefix, startInterval, stopInterval) => {  
       
-     // Aseguramos que month y year sean enteros
-      const safeMonth = parseInt(month);
-      const safeYear = parseInt(year);
-
-      // Definimos la fecha base: el 1ro del mes elegido
-      const baseDate = `${safeYear}-${safeMonth}-01`;
+     
+      let start = startInterval.replace(/['"]/g, ''); 
+      let stop = stopInterval.replace(/['"]/g, '');
+      if (stop.length <= 10) {
+          stop = `${stop} 23:59:59`;
+      }
 
       const query = `
         SELECT 
@@ -165,10 +188,7 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
 
         FROM ${tableName}
         
-        -- Filtro optimizado para usar tu índice (Rango de Fechas)
-        -- Construimos la fecha de inicio 'YYYY-MM-01'
-        WHERE fecha >= '${baseDate}' 
-          AND fecha < DATE_ADD('${baseDate}', INTERVAL 1 MONTH)
+        WHERE (fecha >= '${start}') AND (fecha <= '${stop}')
         
         -- Agrupamos por día para tener 1 punto por día
         GROUP BY DATE(fecha), identificador
@@ -187,14 +207,13 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
     },
 
     //ByMonth or MonthS
-    getWeeklyStatsByMonth : async (tableName, columnPrefix, month, year, monthIntervalQty) => {
+    findtWeeklyAverageByPeriod : async (tableName, columnPrefix, startInterval, stopInterval) => {
   
-      const safeMonth = parseInt(month);
-      const safeYear = parseInt(year);
-      const safeInterval = parseInt(monthIntervalQty)
-
-      // Definimos la fecha base: el 1ro del mes elegido
-      const baseDate = `${safeYear}-${safeMonth}-01`;
+      let start = startInterval.replace(/['"]/g, ''); 
+      let stop = stopInterval.replace(/['"]/g, '');
+      if (stop.length <= 10) {
+          stop = `${stop} 23:59:59`;
+      }
 
       const query = `
             WITH datos_diarios AS (
@@ -206,11 +225,7 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
                     (SUM(${columnPrefix}_tiempo) / NULLIF(SUM(tiempo_total), 0)) * 100 as porcentaje_dia
                 FROM ${tableName}
                 
-                -- CORRECCIÓN AQUÍ:
-                -- 1. Mayor o igual al 1ro del mes
-                -- 2. Menor estricto (<) al 1ro del MES SIGUIENTE (calculado por MySQL)
-                WHERE fecha < '${baseDate}' 
-                  AND fecha > DATE_SUB('${baseDate}', INTERVAL ${safeInterval} MONTH)
+                WHERE (fecha >= '${start}') AND (fecha <= '${stop}')
 
                 GROUP BY DATE(fecha), identificador
             )

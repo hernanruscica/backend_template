@@ -61,6 +61,51 @@ const DataService = {
         } catch (error) {
             console.log('error', error);
         }
+    },
+    //findRollingAverageData (tableName, columnPrefix, averagingPeriod, startInterval, stopInterval)
+    getAllAverageUsageByChannel: async (channelUuid, startInterval, stopInterval) => {
+        try {
+            const channelData = await dataModel.findChannelBasicData(channelUuid)
+            if (channelData.length === 0){
+                return []
+            };
+            const { table_name, column_name, averaging_period } = channelData[0];
+            const data = await dataModel.findRollingAverageData(table_name, column_name, averaging_period, startInterval, stopInterval );
+            //console.log('data from getAllAverageUsageByChannel service: ',data);
+            return data;
+        } catch (error) {
+            console.log('error', error);            
+        }
+    },
+    //findDailyAverageByPeriod  (tableName, columnPrefix, startInterval, stopInterval)
+    getAllDailyUsageByChannel: async (channelUuid, startInterval, stopInterval) => {
+        try {
+            const channelData = await dataModel.findChannelBasicData(channelUuid)
+            if (channelData.length === 0){
+                return []
+            };
+            const { table_name, column_name } = channelData[0];
+            const data = await dataModel.findDailyAverageByPeriod(table_name, column_name, startInterval, stopInterval);
+            return data;
+        } catch (error) {
+            console.log('error', error);
+            
+        }
+    },
+    // findtWeeklyAverageByPeriod (tableName, columnPrefix, startInterval, stopInterval)
+    getAllWeeklyUsageByChannel: async (channelUuid, startInterval, stopInterval) => {
+        try {
+            const channelData = await dataModel.findChannelBasicData(channelUuid)
+            if (channelData.length === 0){
+                return []
+            };
+            const { table_name, column_name } = channelData[0];
+            const data = await dataModel.findtWeeklyAverageByPeriod(table_name, column_name, startInterval, stopInterval);
+            return data;
+        } catch (error) {
+            console.log('error', error);
+            
+        }
     }
 }
 

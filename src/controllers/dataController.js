@@ -1,17 +1,14 @@
-import dataModel from "../models/dataModel.js";
-import { calculatePorcentageOn } from '../utils/MathUtils.js';
 import DataloggersDataStore from "../stores/DataloggersDataStore.js";
+import DataService from "../services/DataService.js";
 
-
+//It uses DataloggersDataStore
 export const getLastPorcentageUsageByChannel =  (req, res, next) => {
     try {
-        const { dataloggerUuid, channelUuid } = req.params;    
-        
+        const { dataloggerUuid, channelUuid } = req.params;            
         const dataloggerData = DataloggersDataStore.getLoggerData(dataloggerUuid);      
-
-        const currentChannelData = dataloggerData?.channels?.find(ch => ch.uuid == channelUuid)        
+        const currentChannelData = dataloggerData?.channels?.find(ch => ch.uuid == channelUuid) || undefined;
         
-        if (currentChannelData) {
+        if (currentChannelData ) {
             return res.status(200).json({success: true, message: 'ok', data: currentChannelData});
         }
         return res.status(404).json({success: false, message: 'not found', data: null});     
@@ -20,12 +17,14 @@ export const getLastPorcentageUsageByChannel =  (req, res, next) => {
         next(error);
     }
 }
-
+//It uses DataloggersDataStore
 export const getDataloggerLastData = (req, res, next) => {
     try {
-        const { dataloggerUuid } = req.params;    
-        
+        const { dataloggerUuid } = req.params;            
         const dataloggerData = DataloggersDataStore.getLoggerData(dataloggerUuid);    
+        if (dataloggerData.length == 0){
+            return res.status(404).json({success: false, message: 'not found', data: null}); 
+        }
         
         if (dataloggerData) {
             return res.status(200).json({success: true, message: 'ok', data: dataloggerData});
@@ -37,44 +36,61 @@ export const getDataloggerLastData = (req, res, next) => {
     }
 }
 
+//It uses DataService
 export const getDataByTimePeriod = async (req, res, next) => {    
     try {
-        const {table, period} = req.params;
-        //console.log(table, timePeriod)
-        const currentData = await dataModel.findAllByTimePeriod(table, period)
-        if (currentData?.length > 0){
-            return res.status(200).json({message: 'Data Founded', count: currentData.length, data: currentData});
+        const { channelUuid } = req.params;
+        const { start, end} = req.query;
+        //OK console.log(` requiryng channelUuid: ${channelUuid} start: ${start} and end: ${end}`) 
+        const  responseData = await DataService.getAllAverageUsageByChannel(channelUuid, start, end);
+
+        if (responseData.length > 0){
+            return res.status(200).json({success: true, message: 'Data Founded', count: responseData.length, data: responseData});
         }else{
-            return res.status(400).json({message: 'Data Not Found'});
+            return res.status(400).json({success: false, message: 'Data Not Found', count: 0, data : [] });
         }
     } catch (error) {
         next(error);
     }
 }
-/*
-getPorcentageOn: returns an array with objets. These are the data from a digital channel
-- tableName is the name of the table on DB 
-- columnPrefix is the prefix for the channel column
-- timePeriod is the quantity of minutes from NOW, to take the data 
-- rangePorcentage is the quantity of minutes from NOW, to make the individual porcentage for each register. 
-*/
-export const getPorcentagesOn = async (req, res, next) => {    
+
+//It uses DataService
+export const getDataDailyByTimePeriod = async (req, res, next) => {    
     try {
-        const {tableName, columnPrefix, timePeriod, rangePorcentage } = req.params;
+        const { channelUuid } = req.params;
+        const { start, end} = req.query;
         
-        const currentData = await dataModel.findDataFromDigitalChannel(tableName, columnPrefix, timePeriod);
-        //console.log(currentData);
-        if (currentData?.length > 0){
-            const rangePorcentageSecs = rangePorcentage * 60;
-            const dataPorcentagesOn = calculatePorcentageOn(currentData, rangePorcentageSecs)
-            return res.status(200).json({success: true, message: 'Data Founded', count: dataPorcentagesOn.length, data: dataPorcentagesOn});
+        const responseData = await DataService.getAllDailyUsageByChannel(channelUuid, start, end);
+        //console.log(responseData);
+        if (responseData?.length > 0){            
+            return res.status(200).json({success: true, message: 'Data Founded', count: responseData.length, data: responseData});
         }else{
-            return res.status(200).json({success: false, message: 'Data Not Found'});
+            return res.status(200).json({success: false, message: 'Data Not Found', count: 0, data: []});
         }
     } catch (error) {
         next(error); 
     }
 }
+
+////It uses DataService 
+export const getDataWeeklyByTimePeriod = async (req, res, next) => {    
+    try {
+        const { channelUuid } = req.params;
+        const { start, end} = req.query;
+        
+        const responseData = await DataService.getAllWeeklyUsageByChannel(channelUuid, start, end);
+        //console.log(responseData);
+        if (responseData?.length > 0){            
+            return res.status(200).json({success: true, message: 'Data Founded', count: responseData.length, data: responseData});
+        }else{
+            return res.status(200).json({success: false, message: 'Data Not Found', count: 0, data: []});
+        }
+    } catch (error) {
+        next(error); 
+    }
+}
+
+/*
 export const getAnalogData = async (req, res, next) => {
     try {
         const {tableName, columnPrefix, timePeriod } = req.params;     
@@ -100,7 +116,6 @@ export const getLastData = async (req, res, next) => {
         }
     } catch (error) {
         next(error);
-    }
-       /* 
-      console.log(req.body.tableName) ;*/
+    }      
 }
+*/

@@ -32,18 +32,34 @@ Content-Type: application/json
 
 @channel_compresor2_quilmes = b5b4b3b2-b1b0-a9a8-a7a6-a5a4a3a2a1a0
 
-### '/getporcentages/:tableName/:columnPrefix/:timePeriod/:rangePorcentage' time and ranges in minutes /api/data/getporcentages/cocina/d1/7200/60
-### todavia en veremos, tengo que rehacer y optimizar las consultas a la BD (29/12/25)
-GET {{api}}/data/getporcentages/cocina/d3/7200/720 
-Content-Type: application/json
-Authorization: Bearer {{token}}
 
-### /data/getPorcentageUsageByChannel/:channelUuid/:timeRange/:lastRegister
+### /data/
 GET {{api}}/data/getLastPorcentageUsageByChannel/{{datalogger_quilmes}}/{{channel_compresor1_quilmes}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 ### /data/getDataloggerLastData/:dataloggerUuid
 GET {{api}}/data/getDataloggerLastData/{{datalogger_quilmes}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### '/data/allregisters/:channeluuid' 
+# required filter queries: 'start' and 'end'. Example: ?start='2025-12-01'&end='2025-12-31'
+
+GET {{api}}/data/allregisters/{{channel_compresor1_quilmes}}?start='2025-12-11'&end='2025-12-12'
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### '/data/alldaily/:channeluuid' 
+# required filter queries: 'start' and 'end'. Example: ?start='2025-12-01'&end='2025-12-31'
+
+GET {{api}}/data/alldaily/{{channel_compresor1_quilmes}}?start='2025-06-01'&end='2025-12-31'
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### '/data/alldaily/:channeluuid' 
+# required filter queries: 'start' and 'end'. Example: ?start='2025-12-01'&end='2025-12-31'
+
+GET {{api}}/data/allweekly/{{channel_compresor1_quilmes}}?start='2025-06-01'&end='2025-12-31'
 Content-Type: application/json
 Authorization: Bearer {{token}}
