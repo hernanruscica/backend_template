@@ -44,7 +44,7 @@ export const getDataByTimePeriod = async (req, res, next) => {
         //OK console.log(` requiryng channelUuid: ${channelUuid} start: ${start} and end: ${end}`) 
         const  responseData = await DataService.getAllAverageUsageByChannel(channelUuid, start, end);
 
-        if (responseData.length > 0){
+        if (responseData?.length > 0){
             return res.status(200).json({success: true, message: 'Data Founded', count: responseData.length, data: responseData});
         }else{
             return res.status(400).json({success: false, message: 'Data Not Found', count: 0, data : [] });

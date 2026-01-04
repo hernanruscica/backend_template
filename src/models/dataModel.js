@@ -57,20 +57,26 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
       const fullColumnName = `${columnPrefix}_tiempo`;
       const cleanColumnName = poolData.escapeId(fullColumnName);
       const queryString = `
-        SELECT 
-            -- Sumas (lo que ya tenías)
-            COALESCE(SUM(tiempo_total), 0) as total_time_period, 
-            COALESCE(SUM(${cleanColumnName}), 0) as total_time_on,
+          SELECT 
+            -- 1. Porcentaje promedio (Correcto como lo tenías)
+            TRUNCATE(AVG(
+                (${cleanColumnName} / NULLIF(tiempo_total, 0)) * 100
+            ), 2) as average_usage_percentage,
+
+            -- 2. CORREGIDO: Tiempo total encendido estimado (en HORAS)
+            -- Hacemos (Horas Totales * Promedio) y AL FINAL truncamos a 2 decimales
+            TRUNCATE(
+              (TIMESTAMPDIFF(SECOND, MIN(fecha), MAX(fecha)) / 3600.0) * AVG(${cleanColumnName} / NULLIF(tiempo_total, 0)), 
+              0
+            ) as total_time_on_hours,
+
+            -- 3. Totales informativos
             COUNT(*) as registers_quantity,
-
-            -- FECHA DE INICIO (El registro más antiguo)
             MIN(fecha) as first_date,
+            MAX(fecha) as last_date
 
-            -- (Opcional) FECHA FINAL (El registro más nuevo)            
-            -- MAX(fecha) as last_date
-            MAX(CONVERT_TZ(fecha, '+00:00', '${process.env.UTC_LOCAL}')) AS last_date
-
-        FROM ${cleanTableName};`;
+          FROM ${cleanTableName};
+      `;
                           
       const [rows] = await poolData.query(queryString);    
       return rows;

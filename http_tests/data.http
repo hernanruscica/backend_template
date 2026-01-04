@@ -57,7 +57,7 @@ GET {{api}}/data/alldaily/{{channel_compresor1_quilmes}}?start='2025-06-01'&end=
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
-### '/data/alldaily/:channeluuid' 
+### '/data/allweekly/:channeluuid' 
 # required filter queries: 'start' and 'end'. Example: ?start='2025-12-01'&end='2025-12-31'
 
 GET {{api}}/data/allweekly/{{channel_compresor1_quilmes}}?start='2025-06-01'&end='2025-12-31'
