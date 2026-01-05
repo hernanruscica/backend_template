@@ -24,7 +24,7 @@ app.use(cors({ origin: process.env.BASE_URL_FRONT }));
 
 // Limit requests from same API
 const limiter = rateLimit({
-  max: 100, // 100 requests from the same IP in 15 minutes
+  max: 200, // 100 requests from the same IP in 15 minutes
   windowMs: 15 * 60 * 1000,
   message: 'Too many requests from this IP, please try again in 15 minutes!',
 });

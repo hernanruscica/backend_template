@@ -51,11 +51,11 @@ const DataService = {
             
             const data = responseData[0];
            // console.log('data on getTotalOnTimeFromChannel', data);
-
+            /*
             data.porcentageUsagePeriod = data.total_time_period !== 0 
                 ? (( data.total_time_on * 100 ) / data.total_time_period).toFixed(2)
                 : 0; 
-            
+            */
             return data;
             
         } catch (error) {

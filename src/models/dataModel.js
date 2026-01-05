@@ -21,7 +21,10 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
         COALESCE(SUM(${columnPrefix}_tiempo), 0) as total_time_on,
         COUNT(*) as registers_quantity,
 
-        -- 2. Datos del último registro (Subconsultas con LIMIT 1)
+        -- 2 fecha del ultimo registro
+        CONVERT_TZ(MAX(fecha), '+00:00', '${process.env.UTC_LOCAL}') as last_record_date,
+
+        -- 3. Datos del último registro (Subconsultas con LIMIT 1)
         (SELECT tiempo_total 
          FROM ${tableName} 
          WHERE fecha >= ${dateThresholdSql} 
@@ -73,7 +76,8 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
             -- 3. Totales informativos
             COUNT(*) as registers_quantity,
             MIN(fecha) as first_date,
-            MAX(fecha) as last_date
+            -- MAX(fecha) as last_date
+            CONVERT_TZ(MAX(fecha), '+00:00', '${process.env.UTC_LOCAL}')  as last_date
 
           FROM ${cleanTableName};
       `;
