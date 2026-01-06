@@ -146,8 +146,7 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
 
         const query = `
           SELECT 
-              CONVERT_TZ(fecha, '+00:00', '${process.env.UTC_LOCAL}') AS fecha,\
-              identificador,            
+              CONVERT_TZ(fecha, '+00:00', '${process.env.UTC_LOCAL}') AS fecha, texto,            
               ROUND(
                   (
                       SUM(${columnNameClean}) OVER w / 
@@ -174,8 +173,7 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
         return rows;
     },
 
-    findDailyAverageByPeriod : async (tableName, columnPrefix, startInterval, stopInterval) => {  
-      
+   findDailyAverageByPeriod : async (tableName, columnPrefix, startInterval, stopInterval) => {        
      
       let start = startInterval.replace(/['"]/g, ''); 
       let stop = stopInterval.replace(/['"]/g, '');
@@ -187,23 +185,36 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
         SELECT 
             -- Eje X del gráfico: El día (formato YYYY-MM-DD)
             DATE(fecha) as dia,
-            identificador,
+            -- Eliminamos 'identificador' como pediste
 
             -- Eje Y del gráfico: El porcentaje de uso real del día
-            -- Formula: (Total Segundos Encendido / Total Segundos Disponibles) * 100
             ROUND(
                 TRUNCATE((SUM(${columnPrefix}_tiempo) / NULLIF(SUM(tiempo_total), 0)) * 100, 2), 
                 2
-            ) AS porcentaje_uso
+            ) AS porcentaje_uso,
+
+            -- NUEVO: Contador de Fallos de Conexión
+            -- Sumamos 1 si el texto coincide con los errores de trama o router
+            COALESCE(SUM(CASE 
+                WHEN texto IN ('Fallo en transmision de trama', 'Fallo de conexion con el router') THEN 1 
+                ELSE 0 
+            END), 0) as conection_failures,
+
+            -- NUEVO: Contador de Fallos de Energía
+            -- Sumamos 1 si el texto es 'Iniciando equipo'
+            COALESCE(SUM(CASE 
+                WHEN texto = 'Iniciando equipo' THEN 1 
+                ELSE 0 
+            END), 0) as energy_failures
 
         FROM ${tableName}
         
         WHERE (fecha >= '${start}') AND (fecha <= '${stop}')
         
-        -- Agrupamos por día para tener 1 punto por día
-        GROUP BY DATE(fecha), identificador
+        -- Agrupamos por día (ya no agrupamos por identificador)
+        GROUP BY DATE(fecha)
         
-        -- Ordenamos cronológicamente para que el gráfico se dibuje de izq a der
+        -- Ordenamos cronológicamente
         ORDER BY dia ASC;
       `;
 
