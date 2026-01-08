@@ -20,9 +20,13 @@ INSERT INTO business_users (uuid, user_uuid, business_uuid, role_uuid, created_b
 INSERT INTO business_users (uuid, user_uuid, business_uuid, role_uuid, created_by) VALUES
 ('0c1d2e3f-4a5b-6c7d-8e9f-0a1b2c3d4e5f', '7a8b9c0d-1e2f-3a4b-5c6d-7e8f90a1b2c3', '4e329ada-8511-4bfa-8d44-57a0ca4fd80c', 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d');
 
--- Link demo4 (Technician) to MDV Sensores as a Technician
+-- Link demo4 (Technician) to HCO as a Technician
 INSERT INTO business_users (uuid, user_uuid, business_uuid, role_uuid, created_by) VALUES
-('1d2e3f4a-5b6c-7d8e-9f0a-1b2c3d4e5f6a', '8b9c0d1e-2f3a-4b5c-6d7e-8f90a1b2c3d4', '4e329ada-8511-4bfa-8d44-57a0ca4fd80c', 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d');
+('1c2e1f4a-5b6c-7d8e-9f0a-1b2c3d4e5f6a', '8b9c0d1e-2f3a-4b5c-6d7e-8f90a1b2c3d4', '8c763e1e-2955-4f1e-8b88-91e4ae8cb24a', 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d');
+
+-- Link demo4Admin HCO (Administrator) to HCO as a Administrator
+INSERT INTO business_users (uuid, user_uuid, business_uuid, role_uuid, created_by) VALUES
+('1d2e3f4a-5b6c-7d8e-9f0a-1b2c3d4e5f6a', '8b9c0d1x-2f3a-4b5c-6d7e-8f90a1b2c3d4', '8c763e1e-2955-4f1e-8b88-91e4ae8cb24a', 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d');
 
 -- Link Fernando Olivares (Administrator) to Quilmes as an Administrator
 INSERT INTO business_users (uuid, user_uuid, business_uuid, role_uuid, created_by) VALUES
@@ -31,3 +35,15 @@ INSERT INTO business_users (uuid, user_uuid, business_uuid, role_uuid, created_b
 -- Link Juan Carlos Perez Fernandez (Owner) to MDV Sensores as an Owner
 INSERT INTO business_users (uuid, user_uuid, business_uuid, role_uuid, created_by) VALUES
 ('3f4a5b6c-7d8e-9f0a-1b2c-3d4e5f6a7b8c', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '4e329ada-8511-4bfa-8d44-57a0ca4fd80c', 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d');
+
+-- Link Demo admin1 (Administrator) to Quilmes as an Administrator
+INSERT INTO business_users (uuid, user_uuid, business_uuid, role_uuid, created_by) VALUES
+('2e3f4a5b-6c7s-8e9f-0a1b-2c3d4e5f6a7b', '1e2f3a4b-5c6d-7e8f-90a1-b2c3d4e5f607', '5f430bdb-9622-4c1b-9e55-68b1db5ae91d', 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d');
+
+-- Link DosUbicaciones AdminMDV (Administrator) to Quilmes as an Administrator
+INSERT INTO business_users (uuid, user_uuid, business_uuid, role_uuid, created_by) VALUES
+('2e3f4a5b-6c7t-8e9f-0a1b-2c3d4e5f6a7b', '2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e', '5f430bdb-9622-4c1b-9e55-68b1db5ae91d', 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d');
+
+-- Link DosUbicaciones AdminMDV (Administrator) to COcina MDV as an Administrator
+INSERT INTO business_users (uuid, user_uuid, business_uuid, role_uuid, created_by) VALUES
+('2e3f4a5b-6c7i-8e9f-0a1b-2c3d4e5f6a7b', '2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e', '4e329ada-8511-4bfa-8d44-57a0ca4fd80c', 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d');

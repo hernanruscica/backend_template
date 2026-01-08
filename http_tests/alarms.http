@@ -38,7 +38,7 @@ Content-Type: application/json
 }
 
 ###
-# Get all alarms as Owner
+# Get all alarms as Owner 
 GET {{api}}/businesses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c/alarms
 Authorization: Bearer {{ownerLogin.response.body.token}}
 
