@@ -2,12 +2,12 @@ import BaseModel from './BaseModel.js';
 import { pool } from '../config/database.js';
 
 const allowedFields = [
+  'business_uuid',  
+  'event_uuid',
   'name',
   'description',
-  'alarms_logs_id',
   'user_id',
-  'is_active',
-  'business_uuid',  
+  'is_active'  
 ];
 
 const SolutionModelBase = BaseModel('solutions', allowedFields);

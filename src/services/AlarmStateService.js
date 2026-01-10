@@ -3,13 +3,14 @@ import UserAlarmModel from '../models/UserAlarmModel.js';
 import { AlarmLogModel } from '../models/AlarmLogModel.js';
 import { sendMessage } from '../utils/mail.js';
 import generateTokenAlarmLog from '../utils/generateTokenAlarmLog.js';
+import crypto from 'crypto';
 
 class AlarmStateService {
   
   /**
    * Maneja el cambio de estado de una alarma (Disparo o Reseteo)
    */
-  async handleStateChange(alarm, isTriggered, variables) {
+  async handleStateChange(alarm, isTriggered, variables, message) {
     // 1. Verificar si el estado realmente cambió para evitar escrituras innecesarias
     // (Asumiendo que alarm.disparada es 1 o 0)
     const newState = isTriggered ? 1 : 0;
@@ -32,15 +33,16 @@ class AlarmStateService {
     
     if (!usersAffected || usersAffected.length === 0) return;
 
+    const eventUuidForAllUsersAffects = crypto.randomUUID()
     // 4. Procesar notificaciones para cada usuario (Parallel processing)
     const notificationPromises = usersAffected.map(user => 
-      this.notifyUser(user, alarm, newState, variables)
+      this.notifyUser(user, alarm, newState, variables, message, eventUuidForAllUsersAffects)
     );
 
     await Promise.allSettled(notificationPromises);
   }
 
-  async notifyUser(user, alarm, isTriggered, variables) {
+  async notifyUser(user, alarm, isTriggered, variables, message = `Alarma ${isTriggered == 1 ? 'disparada' : 'reseteada'}`, eventUuid) {
     try {     
 
         // B. Generar Token y Enviar Email
@@ -55,14 +57,15 @@ class AlarmStateService {
      
        // A. Crear Log
       const alarmLog = {
-        alarm_uuid: alarm.uuid, // O uuid según tu esquema
+        business_uuid: alarm.business_uuid, 
+        alarm_uuid: alarm.uuid, 
+        event_uuid: eventUuid,
         user_uuid: user.user_uuid,
         channel_uuid: alarm.channel_uuid,
-        business_uuid: alarm.business_uuid, // Agregado por consistencia con tus tablas nuevas
         triggered: isTriggered,
         triggered_at: new Date(),
         email_sent: emailSent,
-        message:`mensaje de alarma ${(isTriggered) ? 'disparada.' : 'reseteada.'}`        
+        message: message || null        
       };
      
       const logId = await AlarmLogModel.create(alarmLog);

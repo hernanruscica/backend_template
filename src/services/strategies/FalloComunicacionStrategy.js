@@ -28,7 +28,7 @@ class FalloComunicacionStrategy {
     try {
       const isTriggered = evaluate(condition_logic, variables);
       console.log(`${name} >>> condicion logica : ${condition_logic} - variables: ${JSON.stringify(variables)} - disparada: ${isTriggered}`);
-      return { triggered: isTriggered, variables };
+      return { triggered: isTriggered, variables, message: `Valor registrado: ${variables.value} minutos desde el último dato.` };
     } catch (error) {
       console.error(`Error evaluando fallo comunicación:`, error);
       return { triggered: false, variables, error };

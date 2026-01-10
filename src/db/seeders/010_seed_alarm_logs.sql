@@ -1,0 +1,41 @@
+-- --------------------------------------------------------------------------------
+-- SEED ALARM_LOGS
+-- 5 Eventos distintos, 4 notificaciones (logs) por evento = 20 Registros
+-- --------------------------------------------------------------------------------
+
+INSERT INTO alarm_logs (uuid, business_uuid, event_uuid, alarm_uuid, user_uuid, channel_uuid, triggered_at, seen_at, triggered, email_sent, message, created_at, created_by) VALUES
+
+-- EVENTO 1: Fallo transmisión en Guemes (Hace 2 días)
+-- Alarma: a1b2c3d4-0005... | Canal: 5051...
+('log-001-user-juan', '6a541cec-0733-4dfc-8f66-79c2ec6bf02e', 'evt-guemes-fail-001', 'a1b2c3d4-0005-4a7b-8c9d-0e1f2a3b4c5d', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '50515253-5455-5657-5859-606162636465', NOW() - INTERVAL 2 DAY, NOW() - INTERVAL 1 DAY, true, true, 'Fallo transmision datos Guemes detectado > 5 min', NOW() - INTERVAL 2 DAY, NULL),
+('log-001-user-norb', '6a541cec-0733-4dfc-8f66-79c2ec6bf02e', 'evt-guemes-fail-001', 'a1b2c3d4-0005-4a7b-8c9d-0e1f2a3b4c5d', '4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f90', '50515253-5455-5657-5859-606162636465', NOW() - INTERVAL 2 DAY, NULL, true, true, 'Fallo transmision datos Guemes detectado > 5 min', NOW() - INTERVAL 2 DAY, NULL),
+('log-001-user-marc', '6a541cec-0733-4dfc-8f66-79c2ec6bf02e', 'evt-guemes-fail-001', 'a1b2c3d4-0005-4a7b-8c9d-0e1f2a3b4c5d', '3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f', '50515253-5455-5657-5859-606162636465', NOW() - INTERVAL 2 DAY, NULL, true, true, 'Fallo transmision datos Guemes detectado > 5 min', NOW() - INTERVAL 2 DAY, NULL),
+('log-001-user-demo', '6a541cec-0733-4dfc-8f66-79c2ec6bf02e', 'evt-guemes-fail-001', 'a1b2c3d4-0005-4a7b-8c9d-0e1f2a3b4c5d', '1e2f3a4b-5c6d-7e8f-90a1-b2c3d4e5f607', '50515253-5455-5657-5859-606162636465', NOW() - INTERVAL 2 DAY, NOW() - INTERVAL 2 DAY, true, true, 'Fallo transmision datos Guemes detectado > 5 min', NOW() - INTERVAL 2 DAY, NULL),
+
+-- EVENTO 2: Cafetera MDV (Hace 1 día) - Valor bajo
+-- Alarma: b1c2d3e4-0001... | Canal: 2524...
+('log-002-user-juan', '4e329ada-8511-4bfa-8d44-57a0ca4fd80c', 'evt-mdv-cafe-002', 'b1c2d3e4-0001-4a7b-8c9d-0e1f2a3b4c5d', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '25242322-2120-1918-1716-151413121110', NOW() - INTERVAL 1 DAY, NULL, true, true, 'Cafetera valor bajo: 8% (Limit: 10%)', NOW() - INTERVAL 1 DAY, NULL),
+('log-002-user-norb', '4e329ada-8511-4bfa-8d44-57a0ca4fd80c', 'evt-mdv-cafe-002', 'b1c2d3e4-0001-4a7b-8c9d-0e1f2a3b4c5d', '4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f90', '25242322-2120-1918-1716-151413121110', NOW() - INTERVAL 1 DAY, NULL, true, true, 'Cafetera valor bajo: 8% (Limit: 10%)', NOW() - INTERVAL 1 DAY, NULL),
+('log-002-user-marc', '4e329ada-8511-4bfa-8d44-57a0ca4fd80c', 'evt-mdv-cafe-002', 'b1c2d3e4-0001-4a7b-8c9d-0e1f2a3b4c5d', '3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f', '25242322-2120-1918-1716-151413121110', NOW() - INTERVAL 1 DAY, NULL, true, true, 'Cafetera valor bajo: 8% (Limit: 10%)', NOW() - INTERVAL 1 DAY, NULL),
+('log-002-user-demo', '4e329ada-8511-4bfa-8d44-57a0ca4fd80c', 'evt-mdv-cafe-002', 'b1c2d3e4-0001-4a7b-8c9d-0e1f2a3b4c5d', '1e2f3a4b-5c6d-7e8f-90a1-b2c3d4e5f607', '25242322-2120-1918-1716-151413121110', NOW() - INTERVAL 1 DAY, NULL, true, true, 'Cafetera valor bajo: 8% (Limit: 10%)', NOW() - INTERVAL 1 DAY, NULL),
+
+-- EVENTO 3: Compresor 1 Quilmes (Hace 5 horas) - Alta presión
+-- Alarma: c1d2e3f4-0001... | Canal: a0a1...
+('log-003-user-juan', '5f430bdb-9622-4c1b-9e55-68b1db5ae91d', 'evt-quilmes-comp-003', 'c1d2e3f4-0001-4a7b-8c9d-0e1f2a3b4c5d', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', 'a0a1a2a3-a4a5-a6a7-a8a9-b0b1b2b3b4b5', NOW() - INTERVAL 5 HOUR, NOW() - INTERVAL 1 HOUR, true, true, 'Compresor 1 alto consumo: 48A (Limit: 45A)', NOW() - INTERVAL 5 HOUR, NULL),
+('log-003-user-norb', '5f430bdb-9622-4c1b-9e55-68b1db5ae91d', 'evt-quilmes-comp-003', 'c1d2e3f4-0001-4a7b-8c9d-0e1f2a3b4c5d', '4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f90', 'a0a1a2a3-a4a5-a6a7-a8a9-b0b1b2b3b4b5', NOW() - INTERVAL 5 HOUR, NULL, true, true, 'Compresor 1 alto consumo: 48A (Limit: 45A)', NOW() - INTERVAL 5 HOUR, NULL),
+('log-003-user-marc', '5f430bdb-9622-4c1b-9e55-68b1db5ae91d', 'evt-quilmes-comp-003', 'c1d2e3f4-0001-4a7b-8c9d-0e1f2a3b4c5d', '3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f', 'a0a1a2a3-a4a5-a6a7-a8a9-b0b1b2b3b4b5', NOW() - INTERVAL 5 HOUR, NULL, true, true, 'Compresor 1 alto consumo: 48A (Limit: 45A)', NOW() - INTERVAL 5 HOUR, NULL),
+('log-003-user-demo', '5f430bdb-9622-4c1b-9e55-68b1db5ae91d', 'evt-quilmes-comp-003', 'c1d2e3f4-0001-4a7b-8c9d-0e1f2a3b4c5d', '1e2f3a4b-5c6d-7e8f-90a1-b2c3d4e5f607', 'a0a1a2a3-a4a5-a6a7-a8a9-b0b1b2b3b4b5', NOW() - INTERVAL 5 HOUR, NULL, true, true, 'Compresor 1 alto consumo: 48A (Limit: 45A)', NOW() - INTERVAL 5 HOUR, NULL),
+
+-- EVENTO 4: Bomba 1 HCO (Hace 30 minutos) - Presión crítica
+-- Alarma: d1e2f3a4-0001... | Canal: e0e1...
+('log-004-user-juan', '8c763e1e-2955-4f1e-8b88-91e4ae8cb24a', 'evt-hco-pump-004', 'd1e2f3a4-0001-4a7b-8c9d-0e1f2a3b4c5d', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', 'e0e1e2e3-e4e5-e6e7-e8e9-f0f1f2f3f4f5', NOW() - INTERVAL 30 MINUTE, NULL, true, false, 'Bomba 1 HCO sobrecarga: 60A (Limit: 58A)', NOW() - INTERVAL 30 MINUTE, NULL),
+('log-004-user-norb', '8c763e1e-2955-4f1e-8b88-91e4ae8cb24a', 'evt-hco-pump-004', 'd1e2f3a4-0001-4a7b-8c9d-0e1f2a3b4c5d', '4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f90', 'e0e1e2e3-e4e5-e6e7-e8e9-f0f1f2f3f4f5', NOW() - INTERVAL 30 MINUTE, NULL, true, false, 'Bomba 1 HCO sobrecarga: 60A (Limit: 58A)', NOW() - INTERVAL 30 MINUTE, NULL),
+('log-004-user-marc', '8c763e1e-2955-4f1e-8b88-91e4ae8cb24a', 'evt-hco-pump-004', 'd1e2f3a4-0001-4a7b-8c9d-0e1f2a3b4c5d', '3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f', 'e0e1e2e3-e4e5-e6e7-e8e9-f0f1f2f3f4f5', NOW() - INTERVAL 30 MINUTE, NULL, true, false, 'Bomba 1 HCO sobrecarga: 60A (Limit: 58A)', NOW() - INTERVAL 30 MINUTE, NULL),
+('log-004-user-demo', '8c763e1e-2955-4f1e-8b88-91e4ae8cb24a', 'evt-hco-pump-004', 'd1e2f3a4-0001-4a7b-8c9d-0e1f2a3b4c5d', '1e2f3a4b-5c6d-7e8f-90a1-b2c3d4e5f607', 'e0e1e2e3-e4e5-e6e7-e8e9-f0f1f2f3f4f5', NOW() - INTERVAL 30 MINUTE, NULL, true, false, 'Bomba 1 HCO sobrecarga: 60A (Limit: 58A)', NOW() - INTERVAL 30 MINUTE, NULL),
+
+-- EVENTO 5: Temp Gabinetes Guemes (Hace 10 minutos)
+-- Alarma: a1b2c3d4-0001... | Canal: 1011...
+('log-005-user-juan', '6a541cec-0733-4dfc-8f66-79c2ec6bf02e', 'evt-guemes-temp-005', 'a1b2c3d4-0001-4a7b-8c9d-0e1f2a3b4c5d', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', '10111213-1415-1617-1819-202122232425', NOW() - INTERVAL 10 MINUTE, NULL, true, true, 'Temperatura Gabinetes Alta: 42C (Limit: 40C)', NOW() - INTERVAL 10 MINUTE, NULL),
+('log-005-user-norb', '6a541cec-0733-4dfc-8f66-79c2ec6bf02e', 'evt-guemes-temp-005', 'a1b2c3d4-0001-4a7b-8c9d-0e1f2a3b4c5d', '4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f90', '10111213-1415-1617-1819-202122232425', NOW() - INTERVAL 10 MINUTE, NULL, true, true, 'Temperatura Gabinetes Alta: 42C (Limit: 40C)', NOW() - INTERVAL 10 MINUTE, NULL),
+('log-005-user-marc', '6a541cec-0733-4dfc-8f66-79c2ec6bf02e', 'evt-guemes-temp-005', 'a1b2c3d4-0001-4a7b-8c9d-0e1f2a3b4c5d', '3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f', '10111213-1415-1617-1819-202122232425', NOW() - INTERVAL 10 MINUTE, NULL, true, true, 'Temperatura Gabinetes Alta: 42C (Limit: 40C)', NOW() - INTERVAL 10 MINUTE, NULL),
+('log-005-user-demo', '6a541cec-0733-4dfc-8f66-79c2ec6bf02e', 'evt-guemes-temp-005', 'a1b2c3d4-0001-4a7b-8c9d-0e1f2a3b4c5d', '1e2f3a4b-5c6d-7e8f-90a1-b2c3d4e5f607', '10111213-1415-1617-1819-202122232425', NOW() - INTERVAL 10 MINUTE, NULL, true, true, 'Temperatura Gabinetes Alta: 42C (Limit: 40C)', NOW() - INTERVAL 10 MINUTE, NULL);

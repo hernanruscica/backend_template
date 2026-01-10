@@ -41,7 +41,7 @@ class AlarmMonitorService {
 
       // C. Delegar cambio de estado (Trigger/Reset)
       // AlarmStateService se encarga de ver si cambió de 0 a 1 o de 1 a 0
-      await AlarmStateService.handleStateChange(alarm, result.triggered, result.variables);
+      await AlarmStateService.handleStateChange(alarm, result.triggered, result.variables, result.message);
 
     } catch (error) {
       console.error(`❌ Error procesando alarma ${alarm.uuid}:`, error);

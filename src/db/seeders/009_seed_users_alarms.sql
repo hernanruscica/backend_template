@@ -60,4 +60,20 @@ INSERT INTO users_alarms (uuid, alarm_uuid, user_uuid, business_uuid, created_by
 
 
 -- ALARMAS PARA DEMO ADMIN1 ('1e2f3a4b-5c6d-7e8f-90a1-b2c3d4e5f607', 'Demo', 'admin1', 'mdvmonitoreoremoto@gmail.com'
+-- --------------------------------------------------------------------------------
+-- PASO PREVIO: Suscribir a un 4to usuario (Demo Admin1) para llegar a los 4 notificados
+-- Usuario: '1e2f3a4b-5c6d-7e8f-90a1-b2c3d4e5f607' (Demo admin1)
+-- --------------------------------------------------------------------------------
+INSERT INTO users_alarms (uuid, alarm_uuid, user_uuid, business_uuid, created_by) VALUES
+-- Suscribir a Fallo Guemes
+('ua-extra-0001-0000-0000-000000000001', 'a1b2c3d4-0005-4a7b-8c9d-0e1f2a3b4c5d', '1e2f3a4b-5c6d-7e8f-90a1-b2c3d4e5f607', '6a541cec-0733-4dfc-8f66-79c2ec6bf02e', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d'),
+-- Suscribir a Cafetera MDV
+('ua-extra-0002-0000-0000-000000000001', 'b1c2d3e4-0001-4a7b-8c9d-0e1f2a3b4c5d', '1e2f3a4b-5c6d-7e8f-90a1-b2c3d4e5f607', '4e329ada-8511-4bfa-8d44-57a0ca4fd80c', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d'),
+-- Suscribir a Compresor 1 Quilmes
+('ua-extra-0003-0000-0000-000000000001', 'c1d2e3f4-0001-4a7b-8c9d-0e1f2a3b4c5d', '1e2f3a4b-5c6d-7e8f-90a1-b2c3d4e5f607', '5f430bdb-9622-4c1b-9e55-68b1db5ae91d', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d'),
+-- Suscribir a Bomba 1 HCO
+('ua-extra-0004-0000-0000-000000000001', 'd1e2f3a4-0001-4a7b-8c9d-0e1f2a3b4c5d', '1e2f3a4b-5c6d-7e8f-90a1-b2c3d4e5f607', '8c763e1e-2955-4f1e-8b88-91e4ae8cb24a', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d'),
+-- Suscribir a Temp Gabinetes Guemes
+('ua-extra-0005-0000-0000-000000000001', 'a1b2c3d4-0001-4a7b-8c9d-0e1f2a3b4c5d', '1e2f3a4b-5c6d-7e8f-90a1-b2c3d4e5f607', '6a541cec-0733-4dfc-8f66-79c2ec6bf02e', 'e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d');
+
 
