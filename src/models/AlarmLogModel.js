@@ -10,6 +10,7 @@ const allowedFields = [
   'triggered_at',
   'seen_at',
   'triggered',
+  'triggered_value',
   'email_sent',
   'message',
 ];
@@ -22,6 +23,7 @@ const findLogsByAlarmUuid = async (businessUuid, alarmUuid) => {
             al.message,
             al.email_sent,
             MAX(al.triggered_at) as triggered_at,
+            al.triggered_value,
             
             -- 1. Array de usuarios (Agregación directa)
             JSON_ARRAYAGG(

@@ -58,14 +58,14 @@ Authorization: Bearer {{token}}
 ### '/data/allregisters/:channeluuid' 
 # required filter queries: 'start' and 'end'. Example: ?start='2025-12-01'&end='2025-12-31'
 
-GET {{api}}/data/allregisters/businesses/{{own_business_uuid}}/{{channel_compresor1_quilmes}}?start='2025-12-11'&end='2025-12-12'
+GET {{api}}/data/allregisters/businesses/{{own_business_uuid}}/{{channel_compresor1_quilmes}}?start='2026-01-09T12:10:00'&end='2026-01-10T12:14:00'
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 ### '/data/alldaily/:channeluuid' 
 # required filter queries: 'start' and 'end'. Example: ?start='2025-12-01'&end='2025-12-31'
 
-GET {{api}}/data/alldaily/{{channel_compresor1_quilmes}}?start='2025-06-01'&end='2025-12-31'
+GET {{api}}/data/alldaily/businesses/{{own_business_uuid}}/{{channel_compresor1_quilmes}}?start='2025-06-01'&end='2025-12-31'
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

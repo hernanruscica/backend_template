@@ -6,6 +6,7 @@ CREATE TABLE alarm_logs (
     user_uuid CHAR(36) NOT NULL,
     channel_uuid CHAR(36) NOT NULL,
     triggered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    triggered_value FLOAT NULL DEFAULT NULL,
     seen_at TIMESTAMP NULL DEFAULT NULL,
     triggered BOOLEAN DEFAULT true, -- Mantenido a pedido tuyo
     email_sent BOOLEAN DEFAULT false,

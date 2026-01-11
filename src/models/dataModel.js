@@ -125,47 +125,55 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
       return rows;
     },
 
-    //Enero 2026: devuelve todos los datos por 5 minutos promediados para atras (rollingAverage) por averagingPeriod, dentro de un intervalo de tiempo
-    findRollingAverageData: async (tableName, columnPrefix, averagingPeriod, startInterval, stopInterval) => {
+  findRollingAverageData: async (tableName, columnPrefix, averagingPeriod, startInterval, stopInterval) => {
     
         const averagingPeriodSeconds = averagingPeriod * 60;       
         const tableNameClean = poolData.escapeId(tableName);
         const columnNameClean = poolData.escapeId(`${columnPrefix}_tiempo`);
 
-        // --- CORRECCIÓN DE FECHAS ---
-        // Quitamos comillas si vienen en el string (ej: "'2025-12-01'" -> "2025-12-01")
+        // --- LIMPIEZA DE FECHAS ---
         let start = startInterval.replace(/['"]/g, ''); 
         let stop = stopInterval.replace(/['"]/g, '');
 
-        // Aseguramos que el FINAL incluya todo el día hasta el último segundo
-        // Si el string es corto (ej: "2025-12-31"), le pegamos la hora final.
         if (stop.length <= 10) {
             stop = `${stop} 23:59:59`;
         }
-        // -----------------------------
 
         const query = `
-          SELECT 
-              CONVERT_TZ(fecha, '+00:00', '${process.env.UTC_LOCAL}') AS fecha, texto,            
-              ROUND(
-                  (
-                      SUM(${columnNameClean}) OVER w / 
-                      NULLIF(SUM(tiempo_total) OVER w, 0)
-                  ) * 100, 
-                  2
-              ) AS porcentaje_promedio                
-          FROM ${tableNameClean}
-          
-          -- CORRECCIÓN DE LÓGICA SQL:
-          -- Usamos >= para incluir el inicio exacto
-          -- Usamos <= para incluir el final exacto (ahora que stop tiene hora 23:59:59)
-          WHERE (fecha >= '${start}') AND (fecha <= '${stop}')
-          
-          WINDOW w AS (
-              PARTITION BY identificador 
-              ORDER BY UNIX_TIMESTAMP(fecha) 
-              RANGE BETWEEN ${averagingPeriodSeconds} PRECEDING AND CURRENT ROW
+          WITH RollingData AS (
+              SELECT 
+                  fecha, -- Mantenemos fecha original para filtrar luego
+                  CONVERT_TZ(fecha, '+00:00', '${process.env.UTC_LOCAL}') AS fecha_local, 
+                  texto, 
+                  energia,            
+                  ROUND(
+                      (
+                          SUM(${columnNameClean}) OVER w / 
+                          NULLIF(SUM(tiempo_total) OVER w, 0)
+                      ) * 100, 
+                      2
+                  ) AS porcentaje_promedio                
+              FROM ${tableNameClean}
+              
+              -- 1. AQUI EL TRUCO: Buscamos datos hacia atrás (Buffer)
+              -- Restamos el tiempo del promedio al inicio para que el primer dato real tenga historia
+              WHERE (fecha >= DATE_SUB('${start}', INTERVAL ${averagingPeriodSeconds} SECOND)) 
+                AND (fecha <= '${stop}')
+              
+              WINDOW w AS (
+                  PARTITION BY identificador 
+                  ORDER BY UNIX_TIMESTAMP(fecha) 
+                  RANGE BETWEEN ${averagingPeriodSeconds} PRECEDING AND CURRENT ROW
+              )
           )
+          -- 2. FILTRO FINAL: Ahora sí cortamos por la fecha que pidió el usuario
+          SELECT 
+             fecha_local as fecha, 
+             texto, 
+             energia, 
+             porcentaje_promedio
+          FROM RollingData
+          WHERE fecha >= '${start}' 
           ORDER BY fecha DESC;
         `;
         
@@ -177,44 +185,49 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
      
       let start = startInterval.replace(/['"]/g, ''); 
       let stop = stopInterval.replace(/['"]/g, '');
+      
+      // Aseguramos que el 'stop' cubra hasta el último segundo del día
       if (stop.length <= 10) {
           stop = `${stop} 23:59:59`;
       }
 
       const query = `
         SELECT 
-            -- Eje X del gráfico: El día (formato YYYY-MM-DD)
-            DATE(fecha) as dia,
-            -- Eliminamos 'identificador' como pediste
+            -- Eje X: El día
+            DATE(fecha) as dia,            
 
-            -- Eje Y del gráfico: El porcentaje de uso real del día
+            -- Eje Y: Porcentaje de uso
+            -- SUM(xx_tiempo) / SUM(tiempo_total) calcula el promedio ponderado correcto de todo el día
             ROUND(
                 TRUNCATE((SUM(${columnPrefix}_tiempo) / NULLIF(SUM(tiempo_total), 0)) * 100, 2), 
                 2
             ) AS porcentaje_uso,
 
-            -- NUEVO: Contador de Fallos de Conexión
-            -- Sumamos 1 si el texto coincide con los errores de trama o router
+            -- Contador de Fallos de Conexión (Mantenemos igual)
             COALESCE(SUM(CASE 
                 WHEN texto IN ('Fallo en transmision de trama', 'Fallo de conexion con el router') THEN 1 
                 ELSE 0 
             END), 0) as conection_failures,
 
-            -- NUEVO: Contador de Fallos de Energía
-            -- Sumamos 1 si el texto es 'Iniciando equipo'
+            -- Contador de Fallos de Energía (Mantenemos igual)
             COALESCE(SUM(CASE 
                 WHEN texto = 'Iniciando equipo' THEN 1 
                 ELSE 0 
-            END), 0) as energy_failures
+            END), 0) as energy_failures,
+
+            -- NUEVO: Contador de Fallos de Fase
+            -- Sumamos 1 cada vez que la columna 'energia' sea igual a 1
+            COALESCE(SUM(CASE 
+                WHEN energia = 1 THEN 1 
+                ELSE 0 
+            END), 0) as phase_failures
 
         FROM ${tableName}
         
         WHERE (fecha >= '${start}') AND (fecha <= '${stop}')
         
-        -- Agrupamos por día (ya no agrupamos por identificador)
         GROUP BY DATE(fecha)
         
-        -- Ordenamos cronológicamente
         ORDER BY dia ASC;
       `;
 
@@ -222,7 +235,7 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
           const [rows] = await poolData.query(query);
           return rows;
       } catch (error) {
-          console.error("Error obteniendo datos mensuales:", error);
+          console.error("Error obteniendo datos diarios por periodo:", error);
           throw error;
       }
     },
