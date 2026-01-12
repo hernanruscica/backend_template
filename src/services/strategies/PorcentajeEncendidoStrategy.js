@@ -26,7 +26,7 @@ class PorcentajeEncendidoStrategy {
    */
     try {
       const isTriggered = evaluate(condition_logic, variables);
-      console.log(`${name} >>> condicion logica : ${condition_logic} - variables: ${JSON.stringify(variables)} - disparada: ${isTriggered}`);      
+      console.log(`${name} >>> condicion logica : ${condition_logic} - valor ${variables.value} -  variables: ${JSON.stringify(variables)} - disparada: ${isTriggered}`);      
       return { triggered: isTriggered, variables, message: `Valor registrado: ${variables.value}.` };
     } catch (error) {
       console.error(`Error evaluando condición ${condition_logic}:`, error);

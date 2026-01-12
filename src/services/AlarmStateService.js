@@ -44,15 +44,17 @@ class AlarmStateService {
 
   async notifyUser(user, alarm, isTriggered, variables, message = `Alarma ${isTriggered == 1 ? 'disparada' : 'reseteada'}`, eventUuid) {
     try {     
-
+      let emailSent = 0;
+      if (isTriggered == 1) {
         // B. Generar Token y Enviar Email
-      const token = generateTokenAlarmLog(user.uuid, alarm.uuid, alarm.canal_id, alarm.datalogger_id);
-      
-      // Aquí podrías ajustar el subject/body según si esTriggered es 1 (ALERTA) o 0 (NORMALIZADO)
-      const emailSent = await sendMessage(alarm, variables, user.email, token, isTriggered);
+        const token = generateTokenAlarmLog(user.uuid, alarm.uuid, alarm.canal_id, alarm.datalogger_id);
+        
+        // Aquí podrías ajustar el subject/body según si esTriggered es 1 (ALERTA) o 0 (NORMALIZADO)
+        emailSent = await sendMessage(alarm, variables, user.email, token, isTriggered);
 
-      if(emailSent){
-        console.log(`📧 Notificación enviada a ${user.email} (Triggered: ${isTriggered})`);
+        if(emailSent){
+          console.log(`📧 Notificación enviada a ${user.email} (Triggered: ${isTriggered})`);
+        }
       }
      
        // A. Crear Log
@@ -63,12 +65,18 @@ class AlarmStateService {
         user_uuid: user.user_uuid,
         channel_uuid: alarm.channel_uuid,
         triggered: isTriggered,
-        triggered_at: new Date(),
-        email_sent: emailSent,
+        // Multiplicamos la hora del .env por 3.600.000 (milisegundos en una hora)
+        triggered_at: new Date(Date.now() ),
+        triggered_value: variables.value,
+        datalogger_uuid: alarm.datalogger_uuid,
+        email_sent: emailSent,        
         message: message || null        
       };
      
       const logId = await AlarmLogModel.create(alarmLog);
+
+      console.log('logId de la creacion de alarmlogModel', logId);
+      
       
       if (!logId) throw new Error("No se pudo crear el log");   
 

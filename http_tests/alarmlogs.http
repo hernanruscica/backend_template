@@ -53,9 +53,14 @@ GET {{api}}/businesses/{{business_uuid}}/alarmlogs/log-002-user-demo
 Authorization: Bearer {{token}}
 
 
-###
+### alarm de fallo datos en guemes: a1b2c3d4-0005-4a7b-8c9d-0e1f2a3b4c5d
 # Get alarmlogs by Alarm UUID FUNCIONA, perfecto para la vista del historial de disparos
-GET {{api}}/businesses/{{business_uuid}}/alarmlogs/alarm/b1c2d3e4-0001-4a7b-8c9d-0e1f2a3b4c5d
+GET {{api}}/businesses/{{business_uuid}}/alarmlogs/alarm/a1b2c3d4-0005-4a7b-8c9d-0e1f2a3b4c5d
+Authorization: Bearer {{token}}
+
+###
+#  get /businesses/{{business_uuid}}/alarmlogs/datalogger/{{datalogger_uuid}}
+GET {{api}}/businesses/{{business_uuid}}/alarmlogs/datalogger/g2c3d4e5-f6a7-8901-2345-67890abcdef1
 Authorization: Bearer {{token}}
 
 

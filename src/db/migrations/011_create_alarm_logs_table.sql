@@ -5,6 +5,7 @@ CREATE TABLE alarm_logs (
     alarm_uuid CHAR(36) NOT NULL,
     user_uuid CHAR(36) NOT NULL,
     channel_uuid CHAR(36) NOT NULL,
+    datalogger_uuid CHAR(36) NULL, -- Campo Nuevo: Identificador del datalogger
     triggered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     triggered_value FLOAT NULL DEFAULT NULL,
     seen_at TIMESTAMP NULL DEFAULT NULL,

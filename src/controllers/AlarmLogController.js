@@ -30,8 +30,21 @@ const getByAlarmUuid = catchAsync(async (req, res, next) => {
   });
 });
 
+const getByDataloggerUuid = catchAsync(async (req, res, next) => { 
+  
+  const { businessUuid, dataloggerUuid } = req.params;
+  const items = await AlarmLogService.getByDataloggerUuid(businessUuid, dataloggerUuid);
+
+  res.status(200).json({
+    success: true,
+    count: items.length,
+    items,
+  });
+});
+
 export const AlarmLogController = {
   ...genericController,
   create,
-  getByAlarmUuid
+  getByAlarmUuid,
+  getByDataloggerUuid
 };

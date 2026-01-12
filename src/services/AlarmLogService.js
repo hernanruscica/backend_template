@@ -26,9 +26,21 @@ const getByAlarmUuid = async (businessUuid, alarmUuid) => {
   return alarmLogsByBusiness;
 }
 
+const getByDataloggerUuid = async (businessUuid, dataloggerUuid) => {
+  //console.log('businessUuid on alarmlogservice:', businessUuid);
+  //console.log('dataloggerUuid on alarmlogservice:', dataloggerUuid);
+  
+  const alarmLogsByDatalogger = await AlarmLogModel.findLogsByDataloggerUuid(businessUuid, dataloggerUuid);
+  //console.log('alarmLogsByBusiness on AlarmLogsService', alarmLogsByBusiness);
+  
+  
+  return alarmLogsByDatalogger;
+}
+
 export const AlarmLogService = {
   ...genericService,
   create,
   getAll,
-  getByAlarmUuid
+  getByAlarmUuid,
+  getByDataloggerUuid
 };
