@@ -64,9 +64,8 @@ class AlarmStateService {
         event_uuid: eventUuid,
         user_uuid: user.user_uuid,
         channel_uuid: alarm.channel_uuid,
-        triggered: isTriggered,
-        // Multiplicamos la hora del .env por 3.600.000 (milisegundos en una hora)
-        triggered_at: new Date(Date.now() ),
+        triggered: isTriggered,        
+        triggered_at: new Date(),
         triggered_value: variables.value,
         datalogger_uuid: alarm.datalogger_uuid,
         email_sent: emailSent,        
