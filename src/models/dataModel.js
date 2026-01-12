@@ -5,133 +5,131 @@ dotenv.config();
 
 const dataModel = {
     findAllByTimePeriod: async (table, timePeriod) => {
+        // Nota: NOW() en MySQL depende de la config del server. 
+        // Si tu server está en UTC, esto está bien para filtrar "hace X minutos", 
+        // pero para visualizar, el front recibirá UTC.
         const queryString = `SELECT * FROM ${table} WHERE fecha >= DATE_SUB(NOW(), INTERVAL ${timePeriod} MINUTE) AND fecha <= NOW() ORDER BY fecha DESC;`;
         const [rows] = await poolData.query(queryString);    
         return rows;
-      },
-findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
+    },
 
-  // Definimos el filtro de fecha una vez para reutilizarlo
-  const dateThresholdSql = `DATE_SUB(CONVERT_TZ(NOW(), '+00:00', '-03:00'), INTERVAL ${timePeriod} MINUTE)`;
+    findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
+        // 1. CRITERIO UNIFICADO: Usar variable de entorno o default
+        const timeZoneOffset = process.env.UTC_LOCAL || '-03:00';
 
-  const queryString = `
-      SELECT 
-        -- 1. Agregaciones (Sumas del periodo completo)
-        COALESCE(SUM(tiempo_total), 0) as total_time_period, 
-        COALESCE(SUM(${columnPrefix}_tiempo), 0) as total_time_on,
-        COUNT(*) as registers_quantity,
+        // 2. CORREGIDO: Usar timeZoneOffset en lugar de hardcode '-03:00'
+        const dateThresholdSql = `DATE_SUB(CONVERT_TZ(NOW(), '+00:00', '${timeZoneOffset}'), INTERVAL ${timePeriod} MINUTE)`;
 
-        -- 2 fecha del ultimo registro
-        CONVERT_TZ(MAX(fecha), '+00:00', '${process.env.UTC_LOCAL}') as last_record_date,
+        const queryString = `
+            SELECT 
+                -- 1. Agregaciones
+                COALESCE(SUM(tiempo_total), 0) as total_time_period, 
+                COALESCE(SUM(${columnPrefix}_tiempo), 0) as total_time_on,
+                COUNT(*) as registers_quantity,
 
-        -- 3. Datos del último registro (Subconsultas con LIMIT 1)
-        (SELECT tiempo_total 
-         FROM ${tableName} 
-         WHERE fecha >= ${dateThresholdSql} 
-         ORDER BY fecha DESC LIMIT 1
-        ) as last_record_total,
+                -- 2. Fecha del ultimo registro (CONVERTIDA)
+                CONVERT_TZ(MAX(fecha), '+00:00', '${timeZoneOffset}') as last_record_date,
 
-        (SELECT ${columnPrefix}_tiempo 
-         FROM ${tableName} 
-         WHERE fecha >= ${dateThresholdSql} 
-         ORDER BY fecha DESC LIMIT 1
-        ) as last_record_on
+                -- 3. Datos del último registro
+                (SELECT tiempo_total 
+                 FROM ${tableName} 
+                 WHERE fecha >= ${dateThresholdSql} 
+                 ORDER BY fecha DESC LIMIT 1
+                ) as last_record_total,
 
-      FROM ${tableName}
-      WHERE fecha >= ${dateThresholdSql}
-  `;
-  
-  const [rows] = await poolData.query(queryString);      
-  
-  // Si no hubo registros en el periodo, last_record_total vendrá como NULL.
-  // Puedes manejarlo aquí si prefieres ceros:
-  const result = rows[0];
-  
-  /* Opcional: convertir nulls a 0 si prefieres
-  if (result.last_record_total === null) result.last_record_total = 0;
-  if (result.last_record_on === null) result.last_record_on = 0;
-  */
-  
-  return result; 
-},
+                (SELECT ${columnPrefix}_tiempo 
+                 FROM ${tableName} 
+                 WHERE fecha >= ${dateThresholdSql} 
+                 ORDER BY fecha DESC LIMIT 1
+                ) as last_record_on
+
+            FROM ${tableName}
+            WHERE fecha >= ${dateThresholdSql}
+        `;
+        
+        const [rows] = await poolData.query(queryString);      
+        return rows[0]; 
+    },
     
     findTotalOnTimeFromChannel: async (tableName, columnPrefix) => {
-      const cleanTableName = poolData.escapeId(tableName);
-      const fullColumnName = `${columnPrefix}_tiempo`;
-      const cleanColumnName = poolData.escapeId(fullColumnName);
-      const queryString = `
-          SELECT 
-            -- 1. Porcentaje promedio (Correcto como lo tenías)
-            TRUNCATE(AVG(
-                (${cleanColumnName} / NULLIF(tiempo_total, 0)) * 100
-            ), 2) as average_usage_percentage,
+        const timeZoneOffset = process.env.UTC_LOCAL || '-03:00';
+        const cleanTableName = poolData.escapeId(tableName);
+        const fullColumnName = `${columnPrefix}_tiempo`;
+        const cleanColumnName = poolData.escapeId(fullColumnName);
 
-            -- 2. CORREGIDO: Tiempo total encendido estimado (en HORAS)
-            -- Hacemos (Horas Totales * Promedio) y AL FINAL truncamos a 2 decimales
-            TRUNCATE(
-              (TIMESTAMPDIFF(SECOND, MIN(fecha), MAX(fecha)) / 3600.0) * AVG(${cleanColumnName} / NULLIF(tiempo_total, 0)), 
-              0
-            ) as total_time_on_hours,
+        const queryString = `
+            SELECT 
+                TRUNCATE(AVG(
+                    (${cleanColumnName} / NULLIF(tiempo_total, 0)) * 100
+                ), 2) as average_usage_percentage,
 
-            -- 3. Totales informativos
-            COUNT(*) as registers_quantity,
-            MIN(fecha) as first_date,
-            -- MAX(fecha) as last_date
-            CONVERT_TZ(MAX(fecha), '+00:00', '${process.env.UTC_LOCAL}')  as last_date
+                TRUNCATE(
+                    (TIMESTAMPDIFF(SECOND, MIN(fecha), MAX(fecha)) / 3600.0) * AVG(${cleanColumnName} / NULLIF(tiempo_total, 0)), 
+                    0
+                ) as total_time_on_hours,
 
-          FROM ${cleanTableName};
-      `;
-                          
-      const [rows] = await poolData.query(queryString);    
-      return rows;
+                COUNT(*) as registers_quantity,
+                
+                -- 3. CORREGIDO: Convertir también la fecha inicial
+                CONVERT_TZ(MIN(fecha), '+00:00', '${timeZoneOffset}') as first_date,
+                CONVERT_TZ(MAX(fecha), '+00:00', '${timeZoneOffset}') as last_date
+
+            FROM ${cleanTableName};
+        `;
+                            
+        const [rows] = await poolData.query(queryString);    
+        return rows;
     },
+
     findDataFromAnalogChannel: async (tableName, columnPrefix, timePeriod) => {
-      const queryString = `SELECT 
-                          CONVERT_TZ(fecha, '+00:00', '${process.env.UTC_LOCAL}') AS fecha,\
-                          tiempo_total,\ 
-                          ${columnPrefix}_tiempo as tiempo_encendido,\ 
-	                        ${columnPrefix}_cantidad as cantidad,\
-                          ${columnPrefix}_estado as estado,\
-                          ${columnPrefix}_min as min,\
-                          ${columnPrefix}_inst as inst,\
-                          ${columnPrefix}_max as max,\
-                          servicio, energia, texto\
-                          FROM ${tableName}
-                          WHERE fecha >= DATE_SUB(NOW(), INTERVAL ${timePeriod} MINUTE) AND fecha <= NOW()
-                          ORDER BY fecha ASC;`;
-      const [rows] = await poolData.query(queryString);    
-      return rows;
-    },
-    findChannelBasicData: async (channelUuid) => {
-      const queryString = `
-        SELECT dataloggers.table_name, channels.column_name, channels.name, channels.averaging_period
-        FROM channels
-        INNER JOIN dataloggers ON channels.datalogger_id = dataloggers.uuid
-        WHERE channels.uuid = ?;
-      `;
-      
-      // Se pasa channelUuid como un elemento en un array para que el driver lo escape automáticamente
-      const [rows] = await pool.query(queryString, [channelUuid]);    
-      return rows;
-    },
-    
-    //funciona, pero podria probar de traer tambien el texto y energia para ver los cortes de luz.
-    findDataloggerLastConection: async (tableName) => {
-      const tableClean = poolData.escapeId(tableName);
-      //const queryString = `SELECT CONVERT_TZ(fecha, '+00:00', '${process.env.UTC_LOCAL}') AS data FROM ${tableClean} ORDER BY fecha DESC LIMIT 1;`
-      const queryString = `SELECT fecha AS data FROM ${tableClean} ORDER BY fecha DESC LIMIT 1;`
-     
-      const [rows] = await poolData.query(queryString);
-      return rows;
+        const timeZoneOffset = process.env.UTC_LOCAL || '-03:00';
+        
+        const queryString = `SELECT 
+                            CONVERT_TZ(fecha, '+00:00', '${timeZoneOffset}') AS fecha,
+                            tiempo_total,
+                            ${columnPrefix}_tiempo as tiempo_encendido,
+                            ${columnPrefix}_cantidad as cantidad,
+                            ${columnPrefix}_estado as estado,
+                            ${columnPrefix}_min as min,
+                            ${columnPrefix}_inst as inst,
+                            ${columnPrefix}_max as max,
+                            servicio, energia, texto
+                            FROM ${tableName}
+                            WHERE fecha >= DATE_SUB(NOW(), INTERVAL ${timePeriod} MINUTE) AND fecha <= NOW()
+                            ORDER BY fecha ASC;`;
+        const [rows] = await poolData.query(queryString);    
+        return rows;
     },
 
-  findRollingAverageData: async (tableName, columnPrefix, averagingPeriod, startInterval, stopInterval) => {
+    findChannelBasicData: async (channelUuid) => {
+        // Sin cambios (no maneja fechas)
+        const queryString = `
+            SELECT dataloggers.table_name, channels.column_name, channels.name, channels.averaging_period
+            FROM channels
+            INNER JOIN dataloggers ON channels.datalogger_id = dataloggers.uuid
+            WHERE channels.uuid = ?;
+        `;
+        const [rows] = await pool.query(queryString, [channelUuid]);    
+        return rows;
+    },
     
+    findDataloggerLastConection: async (tableName) => {
+        const timeZoneOffset = process.env.UTC_LOCAL || '-03:00';
+        const tableClean = poolData.escapeId(tableName);
+        
+        // CORREGIDO: Ahora sí convierte la fecha, igual que en AlarmLogModel
+        const queryString = `SELECT CONVERT_TZ(fecha, '+00:00', '${timeZoneOffset}') AS data FROM ${tableClean} ORDER BY fecha DESC LIMIT 1;`
+        
+        const [rows] = await poolData.query(queryString);
+        return rows;
+    },
+
+    findRollingAverageData: async (tableName, columnPrefix, averagingPeriod, startInterval, stopInterval) => {
+        const timeZoneOffset = process.env.UTC_LOCAL || '-03:00';
         const averagingPeriodSeconds = averagingPeriod * 60;       
         const tableNameClean = poolData.escapeId(tableName);
         const columnNameClean = poolData.escapeId(`${columnPrefix}_tiempo`);
 
-        // --- LIMPIEZA DE FECHAS ---
         let start = startInterval.replace(/['"]/g, ''); 
         let stop = stopInterval.replace(/['"]/g, '');
 
@@ -142,8 +140,8 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
         const query = `
           WITH RollingData AS (
               SELECT 
-                  fecha, -- Mantenemos fecha original para filtrar luego
-                  CONVERT_TZ(fecha, '+00:00', '${process.env.UTC_LOCAL}') AS fecha_local, 
+                  fecha, 
+                  CONVERT_TZ(fecha, '+00:00', '${timeZoneOffset}') AS fecha_local, 
                   texto, 
                   energia,            
                   ROUND(
@@ -155,8 +153,6 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
                   ) AS porcentaje_promedio                
               FROM ${tableNameClean}
               
-              -- 1. AQUI EL TRUCO: Buscamos datos hacia atrás (Buffer)
-              -- Restamos el tiempo del promedio al inicio para que el primer dato real tenga historia
               WHERE (fecha >= DATE_SUB('${start}', INTERVAL ${averagingPeriodSeconds} SECOND)) 
                 AND (fecha <= '${stop}')
               
@@ -166,7 +162,6 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
                   RANGE BETWEEN ${averagingPeriodSeconds} PRECEDING AND CURRENT ROW
               )
           )
-          -- 2. FILTRO FINAL: Ahora sí cortamos por la fecha que pidió el usuario
           SELECT 
              fecha_local as fecha, 
              texto, 
@@ -182,41 +177,35 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
     },
 
    findDailyAverageByPeriod : async (tableName, columnPrefix, startInterval, stopInterval) => {        
-     
+      const timeZoneOffset = process.env.UTC_LOCAL || '-03:00';
       let start = startInterval.replace(/['"]/g, ''); 
       let stop = stopInterval.replace(/['"]/g, '');
       
-      // Aseguramos que el 'stop' cubra hasta el último segundo del día
       if (stop.length <= 10) {
           stop = `${stop} 23:59:59`;
       }
 
       const query = `
         SELECT 
-            -- Eje X: El día
-            DATE(fecha) as dia,            
+            -- CORRECCIÓN CRÍTICA: Convertir a local ANTES de agrupar por fecha
+            -- Si no hacemos esto, el GROUP BY agrupa por día UTC (cortando a las 21hs de Arg)
+            DATE(CONVERT_TZ(fecha, '+00:00', '${timeZoneOffset}')) as dia,            
 
-            -- Eje Y: Porcentaje de uso
-            -- SUM(xx_tiempo) / SUM(tiempo_total) calcula el promedio ponderado correcto de todo el día
             ROUND(
                 TRUNCATE((SUM(${columnPrefix}_tiempo) / NULLIF(SUM(tiempo_total), 0)) * 100, 2), 
                 2
             ) AS porcentaje_uso,
 
-            -- Contador de Fallos de Conexión (Mantenemos igual)
             COALESCE(SUM(CASE 
                 WHEN texto IN ('Fallo en transmision de trama', 'Fallo de conexion con el router') THEN 1 
                 ELSE 0 
             END), 0) as conection_failures,
 
-            -- Contador de Fallos de Energía (Mantenemos igual)
             COALESCE(SUM(CASE 
                 WHEN texto = 'Iniciando equipo' THEN 1 
                 ELSE 0 
             END), 0) as energy_failures,
 
-            -- NUEVO: Contador de Fallos de Fase
-            -- Sumamos 1 cada vez que la columna 'energia' sea igual a 1
             COALESCE(SUM(CASE 
                 WHEN energia = 1 THEN 1 
                 ELSE 0 
@@ -224,9 +213,11 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
 
         FROM ${tableName}
         
+        -- Nota: Mantenemos el filtro en UTC si 'start' y 'stop' vienen ajustados al string crudo de la BD
         WHERE (fecha >= '${start}') AND (fecha <= '${stop}')
         
-        GROUP BY DATE(fecha)
+        -- Agrupamos por la fecha CONVERTIDA
+        GROUP BY DATE(CONVERT_TZ(fecha, '+00:00', '${timeZoneOffset}'))
         
         ORDER BY dia ASC;
       `;
@@ -240,9 +231,8 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
       }
     },
 
-    //ByMonth or MonthS
     findtWeeklyAverageByPeriod : async (tableName, columnPrefix, startInterval, stopInterval) => {
-  
+      const timeZoneOffset = process.env.UTC_LOCAL || '-03:00';
       let start = startInterval.replace(/['"]/g, ''); 
       let stop = stopInterval.replace(/['"]/g, '');
       if (stop.length <= 10) {
@@ -252,8 +242,10 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
       const query = `
             WITH datos_diarios AS (
                 SELECT 
-                    DATE(fecha) as dia,
-                    YEARWEEK(fecha, 1) as numero_semana,
+                    -- CORRECCIÓN CRÍTICA: Convertir antes de extraer Día y Semana
+                    DATE(CONVERT_TZ(fecha, '+00:00', '${timeZoneOffset}')) as dia,
+                    YEARWEEK(CONVERT_TZ(fecha, '+00:00', '${timeZoneOffset}'), 1) as numero_semana,
+                    
                     SUM(${columnPrefix}_tiempo) as suma_tiempo_on,
                     SUM(tiempo_total) as suma_tiempo_total,
                     (SUM(${columnPrefix}_tiempo) / NULLIF(SUM(tiempo_total), 0)) * 100 as porcentaje_dia
@@ -261,7 +253,8 @@ findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
                 
                 WHERE (fecha >= '${start}') AND (fecha <= '${stop}')
 
-                GROUP BY DATE(fecha), identificador
+                -- Agrupar por fecha CONVERTIDA
+                GROUP BY DATE(CONVERT_TZ(fecha, '+00:00', '${timeZoneOffset}')), identificador
             )
 
             SELECT 
