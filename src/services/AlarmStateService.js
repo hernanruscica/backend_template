@@ -58,7 +58,7 @@ class AlarmStateService {
       }
 
       // Obtenemos el offset (ej: -3) de tu variable de entorno o usamos -3 por defecto
-      const timezoneOffset = parseInt(process.env.TIME_ZONE_OFFSET) || -3;
+      const timezoneOffset = parseInt(process.env.TIME_ZONE_OFFSET);
      
        // A. Crear Log
       const alarmLog = {
