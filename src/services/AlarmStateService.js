@@ -56,6 +56,9 @@ class AlarmStateService {
           console.log(`📧 Notificación enviada a ${user.email} (Triggered: ${isTriggered})`);
         }
       }
+
+      // Obtenemos el offset (ej: -3) de tu variable de entorno o usamos -3 por defecto
+      const timezoneOffset = parseInt(process.env.TIME_ZONE_OFFSET) || -3;
      
        // A. Crear Log
       const alarmLog = {
@@ -64,8 +67,8 @@ class AlarmStateService {
         event_uuid: eventUuid,
         user_uuid: user.user_uuid,
         channel_uuid: alarm.channel_uuid,
-        triggered: isTriggered,        
-        triggered_at: new Date(),
+        triggered: isTriggered,                
+        triggered_at: new Date(Date.now() + (timezoneOffset * 60 * 60 * 1000)),
         triggered_value: variables.value,
         datalogger_uuid: alarm.datalogger_uuid,
         email_sent: emailSent,        
