@@ -30,8 +30,9 @@ const DataService = {
             if (!dataloggerData)
                 return null;            
             const lastConection = await dataModel.findDataloggerLastConection(dataloggerData.table_name)
+            //console.log('lastConection', lastConection);
 
-            return lastConection[0]
+            return lastConection.length > 0 ? lastConection[0] : null;
             
             //const lastConectionDate = await dataModel.findDataloggerLastConection(dataloggerUuid);
         } catch (error) {

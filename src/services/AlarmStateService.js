@@ -44,19 +44,7 @@ class AlarmStateService {
 
   async notifyUser(user, alarm, isTriggered, variables, message = `Alarma ${isTriggered == 1 ? 'disparada' : 'reseteada'}`, eventUuid) {
     try {     
-      let emailSent = 0;
-      if (isTriggered == 1) {
-        // B. Generar Token y Enviar Email
-        const token = generateTokenAlarmLog(user.uuid, alarm.uuid, alarm.canal_id, alarm.datalogger_id);
-        
-        // Aquí podrías ajustar el subject/body según si esTriggered es 1 (ALERTA) o 0 (NORMALIZADO)
-        emailSent = await sendMessage(alarm, variables, user.email, token, isTriggered);
-
-        if(emailSent){
-          console.log(`📧 Notificación enviada a ${user.email} (Triggered: ${isTriggered})`);
-        }
-      }
-
+      
       // Obtenemos el offset (ej: -3) de tu variable de entorno o usamos -3 por defecto
       const timezoneOffset = parseInt(process.env.TIME_ZONE_OFFSET);
      
@@ -71,14 +59,29 @@ class AlarmStateService {
         triggered_at: new Date(Date.now() + (timezoneOffset * 60 * 60 * 1000)),
         triggered_value: variables.value,
         datalogger_uuid: alarm.datalogger_uuid,
-        email_sent: emailSent,        
+        email_sent: 1, //si alguno no lo envia, lo actualizaremos despues    
         message: message || null        
       };
      
       const logId = await AlarmLogModel.create(alarmLog);
-
       console.log('logId de la creacion de alarmlogModel', logId);
-      
+
+      let emailSent = 0;
+      if (logId && isTriggered == 1) {
+        // B. Generar Token y Enviar Email
+        const token = generateTokenAlarmLog(logId?.uuid, user.user_uuid, alarm.uuid, alarm.channel_uuid, alarm.datalogger_uuid);
+        
+        // Aquí podrías ajustar el subject/body según si esTriggered es 1 (ALERTA) o 0 (NORMALIZADO)
+        emailSent = await sendMessage(alarm, variables, user.email, token, isTriggered);
+
+        if(emailSent){
+          console.log(`📧 Notificación enviada a ${user.email} (Triggered: ${isTriggered})`);
+        }else{
+          console.log(`❌ Falló el envío de notificación a ${user.email} (Triggered: ${isTriggered})`);
+          //uso  async update(uuid, fields, updatedBy) {para actualizar el log
+          await AlarmLogModel.update(logId, {email_sent: 0}, null);
+      }
+    }
       
       if (!logId) throw new Error("No se pudo crear el log");   
 

@@ -43,7 +43,7 @@ const DataloggerDataReceiveService = {
         //create promise array of queries for the last conection date for all dataloggers.
         const promisesLastConection = activeDataloggers.map(async (dl) => {
             const responseData = await DataService.getDataloggerLastConection(dl.uuid);
-            dl.lastConection = responseData.data;
+            dl.lastConection = responseData !== null ? responseData.data : null;
             return dl;
         })
         const dataloggersWithLastConectionInfo = await Promise.all(promisesLastConection);    
