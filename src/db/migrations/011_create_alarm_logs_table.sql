@@ -13,9 +13,9 @@ CREATE TABLE alarm_logs (
     email_sent BOOLEAN DEFAULT false,
     message VARCHAR(255),    
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_by CHAR(36),
-    -- Nota: Eliminé updated_at/by por ser redundantes en un log, 
-    -- pero puedes volver a agregarlos si tu lógica de backend lo requiere.
+    created_by CHAR(36),    
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by CHAR(36)
     
     FOREIGN KEY (alarm_uuid) REFERENCES alarms(uuid) ON DELETE CASCADE,
     FOREIGN KEY (user_uuid) REFERENCES users(uuid) ON DELETE CASCADE,

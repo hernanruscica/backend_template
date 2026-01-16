@@ -64,12 +64,17 @@ class AlarmStateService {
       };
      
       const logId = await AlarmLogModel.create(alarmLog);
-      console.log('logId de la creacion de alarmlogModel', logId);
+      //console.log('logId de la creacion de alarmlogModel', logId);
 
       let emailSent = 0;
       if (logId && isTriggered == 1) {
         // B. Generar Token y Enviar Email
-        const token = generateTokenAlarmLog(logId?.uuid, user.user_uuid, alarm.uuid, alarm.channel_uuid, alarm.datalogger_uuid);
+        const token = generateTokenAlarmLog(logId?.uuid, 
+                                            user.user_uuid, 
+                                            alarm.uuid, 
+                                            alarm.channel_uuid, 
+                                            alarm.datalogger_uuid,
+                                            alarm.business_uuid);
         
         // Aquí podrías ajustar el subject/body según si esTriggered es 1 (ALERTA) o 0 (NORMALIZADO)
         emailSent = await sendMessage(alarm, variables, user.email, token, isTriggered);

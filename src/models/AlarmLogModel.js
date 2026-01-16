@@ -13,7 +13,7 @@ const allowedFields = [
   'triggered',
   'triggered_value',
   'email_sent',
-  'message',
+  'message'
 ];
 
 const findLogsByAlarmUuid = async (businessUuid, alarmUuid) => {

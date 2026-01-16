@@ -66,12 +66,12 @@ Authorization: Bearer {{token}}
 
 ###
 # Update a AlarmLog
-PUT {{api}}/businesses/{{business_uuid}}/alarmlogs/81625590-d9fa-457e-b6fb-1194c45aa37d
+PUT {{api}}/businesses/{{business_uuid}}/alarmlogs/log-002-user-demo
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "message": "Updated AlarmLog description by HTTP test"
+  "seen_at": "2025-12-11T22:15:00.000Z"  
 }
 
 ###
