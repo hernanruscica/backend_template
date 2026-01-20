@@ -74,7 +74,8 @@ class AlarmStateService {
                                             alarm.uuid, 
                                             alarm.channel_uuid, 
                                             alarm.datalogger_uuid,
-                                            alarm.business_uuid);
+                                            alarm.business_uuid,
+                                            alarm.alarm_type);
         
         // Aquí podrías ajustar el subject/body según si esTriggered es 1 (ALERTA) o 0 (NORMALIZADO)
         emailSent = await sendMessage(alarm, variables, user.email, token, isTriggered);

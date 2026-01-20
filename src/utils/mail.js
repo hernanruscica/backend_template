@@ -12,6 +12,25 @@ let transporter = nodemailer.createTransport({
     tls: { rejectUnauthorized: false }
 }); 
 
+// --- HELPER: FORMATEAR FECHA ---
+// Convierte "2026-01-20 16:10:04" a "El martes 20 de Enero de 2026, a las 16:10"
+const formatDate = (dateString) => {
+    const date = dateString ? new Date(dateString) : new Date(); // Si no hay fecha, usa la actual
+    
+    // Arrays para nombres en español
+    const days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+    const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+    const dayName = days[date.getDay()];
+    const dayNum = date.getDate();
+    const monthName = months[date.getMonth()];
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `El ${dayName} ${dayNum} de ${monthName} de ${year}, a las ${hours}:${minutes}`;
+};
+
 // --- HELPER: PLANTILLA HTML MEJORADA ---
 const getTemplate = ({ title, type, bodyContent, actionLink, btnText, footerYear }) => {
     
@@ -19,11 +38,10 @@ const getTemplate = ({ title, type, bodyContent, actionLink, btnText, footerYear
     let headerColor = '#2ecc71'; // Default: Verde
     let iconUrl = '';
 
-    // Iconos (URLs públicas - idealmente alójalas en tu propio servidor)
     const icons = {
-        alert: "https://cdn-icons-png.flaticon.com/512/564/564619.png", // Rojo
-        check: "https://cdn-icons-png.flaticon.com/512/190/190411.png", // Verde
-        security: "https://cdn-icons-png.flaticon.com/512/2919/2919600.png" // Candado/Escudo Azul
+        alert: "https://cdn-icons-png.flaticon.com/512/564/564619.png", 
+        check: "https://cdn-icons-png.flaticon.com/512/190/190411.png", 
+        security: "https://cdn-icons-png.flaticon.com/512/2919/2919600.png" 
     };
 
     switch (type) {
@@ -60,6 +78,7 @@ const getTemplate = ({ title, type, bodyContent, actionLink, btnText, footerYear
             .step-list li { margin-bottom: 10px; padding-left: 5px; }
             .footer { padding: 20px; text-align: center; font-size: 12px; color: #999; background-color: #f4f4f7; border-top: 1px solid #eaeaea; }
             .icon-img { width: 50px; height: 50px; vertical-align: middle; background-color: rgba(255,255,255,0.2); border-radius: 50%; padding: 10px; }
+            .date-label { font-size: 14px; color: #888; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         </style>
     </head>
     <body>
@@ -92,7 +111,7 @@ const getTemplate = ({ title, type, bodyContent, actionLink, btnText, footerYear
     `;
 };
 
-// --- FUNCIÓN DE ALARMAS (Actualizada con el nuevo template) ---
+// --- FUNCIÓN DE ALARMAS MODIFICADA ---
 export const sendMessage = async (alarm, variables, email, token, isTriggered) => {    
     const baseURL = process.env.BASE_URL_FRONT;
     
@@ -100,23 +119,40 @@ export const sendMessage = async (alarm, variables, email, token, isTriggered) =
     const templateType = isTriggered == 1 ? 'alarm_trigger' : 'alarm_reset';
     const titleText = isTriggered == 1 ? 'ALARMA DETECTADA' : 'ALARMA NORMALIZADA';
     
-    // Asunto consistente para agrupación en Gmail
+    // Asunto consistente
     const emailSubject = `[Alerta MDV] Monitor: ${alarm.name}`; 
 
+    // Formatear la fecha (Usamos alarm.updated_at si existe, sino la actual)
+    // Asumo que alarm.updated_at viene en el formato string que mencionaste o timestamp
+    const dateString = formatDate(alarm.updated_at || new Date());
+
     let bodySpecifics = '';
-    // (Aquí va tu lógica switch de alarmas igual que antes, simplificada para el ejemplo)
+    
+    // Agregamos la fecha formateada al inicio de cada mensaje
     switch (alarm.alarm_type) {
         case "porcentage_on":
-             bodySpecifics = `<p>El sensor registró un valor de <strong>${variables.value}</strong> fuera del rango permitido.</p>`;
+             bodySpecifics = `
+                <div class="date-label">${dateString}</div>
+                <p>El sensor registró un valor de <strong>${variables.value}</strong> fuera del rango permitido.</p>
+             `;
             break;
         case "comunication_failure":
-            bodySpecifics = `<p>Pérdida de comunicación detectada hace <strong>${variables.value} minutos</strong>.</p>`;
+            bodySpecifics = `
+                <div class="date-label">${dateString}</div>
+                <p>Se detectaron <strong>${variables.value} minutos</strong> sin envío de datos al servidor.</p>
+            `;
             break;
         case "simultaneous_on":
-            bodySpecifics = `<p>Se detectaron ambos canales encendidos simultáneamente.</p>`;
+            bodySpecifics = `
+                <div class="date-label">${dateString}</div>
+                <p>Se detectaron ambos canales encendidos simultáneamente durante el monitoreo.</p>
+            `;
             break;
         default:
-            bodySpecifics = `<p>Evento registrado en el sensor.</p>`;
+            bodySpecifics = `
+                <div class="date-label">${dateString}</div>
+                <p>Evento registrado en el sensor.</p>
+            `;
     }
 
     const emailHtml = getTemplate({
@@ -135,7 +171,6 @@ export const sendMessage = async (alarm, variables, email, token, isTriggered) =
         html: emailHtml
     };  
 
-    // Enviar (Manejo de errores simplificado)
     try {
         const results = await transporter.sendMail(mailOptions);        
         return results.rejected.length === 0;
@@ -144,12 +179,14 @@ export const sendMessage = async (alarm, variables, email, token, isTriggered) =
     }
 }
 
-// --- FUNCIÓN DE ACTIVACIÓN (NUEVO ESTILO) ---
+// ... (sendActivation y testMessage quedan igual, o puedes importarlas si están en otro lado)
 export const sendActivation = async (token, userData) => {
+    // ... Código anterior de sendActivation
+    // Solo por brevedad no lo repito aquí si ya lo tienes, 
+    // pero si copias y pegas todo el archivo asegúrate de incluirlo.
     const baseURL = process.env.BASE_URL_FRONT;       
     const activationLink = `${baseURL}/panel/ubicaciones/${userData?.businesses_roles?.[0]?.uuid}/usuarios/activar/${token}`;
     
-    // Contenido del cuerpo limpio y organizado
     const bodyContent = `
         <h2 style="color: #333; margin-top: 0;">Hola, ${userData?.first_name} ${userData?.last_name}</h2>
         <p>Bienvenido a <strong>MDV Sensores</strong>. Para comenzar a monitorear sus equipos, necesitamos verificar su identidad y configurar su acceso seguro.</p>
@@ -168,10 +205,10 @@ export const sendActivation = async (token, userData) => {
 
     const emailHtml = getTemplate({
         title: 'ACTIVACIÓN DE CUENTA',
-        type: 'security', // Usamos el modo azul
+        type: 'security',
         bodyContent: bodyContent,
         actionLink: activationLink,
-        btnText: 'ACTIVAR MI CUENTA', // Texto claro en el botón
+        btnText: 'ACTIVAR MI CUENTA',
         footerYear: new Date().getFullYear()
     });
 
@@ -196,7 +233,17 @@ export const sendActivation = async (token, userData) => {
 }
 
 export const testMessage = async (text, email) => {
-    // Puedes mantener esta simple o usar el template también
-    // ... tu código existente ...
-    return true; 
+    let mailOptions = {
+        from: 'info@mdvsrl.com.ar',
+        to: email,
+        subject: `testing hostinger with nodemailer`,
+        html: text
+    };  
+    const results = await transporter.sendMail(mailOptions);        
+    if (results.rejected.length == 0){
+        console.log('Correo enviado correctamente!');
+        return true;
+    }else{
+        return false;
+    }
 }

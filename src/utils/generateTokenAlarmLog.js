@@ -9,7 +9,7 @@ import jwt from 'jsonwebtoken';
  * @param {string} dataloggerId - UUID del datalogger
  * @returns {string} El token firmado
  */
-const generateTokenAlarmLog = (logId, userId, alarmId, channelId, dataloggerId, businessUuid) => {
+const generateTokenAlarmLog = (logId, userId, alarmId, channelId, dataloggerId, businessUuid, alarmType) => {
   
   // Asegúrate de tener esta variable en tu archivo .env
   const secretKey = process.env.JWT_SECRET || 'tu_secreto_super_seguro_para_desarrollo';
@@ -21,7 +21,7 @@ const generateTokenAlarmLog = (logId, userId, alarmId, channelId, dataloggerId, 
     channelId,
     dataloggerId,
     businessUuid,    
-    type: 'ALARM_ACKNOWLEDGE' 
+    type: alarmType
   };
 
   // Firmamos el token.
