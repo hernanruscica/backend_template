@@ -83,7 +83,7 @@ export const UserModel = {
   },
 
   async findAll() {
-    const sql = 'SELECT * FROM users';
+    const sql = 'SELECT * FROM users ORDER BY updated_at DESC';
     const [rows] = await pool.query(sql);
     return Promise.all(rows.map(async row => {
       const { street, city, state, country, zip_code, ...userData } = row;

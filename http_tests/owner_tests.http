@@ -18,8 +18,22 @@ Content-Type: application/json
   "password": "Pass1234"
 }
 
+
+### Login as administrator
+# dni: 28470361 password: Password1234
+# @name login_admin
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{
+  "dni": "28470361",
+  "password": "Pass1234"
+}
+
 ###
 @token = {{login_owner.response.body.token}}
+
+@token_admin = {{login_admin.response.body.token}}
 @own_business_uuid = {{login_owner.response.body.user.businesses_roles[0].uuid}}
 
 ###
@@ -32,8 +46,8 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "firstName": "Technician",
-  "lastName": "User",
+  "firstName": "juan",
+  "lastName": "borrable",
   "email": "technician.user.unique@example.com",
   "password": "Password1234",
   "phone": "2222222",
@@ -117,13 +131,13 @@ Content-Type: image/jpeg
 ###
 
 # Get all users (Owner)
-GET {{api}}/businesses/1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d/users
-Authorization: Bearer {{token}}
+GET {{api}}/businesses/{{own_business_uuid}}/users
+Authorization: Bearer {{token_admin}}
 
 ###
 
 # Get user by ID (Owner) - Use a placeholder UUID, replace with an actual user ID
-GET {{api}}/users/cf87da21-397a-406e-ab18-ef637800fd05
+GET {{api}}/businesses/{{own_business_uuid}}/users/c2e05191-2dee-4212-89f4-9649f5d1fb45
 Authorization: Bearer {{token}}
 
 ###
@@ -161,14 +175,13 @@ Content-Type: image/jpeg
 
 ###
 
-# Delete user (Owner) - Use a placeholder UUID, replace with an actual user ID
-DELETE {{api}}/users/cf87da21-397a-406e-ab18-ef637800fd05
-Authorization: Bearer {{token}}
-
 
 ### Delete user Hard (Owner) -  Use a placeholder UUID, replace with an actual user ID
+# ubicacion uuid quilmes 5f430bdb-9622-4c1b-9e55-68b1db5ae91d
+# ubicacion uuid mdv: 4e329ada-8511-4bfa-8d44-57a0ca4fd80c
+# /api/businesses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c/users/58bf0fd4-b70b-4216-8494-df228d71a243
 
-DELETE {{api}}/users/cf87da21-397a-406e-ab18-ef637800fd05/hard
+DELETE {{api}}/businesses/5f430bdb-9622-4c1b-9e55-68b1db5ae91d/users/0d1e2f3a-4b5c-6d7e-8f90-a1b2c3d4e5f6/hard
 Authorization: Bearer {{token}}
 
 ###

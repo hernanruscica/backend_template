@@ -81,14 +81,17 @@ export const createUserService = async (userData, businessUuid, roleName, adminU
 };
 
 export const getAllUsersService = async (user, businessUuid = null) => {
-  /*
+  
   if (user.isOwner) {
+    //console.log('user on getAllUsersService', user);
+    
     const users = await UserModel.findAll();
     return users;
   }  
-*/
+
   const users = await UserModel.findAllByBusinessUuid(businessUuid);
-  return users;
+  //devuelo los usuarios que No tengan algun role de Owner
+  return users.filter(us => us?.businesses_roles.some(br => br.role !== 'Owner'));
 };
 
 export const getUserByUuidService = async (uuid) => {
