@@ -194,7 +194,8 @@ export const UserModel = {
     const sql = `
       SELECT
         b.*,
-        r.name as role_name
+        r.name as role_name,
+        bu.uuid as business_user_uuid
       FROM business_users bu
       JOIN businesses b ON bu.business_uuid = b.uuid
       JOIN roles r ON bu.role_uuid = r.uuid

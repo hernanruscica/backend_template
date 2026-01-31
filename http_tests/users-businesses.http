@@ -67,7 +67,7 @@ Content-Type: application/json
 
 ###
 # Delete an alarm as Owner
-DELETE {{api}}/alarms/{{business_mdvsrl}}/hard
+DELETE {{api}}/businesses/{{business_mdvsrl}}/user-businesses/b4cf7696-ec8b-4d8b-ab47-f215d329c18e/hard
 Authorization: Bearer {{currentLogin.response.body.token}}
 
 
