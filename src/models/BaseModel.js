@@ -107,6 +107,8 @@ const BaseModel = (tableName, allowedFields = []) => ({
   },
 
   async update(uuid, fields, updatedBy) {
+    console.log('updatedBy', updatedBy);
+    
     const fieldEntries = Object.entries(fields);
     const validFields = fieldEntries.filter(([key]) => this.allowedFields.includes(key));
 

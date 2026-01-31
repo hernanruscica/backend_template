@@ -12,6 +12,7 @@ import alarmRoutes from './routes/alarmRoutes.js';
 import alarmLogsRoutes from './routes/alarmLogsRoutes.js';
 import userAlarmRoutes from './routes/userAlarmRoutes.js'; 
 import dataRoutes from './routes/dataRoutes.js';
+import userBusinessRoutes from './routes/userBusinessRoutes.js';
 import errorHandler from './middlewares/errorHandler.js';
 
 
@@ -42,6 +43,7 @@ app.use('/api', alarmRoutes);
 app.use('/api', alarmLogsRoutes);
 app.use('/api', solutionRoutes);
 app.use('/api', userAlarmRoutes); 
+app.use('/api', userBusinessRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');
