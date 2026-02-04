@@ -17,6 +17,11 @@ let transporter = nodemailer.createTransport({
 const formatDate = (dateString) => {
     const date = dateString ? new Date(dateString) : new Date(); // Si no hay fecha, usa la actual
     
+    // --- NUEVA LÍNEA: Restar 3 horas ---
+    // Esto modifica el objeto 'date' y maneja automáticamente el cambio de día/mes/año si es necesario.
+    date.setHours(date.getHours() - 3);
+    // -----------------------------------
+
     // Arrays para nombres en español
     const days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
     const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
