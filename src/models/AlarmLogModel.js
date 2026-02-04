@@ -33,7 +33,8 @@ const findLogsByAlarmUuid = async (businessUuid, alarmUuid) => {
             MAX(al.datalogger_uuid) as datalogger_uuid,
             
             -- CORRECCIÓN 2: Quitamos el doble MAX. Primero obtenemos la fecha más reciente y luego convertimos.
-            CONVERT_TZ(MAX(al.triggered_at), '+00:00', '${timeZoneOffset}') as triggered_at,             
+            -- CONVERT_TZ(MAX(al.triggered_at), '+00:00', '${timeZoneOffset}') as triggered_at,             
+            MAX(al.triggered_at) as triggered_at,             
             
             a.alarm_type, 
             
@@ -107,7 +108,8 @@ const findLogsByDataloggerUuid = async (businessUuid, dataloggerUuid) => {
             a.alarm_type, 
 
             -- FECHA AJUSTADA
-            CONVERT_TZ(MAX(al.triggered_at), '+00:00', '${timeZoneOffset}') as triggered_at,             
+            -- CONVERT_TZ(MAX(al.triggered_at), '+00:00', '${timeZoneOffset}') as triggered_at,             
+            MAX(al.triggered_at) as triggered_at,             
             
             -- 1. Array de usuarios notificados
             JSON_ARRAYAGG(
@@ -184,7 +186,8 @@ AlarmLogModel.findAllByBusinessUuid = async function(businessUuid) {
         MAX(t.datalogger_uuid) as datalogger_uuid,
         
         -- Corrección de fecha
-        CONVERT_TZ(MAX(t.triggered_at), '+00:00', '${timeZoneOffset}') as triggered_at,       
+        -- CONVERT_TZ(MAX(t.triggered_at), '+00:00', '${timeZoneOffset}') as triggered_at,       
+        MAX(t.triggered_at) as triggered_at,       
         
         -- Objeto Alarma (Agrupamos por a.uuid abajo)
         JSON_OBJECT(
