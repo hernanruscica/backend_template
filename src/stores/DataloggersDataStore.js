@@ -1,8 +1,7 @@
 // services/sensorStore.js
 const globalState = {};
 
-const DataloggersDataStore = {
-    // --- Métodos de Logger (Ya los tenías) ---
+const DataloggersDataStore = {    
     
     setLoggerData: (dataloggerUuid, data) => {
         // data se asume que es un Array de canales: [{ channelUuid: '...', ... }, ...]

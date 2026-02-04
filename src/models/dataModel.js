@@ -15,7 +15,7 @@ const dataModel = {
 
     findLastDataFromChannel: async (tableName, columnPrefix, timePeriod) => {
         // 1. CRITERIO UNIFICADO: Usar variable de entorno o default
-        const timeZoneOffset = process.env.UTC_LOCAL || '-03:00';
+        const timeZoneOffset = process.env.UTC_LOCAL;
 
         // 2. CORREGIDO: Usar timeZoneOffset en lugar de hardcode '-03:00'
         const dateThresholdSql = `DATE_SUB(CONVERT_TZ(NOW(), '+00:00', '${timeZoneOffset}'), INTERVAL ${timePeriod} MINUTE)`;
@@ -28,7 +28,8 @@ const dataModel = {
                 COUNT(*) as registers_quantity,
 
                 -- 2. Fecha del ultimo registro (CONVERTIDA)
-                CONVERT_TZ(MAX(fecha), '+00:00', '${timeZoneOffset}') as last_record_date,
+                -- CONVERT_TZ(MAX(fecha), '+00:00', '${timeZoneOffset}') as last_record_date,
+                MAX(fecha) as last_record_date,
 
                 -- 3. Datos del último registro
                 (SELECT tiempo_total 
@@ -71,8 +72,10 @@ const dataModel = {
                 COUNT(*) as registers_quantity,
                 
                 -- 3. CORREGIDO: Convertir también la fecha inicial
-                CONVERT_TZ(MIN(fecha), '+00:00', '${timeZoneOffset}') as first_date,
-                CONVERT_TZ(MAX(fecha), '+00:00', '${timeZoneOffset}') as last_date
+                 -- CONVERT_TZ(MIN(fecha), '+00:00', '${timeZoneOffset}') as first_date,
+                 -- CONVERT_TZ(MAX(fecha), '+00:00', '${timeZoneOffset}') as last_date,
+                MIN(fecha) as first_date,
+                MAX(fecha) as last_date
 
             FROM ${cleanTableName};
         `;
@@ -141,7 +144,8 @@ const dataModel = {
           WITH RollingData AS (
               SELECT 
                   fecha, 
-                  CONVERT_TZ(fecha, '+00:00', '${timeZoneOffset}') AS fecha_local, 
+                  -- CONVERT_TZ(fecha, '+00:00', '${timeZoneOffset}') AS fecha_local, 
+                  fecha AS fecha_local, 
                   texto, 
                   energia,            
                   ROUND(
