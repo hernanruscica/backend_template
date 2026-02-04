@@ -118,10 +118,10 @@ const dataModel = {
     
     findDataloggerLastConection: async (tableName) => {
         const timeZoneOffset = process.env.UTC_LOCAL || '-03:00';
-        const tableClean = poolData.escapeId(tableName);
+        const tableClean = poolData.escapeId(tableName);       
         
-        // CORREGIDO: Ahora sí convierte la fecha, igual que en AlarmLogModel
-        const queryString = `SELECT CONVERT_TZ(fecha, '+00:00', '${timeZoneOffset}') AS data FROM ${tableClean} ORDER BY fecha DESC LIMIT 1;`
+        //const queryString = `SELECT CONVERT_TZ(fecha, '+00:00', '${timeZoneOffset}') AS data FROM ${tableClean} ORDER BY fecha DESC LIMIT 1;`
+        const queryString = `SELECT fecha AS data FROM ${tableClean} ORDER BY fecha DESC LIMIT 1;`
         
         const [rows] = await poolData.query(queryString);
         return rows;
