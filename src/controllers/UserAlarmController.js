@@ -8,14 +8,15 @@ const UserAlarmController = {
     ...baseUserAlarmController,
 
     create: catchAsync(async (req, res, next) => {
-        const { userUuid, businessUuid } = req.params;
-        if (!userUuid || !businessUuid) {
+        const { businessUuid } = req.params;
+        const { user_uuid } = req.body;
+        if (!user_uuid || !businessUuid) {
             return res.status(400).json({
                 success: false,
-                message: 'userUuid and businessUuid are required in params',
+                message: 'user_uuid and businessUuid are required in params',
             });
         }
-        const item = await UserAlarmService.create({ ...req.body, user_uuid: userUuid }, businessUuid, req.user);
+        const item = await UserAlarmService.create(req.body, businessUuid, req.user);
         res.status(201).json({
             success: true,
             message: `${UserAlarmService.model.tableName.slice(0, -1)} created successfully`,
@@ -53,6 +54,22 @@ const UserAlarmController = {
         res.status(200).json({
             success: true,
             item,
+        });
+    }),
+
+    getUsersByAlarmUuid: catchAsync(async (req, res, next) => {
+        const { alarmUuid, businessUuid } = req.params;
+        if (!alarmUuid || !businessUuid) {
+            return res.status(400).json({
+                success: false,
+                message: 'alarmUuid and businessUuid are required in params',
+            });
+        }
+        const users = await UserAlarmService.getUsersByAlarmUuid(req.user, businessUuid, alarmUuid);
+        res.status(200).json({
+            success: true,
+            count: users.length,
+            users,
         });
     }),
 

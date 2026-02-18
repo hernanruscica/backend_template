@@ -2,7 +2,15 @@
 @business_mdvsrl = 4e329ada-8511-4bfa-8d44-57a0ca4fd80c
 @business_guemes = 2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
 
+@alarm_compresor2_guemes = a1b2c3d4-0003-4a7b-8c9d-0e1f2a3b4c5d
+
+@alarm_cafetera_mdvsrl = b1c2d3e4-0001-4a7b-8c9d-0e1f2a3b4c5d
+
 @user_fernando_quilmes = 9c0d1e2f-3a4b-5c6d-7e8f-90a1b2c3d4e5
+
+@user_juan_carlos_fernandez = e1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d
+
+@user_norberto = 4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f90
 
 ###
 # Owner Login (John Doe)
@@ -37,39 +45,28 @@ Content-Type: application/json
   "password": "1298"
 }
 
-###
-# Get all alarms as Owner by user id
-GET {{api}}/businesses/{{business_mdvsrl}}/users/1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d/alarms
+### 
+# Get all alarms as Owner by user id - from another route, but it is needed to test the association between users and alarms.
+GET {{api}}/businesses/{{business_guemes}}/users/{{user_norberto}}/alarms
 Authorization: Bearer {{ownerLogin.response.body.token}}
 
-
-
-
-### //`/api/businesses/${businessUuid}/alarms/${alarmId}`
-GET {{api}}/businesses/{{business_guemes}}/alarms/0f2dc95d-e605-4635-9e41-eb1ededb6686
-Authorization: Bearer {{ownerLogin.response.body.token}}
-
-
-###
-# Create a new alarm as Owner /api/businneses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c/alarms
-POST {{api}}/businesses/{{business_guemes}}/alarms
+### /businesses/:businessUuid/users-alarms
+# Create a new users-alarms. Its associates an alarm to a user.
+POST {{api}}/businesses/{{business_guemes}}/users-alarms
 Authorization: Bearer {{ownerLogin.response.body.token}}
 Content-Type: application/json
 
 {
-    "name": "New Test Alarm",
-    "description": "A test alarm created by the owner.",
-    "channel_uuid": "{{business_mdvsrl}}",
-    "table_name": "cocina",
-    "column_name": "d1",
-    "time_range": 300,
-    "condition_logic": "value > 50",
-    "condition_show": "Value > 50",
-    "alarm_type": "upper_threshold",
-    "var01": 50,
-    "is_active": true,
-    "triggered": false
+  "alarm_uuid": "{{alarm_compresor2_guemes}}",
+  "user_uuid": "{{user_norberto}}",  
+  "business_uuid": "{{business_mdvsrl}}"
 }
+
+###
+# '/businesses/:businessUuid/users-alarms/alarm/:alarmUuid'
+GET {{api}}/businesses/{{business_guemes}}/users-alarms/alarm/{{alarm_cafetera_mdvsrl}}
+Authorization: Bearer {{ownerLogin.response.body.token}}
+
 
 ###
 # Update an alarm as Owner

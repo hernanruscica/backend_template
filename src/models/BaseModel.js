@@ -13,7 +13,7 @@ const BaseModel = (tableName, allowedFields = []) => ({
     const values = [uuid];
     const placeholders = ['?'];
 
-    //console.log('data from basemodel',data);
+    console.log('data from basemodel',data);
     
     for (const key in data) {
       if (this.allowedFields.includes(key)) {
@@ -30,7 +30,8 @@ const BaseModel = (tableName, allowedFields = []) => ({
     }
 
     const sql = `INSERT INTO ${this.tableName} (${fields.join(', ')}) VALUES (${placeholders.join(', ')})`;
-
+    //console.log('SQL Query:', sql);
+    //console.log('Values:', values);
     try {
       await pool.query(sql, values);
       return this.findByUuid(uuid);

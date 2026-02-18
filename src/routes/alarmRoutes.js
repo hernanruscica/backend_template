@@ -18,8 +18,8 @@ router.route('/businesses/:businessUuid/alarms/:uuid')
   .put(permissionMiddleware, AlarmController.updateByUuid)
   .delete(permissionMiddleware, AlarmController.deleteByUuid);
 
-router.route('/businesses/:businessUuid/users/:userId/alarms')
-  .get(permissionMiddleware, AlarmController.getAll)
+router.route('/businesses/:businessUuid/alarms/user/:userId')
+  .get(permissionMiddleware, AlarmController.getAllByUser)
 
 router.route('/businesses/:businessUuid/alarms/:uuid/hard')
   .delete(permissionMiddleware, (req, res, next) => {

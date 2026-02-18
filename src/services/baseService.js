@@ -5,6 +5,8 @@ const BaseService = (model) => ({
   model,
 
   async create(data, businessUuid, user) {
+    
+    
     const business = await BusinessModel.findByUuid(businessUuid);
     if (!business) {
       throw new CustomError('Business not found', 404);

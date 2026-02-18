@@ -15,8 +15,6 @@ import dataRoutes from './routes/dataRoutes.js';
 import userBusinessRoutes from './routes/userBusinessRoutes.js';
 import errorHandler from './middlewares/errorHandler.js';
 
-
-
 const app = express();
 
 // Set security HTTP headers

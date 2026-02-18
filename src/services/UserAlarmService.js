@@ -8,14 +8,15 @@ const UserAlarmService = {
     ...baseUserAlarmService,
 
     async create(data, businessUuid, user) {
-        if (!data.user_uuid || !data.alarm_uuid || !businessUuid) {
+        if (!data.user_uuid || !data.alarm_uuid || !businessUuid || !data.business_uuid) {
             throw new CustomError('user_uuid, alarm_uuid, and businessUuid are required', 400);
         }
 
         // TODO: Add checks to ensure user_uuid, alarm_uuid, and businessUuid actually exist and are consistent.
-        // For now, we'll rely on foreign key constraints.
-        const newData = { ...data, business_uuid: businessUuid };
-        return this.model.create(newData, user.uuid);
+        // For now, we'll rely on foreign key constraints.        
+        
+        
+        return this.model.create(data, user.uuid);
     },
 
     async getAll(user, businessUuid, userUuid) {
@@ -61,6 +62,28 @@ const UserAlarmService = {
         }
 
         return item;
+    },
+
+    async getUsersByAlarmUuid(user, businessUuid, alarmUuid) {
+        if (!alarmUuid) {
+            throw new CustomError('Alarm UUID is required', 400);
+        }
+
+        if (!businessUuid) {
+            throw new CustomError('Business UUID is required', 400);
+        }
+
+        // Authorization check: Ensure the requesting user has access to this business.
+        const isUserInBusiness = user.roles.some(ur => ur.businessUuid === businessUuid);
+        if (!isUserInBusiness && !user.isOwner) {
+            throw new CustomError('User is not authorized to access this business', 403);
+        }
+/*
+        const allUserAlarms = await this.model.findAll();
+        const userSpecificAlarms = allUserAlarms.filter(ua =>
+            ua.alarm_uuid === alarmUuid && ua.business_uuid === businessUuid
+        );*/
+        return this.model.findUsersByAlarmUuid(alarmUuid, businessUuid);
     },
 
     async updateByUuid(uuid, updateData, user, businessUuid) {

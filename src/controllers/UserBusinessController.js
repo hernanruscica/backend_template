@@ -9,7 +9,7 @@ const UserBusinessController = {
 
     create: catchAsync(async (req, res, next) => {
         const { businessUuid } = req.params;
-        console.log('req.body', req.body);
+        //console.log('req.body', req.body);
         
         if (!businessUuid) {
             return res.status(400).json({

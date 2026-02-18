@@ -9,7 +9,7 @@ CREATE TABLE users_alarms (
     updated_by CHAR(36),
     FOREIGN KEY (alarm_uuid) REFERENCES alarms(uuid) ON DELETE CASCADE,
     FOREIGN KEY (user_uuid) REFERENCES users(uuid) ON DELETE CASCADE,
-    FOREIGN KEY (business_uuid) REFERENCES businesses(uuid) ON DELETE CASCADE,
+    FOREIGN KEY (business_uuid) REFERENCES businesses(uuid), 
     FOREIGN KEY (created_by) REFERENCES users(uuid),
     FOREIGN KEY (updated_by) REFERENCES users(uuid)
 );

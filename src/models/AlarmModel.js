@@ -55,6 +55,15 @@ const AlarmModel = {
     const alarms = await this.findAll();
     const activeAlarms = alarms.filter(al => al.is_active == true);
     return activeAlarms || [];
+  },
+  async findAllByUserUuid(businessUuid, userUuid) {
+    const [rows] = await pool.query(
+      `SELECT a.* FROM alarms a
+       JOIN users_alarms ua ON a.uuid = ua.alarm_uuid
+       WHERE ua.user_uuid = ? AND a.business_uuid = ?`,
+      [userUuid, businessUuid]
+    );
+    return rows;
   }
 };
 
