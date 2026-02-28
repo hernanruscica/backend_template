@@ -13,7 +13,7 @@
 @user_norberto = 4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f90
 
 ###
-# Owner Login (John Doe)
+# Owner Login (Juan Carlos Fernandez)
 # @name ownerLogin
 POST {{api}}/auth/login
 Content-Type: application/json
@@ -45,9 +45,9 @@ Content-Type: application/json
   "password": "1298"
 }
 
-### 
+###  /businesses/:businessUuid/alarms/user/:userId
 # Get all alarms as Owner by user id - from another route, but it is needed to test the association between users and alarms.
-GET {{api}}/businesses/{{business_guemes}}/users/{{user_norberto}}/alarms
+GET {{api}}/businesses/{{business_mdvsrl}}/alarms/user/{{user_norberto}}
 Authorization: Bearer {{ownerLogin.response.body.token}}
 
 ### /businesses/:businessUuid/users-alarms
@@ -78,9 +78,9 @@ Content-Type: application/json
     "name": "Updated High Temperature Alert"
 }
 
-###
+### '/businesses/:businessUuid/users-alarms/:uuid/hard'
 # Delete an alarm as Owner
-DELETE {{api}}/alarms/{{business_mdvsrl}}
+DELETE {{api}}/businesses/{{business_mdvsrl}}/users-alarms/c710e365-cff0-42c2-8a0b-ef54d288687d/hard
 Authorization: Bearer {{ownerLogin.response.body.token}}
 
 

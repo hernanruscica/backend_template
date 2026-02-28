@@ -5,7 +5,7 @@ let isRunning = false;
 
 const startAlarmJob = () => {
   // Ejecutar cada 5 minutos: '*/5 * * * *' o 30 segundos: '*/30 * * * * *'
-  cron.schedule('*/30 * * * * *', async () => {
+  cron.schedule('*/5 * * * *', async () => {
     if (isRunning) {
       console.log('⚠️ El job anterior de alarmas sigue corriendo. Saltando esta ejecución.');
       return;
