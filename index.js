@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import app from './src/app.js';
-import startAlarmJob from './src/jobs/alarmJob.js';
+//import startAlarmJob from './src/jobs/alarmJob.js';
 import startDataloggerDataReceiveJob from './src/jobs/DataloggerDataReceiveJob.js';
 
 

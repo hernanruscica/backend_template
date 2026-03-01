@@ -8,6 +8,14 @@ const router = Router();
 // Apply auth middleware to all routes
 router.use(authMiddleware);
 
+// Route for current user's subscribed alarms (no businessUuid required)
+// Validation is done in service, not middleware
+router.route('/users/alarms')
+    .get(UserAlarmController.getMyAlarms);
+
+router.route('/users/alarms/:userUuid')
+    .get(UserAlarmController.getAlarmsByUserUuid);
+
 // Routes for user-alarm associations
 router.route('/businesses/:businessUuid/users-alarms')
     .post(permissionMiddleware, UserAlarmController.create);

@@ -43,7 +43,7 @@ const BaseController = (service) => ({
 
   getByUuid: catchAsync(async (req, res, next) => {
     const { uuid, businessUuid } = req.params;    
-    console.log('req.params en controller',req.params);
+    //console.log('req.params en controller',req.params);
     
     const item = await service.getByUuid(uuid, req.user, businessUuid);
     res.status(200).json({

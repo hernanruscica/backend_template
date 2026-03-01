@@ -19,6 +19,48 @@ const UserAlarmService = {
         return this.model.create(data, user.uuid);
     },
 
+    async getAlarmsByUserUuid(user, targetUserUuid = null) {
+        if (!user || !user.uuid) {
+            throw new CustomError('User is required', 400);
+        }
+
+        const targetUuid = targetUserUuid || user.uuid;
+        const isOwnAlarms = targetUuid === user.uuid;
+
+        // Owner can see all alarms
+        if (user.isOwner) {
+            return this.model.findAlarmsByUserUuid(targetUuid);
+        }
+
+        // Get business UUIDs where the authenticated user has a role
+        const userBusinessUuids = user.roles
+            .filter(r => r.businessUuid)
+            .map(r => r.businessUuid);
+
+        if (userBusinessUuids.length === 0) {
+            throw new CustomError('User does not belong to any business', 403);
+        }
+
+        // If requesting own alarms, filter by user's businesses
+        if (isOwnAlarms) {
+            return this.model.findAlarmsByUserUuidInBusinesses(targetUuid, userBusinessUuids);
+        }
+
+        // If requesting another user's alarms, verify that user belongs to one of our businesses
+        const targetUserBusinesses = await this.model.findBusinessesByUserUuid(targetUuid);
+        const targetUserBusinessUuids = targetUserBusinesses.map(ub => ub.business_uuid);
+        
+        const hasAccess = userBusinessUuids.some(b => targetUserBusinessUuids.includes(b));
+        
+        if (!hasAccess) {
+            throw new CustomError('User does not have access to this user\'s alarms', 403);
+        }
+
+        // Return alarms from businesses where both users have access
+        const sharedBusinesses = userBusinessUuids.filter(b => targetUserBusinessUuids.includes(b));
+        return this.model.findAlarmsByUserUuidInBusinesses(targetUuid, sharedBusinesses);
+    },
+
     async getAll(user, businessUuid, userUuid) {
         if (!businessUuid) {
             throw new CustomError('Business UUID is required', 400);

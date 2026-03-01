@@ -7,7 +7,7 @@ const getAllByUser = async (req, res, next) => {
   try {
     const { businessUuid, userId } = req.params;
     const user = req.user;
-    console.log('userId en AlarmController: ', userId);
+    //console.log('userId en AlarmController: ', userId);
     //fetch alarms for the user in the specified business
     const alarms = await AlarmService.getAllByUser(user, businessUuid, userId);
     res.status(200).json({

@@ -72,7 +72,7 @@ const UserBusinessService = {
             throw new CustomError('Business UUID is required', 400);
         }
 
-        console.log('user on service update', user);
+        //console.log('user on service update', user);
         
         // Authorization check: Ensure the requesting user has access to this business.
         const isUserInBusiness = user.roles.some(ur => ur.businessUuid === businessUuid);

@@ -13,7 +13,7 @@ const BaseModel = (tableName, allowedFields = []) => ({
     const values = [uuid];
     const placeholders = ['?'];
 
-    console.log('data from basemodel',data);
+    //console.log('data from basemodel',data);
     
     for (const key in data) {
       if (this.allowedFields.includes(key)) {
@@ -108,7 +108,7 @@ const BaseModel = (tableName, allowedFields = []) => ({
   },
 
   async update(uuid, fields, updatedBy) {
-    console.log('updatedBy', updatedBy);
+    //console.log('updatedBy', updatedBy);
     
     const fieldEntries = Object.entries(fields);
     const validFields = fieldEntries.filter(([key]) => this.allowedFields.includes(key));

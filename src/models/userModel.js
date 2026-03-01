@@ -53,7 +53,7 @@ export const UserModel = {
     const sql = 'SELECT * FROM users WHERE uuid = ?';
     const [rows] = await pool.query(sql, [uuid]);
     const currentUser = rows[0];
-    console.log('uuid', uuid);
+    //console.log('uuid', uuid);
     
     if (currentUser) {
       const { street, city, state, country, zip_code, ...userData } = currentUser;

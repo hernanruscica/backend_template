@@ -12,6 +12,8 @@
 
 @user_norberto = 4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f90
 
+@user_admin_dosubic = 2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e
+
 ###
 # Owner Login (Juan Carlos Fernandez)
 # @name ownerLogin
@@ -31,7 +33,7 @@ Content-Type: application/json
 
 {
   "dni": "28470361",
-  "password": "Password1234"
+  "password": "Pass1234"
 }
 
 ###
@@ -100,3 +102,28 @@ Content-Type: application/json
     "alarm_type": "lower_threshold",
     "var01": 10
 }
+
+###
+# Get alarms for the authenticated user (Owner)
+GET {{api}}/users/alarms
+Authorization: Bearer {{ownerLogin.response.body.token}}
+
+###
+# Get alarms for a specific user by UUID (Owner)
+GET {{api}}/users/alarms/{{user_norberto}}
+Authorization: Bearer {{ownerLogin.response.body.token}}
+
+###
+# Get alarms for the authenticated user (Admin)
+GET {{api}}/users/alarms
+Authorization: Bearer {{adminLogin.response.body.token}}
+
+###
+# Get alarms for a specific user by UUID (Admin)
+GET {{api}}/users/alarms/{{user_norberto}}
+Authorization: Bearer {{adminLogin.response.body.token}}
+
+###
+# Get alarms for the authenticated user (Technician)
+GET {{api}}/users/alarms
+Authorization: Bearer {{technicianLogin.response.body.token}}

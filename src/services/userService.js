@@ -112,10 +112,10 @@ export const updateUserByUuidService = async (uuid, updateData, requesterUser, f
     throw new CustomError('This user role only can UPDATE his own user', 403);
   }
 
-  console.log('uuid', uuid);
+  //console.log('uuid', uuid);
   
   const user = await UserModel.findByUuid(uuid);
-  console.log('user', user);
+  //console.log('user', user);
   
   if (!user) {
     throw new CustomError('User not found', 404);

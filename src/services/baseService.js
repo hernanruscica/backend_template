@@ -61,7 +61,7 @@ const BaseService = (model) => ({
   },
 
   async updateByUuid(uuid, updateData, user) {
-    console.log('updateData', updateData);
+    //console.log('updateData', updateData);
     const {businessUuid} = updateData;
     const item = await this.model.findByUuid(uuid);
     if (!item) {

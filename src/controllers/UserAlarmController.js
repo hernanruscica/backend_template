@@ -7,6 +7,25 @@ const baseUserAlarmController = BaseController(UserAlarmService);
 const UserAlarmController = {
     ...baseUserAlarmController,
 
+    getMyAlarms: catchAsync(async (req, res, next) => {
+        const alarms = await UserAlarmService.getAlarmsByUserUuid(req.user);
+        res.status(200).json({
+            success: true,
+            count: alarms.length,
+            items: alarms,
+        });
+    }),
+
+    getAlarmsByUserUuid: catchAsync(async (req, res, next) => {
+        const { userUuid } = req.params;
+        const alarms = await UserAlarmService.getAlarmsByUserUuid(req.user, userUuid);
+        res.status(200).json({
+            success: true,
+            count: alarms.length,
+            items: alarms,
+        });
+    }),
+
     create: catchAsync(async (req, res, next) => {
         const { businessUuid } = req.params;
         const { user_uuid } = req.body;
