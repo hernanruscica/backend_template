@@ -31,6 +31,9 @@ router.route('/businesses/:businessUuid')
   .get(permissionMiddleware, getBusinessByUuid)
   .put(permissionMiddleware, validateUpdateBusiness, updateBusinessByUuid)
   .delete(permissionMiddleware, deleteBusinessByUuid);
+  
+// router.route('/businesses/')
+//     .get(permissionMiddleware, getAllBusinesses);
 
 router.route('/businesses/:businessUuid/image')
   .put(permissionMiddleware, upload.single('image'), updateBusinessByUuid); // For image updates
