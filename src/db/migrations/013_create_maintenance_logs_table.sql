@@ -1,0 +1,33 @@
+CREATE TABLE maintenance_logs (
+    uuid CHAR(36) PRIMARY KEY,
+    business_uuid CHAR(36) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    type ENUM('task', 'observation', 'report') DEFAULT 'task',
+    priority ENUM('high', 'medium', 'low') DEFAULT 'medium',
+    status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
+    time_usage INT DEFAULT 0,
+    channel_uuid CHAR(36) NULL,
+    datalogger_uuid CHAR(36) NOT NULL,
+    completed_at TIMESTAMP NULL,
+    completed_by CHAR(36),
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by CHAR(36),
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by CHAR(36),
+
+    FOREIGN KEY (business_uuid) REFERENCES businesses(uuid) ON DELETE CASCADE,
+    FOREIGN KEY (channel_uuid) REFERENCES channels(uuid) ON DELETE SET NULL,
+    FOREIGN KEY (datalogger_uuid) REFERENCES dataloggers(uuid) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(uuid) ON DELETE SET NULL,
+    FOREIGN KEY (updated_by) REFERENCES users(uuid) ON DELETE SET NULL,
+    FOREIGN KEY (completed_by) REFERENCES users(uuid) ON DELETE SET NULL,
+
+    INDEX idx_maintenance_logs_business (business_uuid),
+    INDEX idx_maintenance_logs_datalogger (datalogger_uuid),
+    INDEX idx_maintenance_logs_channel (channel_uuid),
+    INDEX idx_maintenance_logs_status (status),
+    INDEX idx_maintenance_logs_type (type),
+    INDEX idx_maintenance_logs_priority (priority)
+);

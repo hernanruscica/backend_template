@@ -1,0 +1,146 @@
+@api = http://localhost:5000/api
+@businessUuid = 6a541cec-0733-4dfc-8f66-79c2ec6bf02e
+@dataloggerUuid = f1b2c3d4-e5f6-7890-1234-567890abcdef
+@channelUuid = 30313233-3435-3637-3839-404142434445
+@maintenanceLogUuid = 44652dfe-132d-4a2a-a8c2-c12b1ba1fe49
+
+###
+# @name login
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{
+  "dni": "28470359",
+  "password": "Pass1234"
+}
+
+###
+@token = {{login.response.body.token}}
+
+###
+@business_uuid = {{login.response.body.user.businesses_roles[0].uuid}}
+
+###
+@user_uuid = {{login.response.body.user.uuid}}
+
+### ============================================
+### MAINTENANCE LOGS - CRUD OPERATIONS
+### ============================================
+
+### ============================================
+### ROUTES WITHOUT CHANNEL (Datalogger level)
+### ============================================
+
+### Create Maintenance Log (without channel)
+POST {{api}}/businesses/{{businessUuid}}/dataloggers/{{dataloggerUuid}}/maintenance-logs
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "title": "prueba de mantenimiento preventivo",
+    "description": "prueba de descripción del mantenimiento preventivo realizado",
+    "type": "task",
+    "priority": "medium",
+    "status": "pending",
+    "time_usage": 60,
+    "channel_uuid": "65646362-6160-5958-5756-555453525150",
+    "datalogger_uuid": "g2c3d4e5-f6a7-8901-2345-67890abcdef1",
+    "business_uuid": "4e329ada-8511-4bfa-8d44-57a0ca4fd80c"
+}
+
+### Get All Maintenance Logs (without channel)
+GET {{api}}/businesses/{{businessUuid}}/dataloggers/{{dataloggerUuid}}/maintenance-logs
+Authorization: Bearer {{token}}
+
+### Get Maintenance Log by UUID (without channel)
+GET {{api}}/businesses/{{businessUuid}}/dataloggers/{{dataloggerUuid}}/maintenance-logs/{{maintenanceLogUuid}}
+Authorization: Bearer {{token}}
+
+### Update Maintenance Log (without channel)
+PUT {{api}}/businesses/{{businessUuid}}/dataloggers/{{dataloggerUuid}}/maintenance-logs/{{maintenanceLogUuid}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "title": "Título actualizado",
+    "description": "Descripción actualizada del mantenimiento",
+    "type": "observation",
+    "priority": "high",
+    "status": "in_progress",
+    "time_usage": 90
+}
+
+### Complete Maintenance Log (without channel)
+PUT {{api}}/businesses/{{businessUuid}}/dataloggers/{{dataloggerUuid}}/maintenance-logs/{{maintenanceLogUuid}}/complete
+Authorization: Bearer {{token}}
+
+### Delete Maintenance Log - Soft Delete (without channel)
+DELETE {{api}}/businesses/{{businessUuid}}/dataloggers/{{dataloggerUuid}}/maintenance-logs/{{maintenanceLogUuid}}
+Authorization: Bearer {{token}}
+
+### Delete Maintenance Log - Hard Delete (without channel)
+DELETE {{api}}/businesses/{{businessUuid}}/dataloggers/{{dataloggerUuid}}/maintenance-logs/{{maintenanceLogUuid}}/hard
+Authorization: Bearer {{token}}
+
+### ============================================
+### ROUTES WITH CHANNEL (Channel level)
+### ============================================
+
+### Create Maintenance Log (with channel)
+POST {{api}}/businesses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c/dataloggers/g2c3d4e5-f6a7-8901-2345-67890abcdef1/channels/65646362-6160-5958-5756-555453525150/maintenance-logs
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+     "title": "prueba de observacion",
+    "description": "prueba de descripción de una observación realizada",
+    "type": "observation",
+    "priority": "high",
+    "status": "pending",
+    "time_usage": 60
+}
+
+### Get All Maintenance Logs (with channel)
+# /businesses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c/dataloggers/g2c3d4e5-f6a7-8901-2345-67890abcdef1/channels/65646362-6160-5958-5756-555453525150/maintenance-logs
+#GET {{api}}/businesses/{{businessUuid}}/dataloggers/{{dataloggerUuid}}/channels/{{channelUuid}}/maintenance-logs
+GET {{api}}/businesses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c/dataloggers/g2c3d4e5-f6a7-8901-2345-67890abcdef1/channels/65646362-6160-5958-5756-555453525150/maintenance-logs
+Authorization: Bearer {{token}}
+
+### Get Maintenance Log by UUID (with channel)
+GET {{api}}/businesses/{{businessUuid}}/dataloggers/{{dataloggerUuid}}/channels/{{channelUuid}}/maintenance-logs/{{maintenanceLogUuid}}
+Authorization: Bearer {{token}}
+
+### Update Maintenance Log (with channel)
+PUT {{api}}/businesses/{{businessUuid}}/dataloggers/{{dataloggerUuid}}/channels/{{channelUuid}}/maintenance-logs/{{maintenanceLogUuid}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "title": "Sensor reemplazado actualizado",
+    "description": "El sensor de temperatura fue reemplazado exitosamente",
+    "type": "task",
+    "priority": "high",
+    "status": "in_progress",
+    "time_usage": 120,
+    "is_active": true
+}
+
+### Complete Maintenance Log (with channel)
+PUT {{api}}/businesses/{{businessUuid}}/dataloggers/{{dataloggerUuid}}/channels/{{channelUuid}}/maintenance-logs/{{maintenanceLogUuid}}/complete
+Authorization: Bearer {{token}}
+
+### Delete Maintenance Log - Soft Delete (with channel)
+DELETE {{api}}/businesses/{{businessUuid}}/dataloggers/{{dataloggerUuid}}/channels/{{channelUuid}}/maintenance-logs/{{maintenanceLogUuid}}
+Authorization: Bearer {{token}}
+
+### Delete Maintenance Log - Hard Delete (with channel)
+DELETE {{api}}/businesses/{{businessUuid}}/dataloggers/{{dataloggerUuid}}/channels/{{channelUuid}}/maintenance-logs/{{maintenanceLogUuid}}/hard
+Authorization: Bearer {{token}}
+
+### ============================================
+### VALID VALUES REFERENCE
+### ============================================
+
+# type: "task", "observation", "report"
+# priority: "high" (red), "medium" (yellow), "low" (green)
+# status: "pending", "in_progress", "completed"
