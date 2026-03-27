@@ -1,6 +1,6 @@
-//@api = http://localhost:5000/api
+@api = http://localhost:5000/api
 
-@api = https://mdv-monitoreo-remoto-backend.onrender.com/api
+//@api = https://mdv-monitoreo-remoto-backend.onrender.com/api
 @token = 
 
 ###
@@ -38,7 +38,11 @@ Content-Type: application/json
 
 @datalogger_quilmes = h3d4e5f6-a7b8-9012-3456-7890abcdef12
 
+@datalogger_mdv = g2c3d4e5-f6a7-8901-2345-67890abcdef1
+
 @channel_cafetera = 25242322-2120-1918-1716-151413121110
+
+@channel_dispenser = 65646362-6160-5958-5756-555453525150
 
 @channel_compresor1_guemes = 30313233-3435-3637-3839-404142434445
 
@@ -48,7 +52,7 @@ Content-Type: application/json
 
 
 ### /data/
-GET {{api}}/data/getLastPorcentageUsageByChannel/businesses/{{own_business_uuid}}/{{datalogger_quilmes}}/{{channel_compresor1_quilmes}}
+GET {{api}}/data/getLastPorcentageUsageByChannel/businesses/{{own_business_uuid}}/{{datalogger_mdv}}/{{channel_dispenser}}
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -74,6 +78,13 @@ Authorization: Bearer {{token}}
 ### '/data/allweekly/:channeluuid' 
 # required filter queries: 'start' and 'end'. Example: ?start='2025-12-01'&end='2025-12-31'
 
-GET {{api}}/data/allweekly/{{channel_compresor1_quilmes}}?start='2025-06-01'&end='2026-01-06'
+GET {{api}}/data/allweekly/businesses/{{own_business_uuid}}/{{channel_compresor1_quilmes}}?start='2025-06-01'&end='2026-01-06'
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### '/data/totalontime/:channeluuid'
+# required filter queries: 'start' and 'end'. Example: ?start='2025-12-01'&end='2025-12-31'
+
+GET {{api}}/data/totalontime/businesses/{{own_business_uuid}}/{{channel_compresor1_quilmes}}?start='2025-06-01'&end='2025-12-31'
 Content-Type: application/json
 Authorization: Bearer {{token}}

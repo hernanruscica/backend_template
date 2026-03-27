@@ -84,6 +84,42 @@ const dataModel = {
         return rows;
     },
 
+    findTotalOnTimeFromChannelByPeriod: async (tableName, columnPrefix, startInterval, stopInterval) => {
+        const timeZoneOffset = process.env.UTC_LOCAL || '-03:00';
+        const cleanTableName = poolData.escapeId(tableName);
+        const fullColumnName = `${columnPrefix}_tiempo`;
+        const cleanColumnName = poolData.escapeId(fullColumnName);
+
+        let start = startInterval ? startInterval.replace(/['"]/g, '') : '1970-01-01';
+        let stop = stopInterval ? stopInterval.replace(/['"]/g, '') : 'NOW()';
+        if (stop.length <= 10) {
+            stop = `${stop} 23:59:59`;
+        }
+
+        const queryString = `
+            SELECT 
+                TRUNCATE(AVG(
+                    (${cleanColumnName} / NULLIF(tiempo_total, 0)) * 100
+                ), 2) as average_usage_percentage,
+
+                TRUNCATE(
+                    (TIMESTAMPDIFF(SECOND, MIN(fecha), MAX(fecha)) / 3600.0) * AVG(${cleanColumnName} / NULLIF(tiempo_total, 0)), 
+                    0
+                ) as total_time_on_hours,
+
+                COUNT(*) as registers_quantity,
+
+                MIN(fecha) as first_date,
+                MAX(fecha) as last_date
+
+            FROM ${cleanTableName}
+            WHERE fecha >= '${start}' AND fecha <= '${stop}';
+        `;
+                            
+        const [rows] = await poolData.query(queryString);    
+        return rows;
+    },
+
     findDataFromAnalogChannel: async (tableName, columnPrefix, timePeriod) => {
         const timeZoneOffset = process.env.UTC_LOCAL || '-03:00';
         

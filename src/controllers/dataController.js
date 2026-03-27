@@ -90,6 +90,23 @@ export const getDataWeeklyByTimePeriod = async (req, res, next) => {
     }
 }
 
+export const getTotalOnTimeByTimePeriod = async (req, res, next) => {    
+    try {
+        const { channelUuid } = req.params;
+        const { start, end } = req.query;
+        
+        const responseData = await DataService.getTotalOnTimeFromChannelByPeriod(channelUuid, start, end);
+        
+        if (responseData){            
+            return res.status(200).json({success: true, message: 'Data Founded', data: responseData});
+        }else{
+            return res.status(200).json({success: false, message: 'Data Not Found', data: null});
+        }
+    } catch (error) {
+        next(error); 
+    }
+}
+
 /*
 export const getAnalogData = async (req, res, next) => {
     try {

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getLastPorcentageUsageByChannel, getDataloggerLastData, getDataByTimePeriod, getDataDailyByTimePeriod, getDataWeeklyByTimePeriod } from '../controllers/dataController.js';
+import { getLastPorcentageUsageByChannel, getDataloggerLastData, getDataByTimePeriod, getDataDailyByTimePeriod, getDataWeeklyByTimePeriod, getTotalOnTimeByTimePeriod } from '../controllers/dataController.js';
 //import { protect } from '../middlewares/authMiddleware.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { permissionMiddleware } from '../middlewares/permissionMiddleware.js';
@@ -28,6 +28,10 @@ router.route('/data/alldaily/businesses/:businessUuid/:channelUuid')
 //getDataWeeklyByTimePeriod
 router.route('/data/allweekly/businesses/:businessUuid/:channelUuid')
 .get(permissionMiddleware, getDataWeeklyByTimePeriod);
+
+// required filter queries: 'start' and 'end'. Example: ?start='2025-12-01'&end='2025-12-31'
+router.route('/data/totalontime/businesses/:businessUuid/:channelUuid')
+.get(permissionMiddleware, getTotalOnTimeByTimePeriod);
 
 //router.get('/:table/:period', protect, getDataByTimePeriod);
 // router.get('/getanalog/:tableName/:columnPrefix/:timePeriod', protect, getAnalogData);

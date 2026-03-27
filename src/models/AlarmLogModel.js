@@ -37,7 +37,7 @@ const findLogsByAlarmUuid = async (businessUuid, alarmUuid) => {
             MAX(al.triggered_at) as triggered_at,             
             
             a.alarm_type, 
-            
+            a.channel_uuid,
             -- Array de usuarios
             JSON_ARRAYAGG(
                 JSON_OBJECT(
@@ -106,6 +106,7 @@ const findLogsByDataloggerUuid = async (businessUuid, dataloggerUuid) => {
             -- DATOS DE LA ALARMA (Solo informativos)
             MAX(a.name) as alarm_name, 
             a.alarm_type, 
+            a.channel_uuid,
 
             -- FECHA AJUSTADA
             -- CONVERT_TZ(MAX(al.triggered_at), '+00:00', '${timeZoneOffset}') as triggered_at,             
@@ -183,8 +184,7 @@ AlarmLogModel.findAllByBusinessUuid = async function(businessUuid) {
         MAX(t.message) as message,
         MAX(t.email_sent) as email_sent,
         MAX(t.triggered_value) as triggered_value,
-        MAX(t.datalogger_uuid) as datalogger_uuid,
-        
+        MAX(t.datalogger_uuid) as datalogger_uuid,        
         -- Corrección de fecha
         -- CONVERT_TZ(MAX(t.triggered_at), '+00:00', '${timeZoneOffset}') as triggered_at,       
         MAX(t.triggered_at) as triggered_at,       
@@ -193,6 +193,7 @@ AlarmLogModel.findAllByBusinessUuid = async function(businessUuid) {
         JSON_OBJECT(
           'uuid', a.uuid,
           'name', a.name,
+          'channel_uuid', a.channel_uuid,
           'description', a.description,
           'alarm_type', a.alarm_type, -- Agregué esto que suele ser útil
           'created_at', a.created_at

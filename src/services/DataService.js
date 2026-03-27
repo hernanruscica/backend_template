@@ -63,6 +63,22 @@ const DataService = {
             console.log('error', error);
         }
     },
+    getTotalOnTimeFromChannelByPeriod: async (channelUuid, startInterval, stopInterval) => {
+        try {
+            const channelData = await dataModel.findChannelBasicData(channelUuid)
+            if (channelData.length === 0){
+                return []
+            };
+            const { table_name, column_name } = channelData[0];
+        
+            const responseData = await dataModel.findTotalOnTimeFromChannelByPeriod(table_name, column_name, startInterval, stopInterval);
+            
+            return responseData[0];
+            
+        } catch (error) {
+            console.log('error', error);
+        }
+    },
     //findRollingAverageData (tableName, columnPrefix, averagingPeriod, startInterval, stopInterval)
     getAllAverageUsageByChannel: async (channelUuid, startInterval, stopInterval) => {
         try {
