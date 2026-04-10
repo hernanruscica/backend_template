@@ -2,15 +2,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import app from './src/app.js';
-//import startAlarmJob from './src/jobs/alarmJob.js';
 import startDataloggerDataReceiveJob from './src/jobs/DataloggerDataReceiveJob.js';
+import startMaintenanceAlertJob from './src/jobs/MaintenanceAlertJob.js';
 
 
 const PORT = process.env.PORT || 5000;
 
 
 startDataloggerDataReceiveJob();
-//startAlarmJob();
+startMaintenanceAlertJob();
 
 
 console.log('Starting server...');

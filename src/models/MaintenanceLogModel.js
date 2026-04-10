@@ -9,11 +9,13 @@ const allowedFields = [
     'priority',
     'status',
     'time_usage',
+    'scheduled_date',
     'channel_uuid',
     'datalogger_uuid',
     'completed_at',
     'completed_by',
-    'is_active'
+    'is_active',
+    'last_notification_sent_at'
 ];
 
 const MaintenanceLogModel = {
@@ -79,6 +81,32 @@ const MaintenanceLogModel = {
             [completedBy, completedBy, uuid]
         );
         return result;
+    },
+
+    async markNotificationSent(uuid) {
+        const [result] = await pool.query(
+            `UPDATE maintenance_logs 
+             SET last_notification_sent_at = NOW(),
+                 updated_at = NOW()
+             WHERE uuid = ?`,
+            [uuid]
+        );
+        return result;
+    },
+
+    async findActiveByBusinessUuid(businessUuid) {
+        const [rows] = await pool.query(
+            `SELECT ml.*, 
+                    b.name as business_name
+             FROM maintenance_logs ml
+             LEFT JOIN businesses b ON ml.business_uuid = b.uuid
+             WHERE ml.business_uuid = ?
+               AND ml.is_active = true
+               AND ml.status != 'completed'
+             ORDER BY ml.scheduled_date ASC`,
+            [businessUuid]
+        );
+        return rows;
     }
 };
 

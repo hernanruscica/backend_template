@@ -7,6 +7,8 @@ CREATE TABLE maintenance_logs (
     priority ENUM('high', 'medium', 'low') DEFAULT 'medium',
     status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
     time_usage INT DEFAULT 0,
+    scheduled_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_notification_sent_at DATETIME NULL,
     channel_uuid CHAR(36) NULL,
     datalogger_uuid CHAR(36) NOT NULL,
     completed_at TIMESTAMP NULL,

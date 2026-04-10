@@ -153,6 +153,21 @@ export const sendMessage = async (alarm, variables, email, token, isTriggered) =
                 <p>Se detectaron ambos canales encendidos simultáneamente durante el monitoreo.</p>
             `;
             break;
+        case "maintenance_alert":
+            bodySpecifics = `
+                <div class="date-label">${dateString}</div>
+                <p><strong>Ubicación:</strong> ${variables.location || 'N/A'}</p>
+                <p><strong>Datalogger:</strong> ${variables.datalogger || 'N/A'}</p>
+                <p><strong>Canal:</strong> ${variables.channel || 'N/A'}</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+                <p><strong>Título:</strong> ${variables.title || 'N/A'}</p>
+                <p><strong>Descripción:</strong> ${variables.description || 'N/A'}</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+                <p><strong>Fecha agendada:</strong> ${variables.scheduled_date ? formatDate(variables.scheduled_date) : 'N/A'}</p>
+                <p><strong>Horas de uso actuales:</strong> ${variables.current_hours || 0} horas</p>
+                <p><strong>Horas requeridas:</strong> ${variables.required_hours || 0} horas</p>
+            `;
+            break;
         default:
             bodySpecifics = `
                 <div class="date-label">${dateString}</div>

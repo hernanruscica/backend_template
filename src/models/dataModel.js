@@ -84,7 +84,7 @@ const dataModel = {
         return rows;
     },
 
-    findTotalOnTimeFromChannelByPeriod: async (tableName, columnPrefix, startInterval, stopInterval) => {
+    findTotalOnTimeFromChannelByPeriod: async (tableName, columnPrefix, startInterval = '', stopInterval = '') => {
         const timeZoneOffset = process.env.UTC_LOCAL || '-03:00';
         const cleanTableName = poolData.escapeId(tableName);
         const fullColumnName = `${columnPrefix}_tiempo`;
@@ -113,7 +113,7 @@ const dataModel = {
                 MAX(fecha) as last_date
 
             FROM ${cleanTableName}
-            WHERE fecha >= '${start}' AND fecha <= '${stop}';
+            ${(startInterval != '' && stopInterval != '') ? `WHERE fecha >= '${start}' AND fecha <= '${stop}'` : ''};
         `;
                             
         const [rows] = await poolData.query(queryString);    

@@ -37,6 +37,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
+    "scheduled_date": "2026-12-12T10:00:00Z",
     "title": "prueba de mantenimiento preventivo",
     "description": "prueba de descripción del mantenimiento preventivo realizado",
     "type": "task",
