@@ -138,12 +138,19 @@ export const sendMessage = async (alarm, variables, email, token, isTriggered) =
         case "porcentage_on":
              bodySpecifics = `
                 <div class="date-label">${dateString}</div>
+                <p><strong>Ubicación:</strong> ${variables.location || 'N/A'}</p>
+                <p><strong>Datalogger:</strong> ${variables.datalogger || 'N/A'}</p>
+                <p><strong>Canal:</strong> ${variables.channel || 'N/A'}</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
                 <p>El sensor registró un valor de <strong>${variables.value}</strong> fuera del rango permitido.</p>
              `;
             break;
         case "comunication_failure":
             bodySpecifics = `
                 <div class="date-label">${dateString}</div>
+                <p><strong>Ubicación:</strong> ${variables.location || 'N/A'}</p>
+                <p><strong>Datalogger:</strong> ${variables.datalogger || 'N/A'}</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
                 <p>Se detectaron <strong>${variables.value} minutos</strong> sin envío de datos al servidor.</p>
             `;
             break;

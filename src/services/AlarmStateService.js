@@ -1,6 +1,9 @@
 import AlarmModel from '../models/AlarmModel.js';
 import UserAlarmModel from '../models/UserAlarmModel.js';
 import { AlarmLogModel } from '../models/AlarmLogModel.js';
+import { BusinessModel } from '../models/businessModel.js';
+import DataloggerModel from '../models/DataloggerModel.js';
+import ChannelModel from '../models/ChannelModel.js';
 import { sendMessage } from '../utils/mail.js';
 import generateTokenAlarmLog from '../utils/generateTokenAlarmLog.js';
 import crypto from 'crypto';
@@ -68,7 +71,19 @@ class AlarmStateService {
 
       let emailSent = 0;
       if (logId && isTriggered == 1) {
-        // B. Generar Token y Enviar Email
+        // B. Enrich variables with location, datalogger and channel info
+        const business = await BusinessModel.findByUuid(alarm.business_uuid);
+        const datalogger = await DataloggerModel.findByUuid(alarm.datalogger_uuid);
+        const channel = alarm.channel_uuid ? await ChannelModel.findByUuid(alarm.channel_uuid) : null;
+
+        const enrichedVariables = {
+          ...variables,
+          location: business?.name || 'N/A',
+          datalogger: datalogger?.name || 'N/A',
+          channel: channel?.name || 'N/A'
+        };
+
+        // C. Generar Token y Enviar Email
         const token = generateTokenAlarmLog(logId?.uuid, 
                                             user.user_uuid, 
                                             alarm.uuid, 
@@ -78,7 +93,7 @@ class AlarmStateService {
                                             alarm.alarm_type);
         
         // Aquí podrías ajustar el subject/body según si esTriggered es 1 (ALERTA) o 0 (NORMALIZADO)
-        emailSent = await sendMessage(alarm, variables, user.email, token, isTriggered);
+        emailSent = await sendMessage(alarm, enrichedVariables, user.email, token, isTriggered);
 
         if(emailSent){
           console.log(`📧 Notificación enviada a ${user.email} (Triggered: ${isTriggered})`);
