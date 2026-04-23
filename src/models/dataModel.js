@@ -313,7 +313,44 @@ const dataModel = {
 
           const [rows] = await poolData.query(query);
           return rows;
+        },
+
+    findEnergyIncidents: async (tableName, startInterval, stopInterval) => {
+        const timeZoneOffset = process.env.UTC_LOCAL || '-03:00';
+        const cleanTableName = poolData.escapeId(tableName);
+
+        let start = startInterval ? startInterval.replace(/['"]/g, '') : '1970-01-01';
+        let stop = stopInterval ? stopInterval.replace(/['"]/g, '') : 'NOW()';
+
+        if (stop.length <= 10) {
+            stop = `${stop} 23:59:59`;
         }
+
+        const query = `
+            SELECT 
+                CONVERT_TZ(fecha, '+00:00', '${timeZoneOffset}') AS fecha,
+                energia,
+                texto,
+                CASE 
+                    WHEN energia = 1 THEN 'corte_energia'
+                    WHEN texto = 'Iniciando equipo' THEN 'reinicio'
+                    ELSE 'otro'
+                END AS tipo_evento
+            FROM ${cleanTableName}
+            WHERE (energia = 1 OR texto = 'Iniciando equipo')
+              AND fecha >= '${start}'
+              AND fecha <= '${stop}'
+            ORDER BY fecha DESC;
+        `;
+
+        try {
+            const [rows] = await poolData.query(query);
+            return rows;
+        } catch (error) {
+            console.error("Error en findEnergyIncidents:", error);
+            throw error;
+        }
+    }
     
 }
 export default dataModel;

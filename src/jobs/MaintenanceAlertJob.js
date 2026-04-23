@@ -2,10 +2,12 @@ import cron from 'node-cron';
 import { pool } from '../config/database.js';
 
 import ChannelModel from '../models/ChannelModel.js';
+import DataloggerModel from '../models/DataloggerModel.js';
 
 import MaintenanceLogModel from '../models/MaintenanceLogModel.js';
 
 import DataService from '../services/DataService.js';
+import DataloggersDataStore from '../stores/DataloggersDataStore.js';
 import { sendMessage } from '../utils/mail.js';
 
 const MAINTENANCE_CRON_HOUR = 1;
@@ -35,10 +37,17 @@ const startMaintenanceAlertJob = () => {
 };
 
 const checkMaintenanceAlerts = async () => {
+  console.log('========================================');
+  console.log('🔧 checkMaintenanceAlerts ejecutandose...');
+  console.log('========================================');
+  
   const channels = await ChannelModel.findAll();
+  const dataloggers = await DataloggerModel.findAll();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayStr = today.toISOString().split('T')[0];
+
+  const channelsWithData = [];
 
   for (const channel of channels) {
     if (!channel.is_active) continue;
@@ -95,7 +104,34 @@ const checkMaintenanceAlerts = async () => {
         console.log(`📧 Notificación enviada para maintenance: ${maintenance.title}`);
       }
     }
+
+    const totalDataResponse = await DataService.getTotalOnTimeFromChannel(channelUuid);
+    channelsWithData.push({
+      ...channel,
+      totalData: totalDataResponse
+    });
   }
+
+  console.log(`📊 [PRUEBA] MaintenanceAlertJob: Actualizando store con totalData para ${channelsWithData.length} canales`);
+  DataloggersDataStore.setLastTotalDataLoad(Date.now());
+  console.log(`✅ [PRUEBA] lastTotalDataLoad actualizado a: ${new Date().toISOString()}`);
+
+  for (const dl of dataloggers) {
+    if (!dl.is_active) continue;
+    const channelsForDl = channelsWithData.filter(ch => ch.datalogger_id == dl.uuid || ch.datalogger?.uuid == dl.uuid);
+    if (channelsForDl.length > 0) {
+      const existingData = DataloggersDataStore.getLoggerData(dl.uuid);
+      const updatedDl = {
+        ...dl,
+        channels: channelsForDl,
+        lastConection: existingData.lastConection || null
+      };
+      DataloggersDataStore.setLoggerData(dl.uuid, updatedDl);
+      console.log(`   └─ Datalogger ${dl.uuid}: ${channelsForDl.length} canales actualizados`);
+    }
+  }
+  
+  console.log('🏁 checkMaintenanceAlerts FINALIZADO');
 };
 
 const getUsersByRole = async (businessUuid, roles) => {
@@ -136,4 +172,5 @@ const sendMaintenanceEmail = async (user, maintenance, channel, business, totalT
   await sendMessage(alarmData, variables, user.email, token, 1);
 };
 
+export { checkMaintenanceAlerts };
 export default startMaintenanceAlertJob;

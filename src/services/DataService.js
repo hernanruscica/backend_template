@@ -120,8 +120,35 @@ const DataService = {
             const data = await dataModel.findtWeeklyAverageByPeriod(table_name, column_name, startInterval, stopInterval);
             return data;
         } catch (error) {
-            console.log('error', error);
+            console.error('error', error);
             
+        }
+    },
+
+    getEnergyIncidents: async (dataloggerUuid, startInterval, stopInterval) => {
+        try {
+            const dataloggerData = await DataloggerModel.findByUuid(dataloggerUuid);
+            if (!dataloggerData || !dataloggerData.table_name) {
+                return { success: false, message: 'Datalogger no encontrado o sin tabla asociada', data: [] };
+            }
+
+            const incidents = await dataModel.findEnergyIncidents(
+                dataloggerData.table_name,
+                startInterval,
+                stopInterval
+            );
+
+            return {
+                success: true,
+                message: 'Incidentes de energia encontrados',
+                datalogger: dataloggerData.name,
+                table_name: dataloggerData.table_name,
+                count: incidents.length,
+                data: incidents
+            };
+        } catch (error) {
+            console.error('error', error);
+            return { success: false, message: 'Error al obtener incidentes', data: [] };
         }
     }
 }

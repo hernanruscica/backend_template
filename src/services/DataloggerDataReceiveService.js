@@ -6,7 +6,9 @@ import DataService from "./DataService.js";
 
 const DataloggerDataReceiveService = {
     loadData: async () => {
-        console.log('loadData from dataloggers');
+        console.log('========================================');
+        console.log('🔄 DataloggerDataReceiveJob ejecutandose...');
+        console.log('========================================');
         // Get All active dataloggers
         const responseDls = await DataloggerModel.findAll();
         const activeDataloggers = responseDls.filter(dl => dl.is_active == true);        
@@ -21,15 +23,19 @@ const DataloggerDataReceiveService = {
             ch.lastData = responseData;
             
             const dataloggerData = DataloggersDataStore.getLoggerData(ch.datalogger_id);
-            const totalDataExists = Object.keys(dataloggerData).length !== 0 
-            //console.log('dataloggerData', dataloggerData);            
+            const totalDataExists = Object.keys(dataloggerData).length !== 0;            
 
-            const d = new Date();            
-            if (!totalDataExists || (d.getHours() === 10 && d.getMinutes() === 10)) {
-                //console.log("Cargando totalData...");
+            const shouldReload = DataloggersDataStore.shouldReloadTotalData(24);
+            
+            if (!totalDataExists || shouldReload) {
+                console.log(`📊 [PRUEBA] Canal ${ch.uuid}: CARGANDO totalData (shouldReload=${shouldReload})`);
                 const responseDataTotalData = await DataService.getTotalOnTimeFromChannel(ch.uuid);
-                ch.totalData = responseDataTotalData;                
-            }else{
+                ch.totalData = responseDataTotalData;
+                if (shouldReload) {
+                    DataloggersDataStore.setLastTotalDataLoad(Date.now());
+                    console.log(`✅ [PRUEBA] lastTotalDataLoad actualizado a: ${new Date().toISOString()}`);
+                }
+            } else {
                 ch.totalData = DataloggersDataStore.getLoggerData(ch.datalogger_id).channels.find(c => c.uuid == ch.uuid).totalData;            
             }
             

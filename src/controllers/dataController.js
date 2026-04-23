@@ -107,6 +107,41 @@ export const getTotalOnTimeByTimePeriod = async (req, res, next) => {
     }
 }
 
+export const getEnergyIncidents = async (req, res, next) => {    
+    try {
+        const { businessUuid, dataloggerUuid } = req.params;
+        const { start, end } = req.query;
+        
+        if (!start || !end) {
+            return res.status(400).json({
+                success: false,
+                message: 'Parametros start y end son requeridos. Ejemplo: ?start=2025-06-01&end=2025-12-31'
+            });
+        }
+
+        const responseData = await DataService.getEnergyIncidents(dataloggerUuid, start, end);
+        
+        if (responseData.success){            
+            return res.status(200).json({
+                success: true,
+                message: responseData.message,
+                datalogger: responseData.datalogger,
+                table_name: responseData.table_name,
+                count: responseData.count,
+                data: responseData.data
+            });
+        }else{
+            return res.status(404).json({
+                success: false,
+                message: responseData.message,
+                data: []
+            });
+        }
+    } catch (error) {
+        next(error); 
+    }
+}
+
 /*
 export const getAnalogData = async (req, res, next) => {
     try {

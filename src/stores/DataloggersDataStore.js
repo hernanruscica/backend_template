@@ -1,5 +1,7 @@
 // services/sensorStore.js
-const globalState = {};
+const globalState = {
+    lastTotalDataLoad: 0
+};
 
 const DataloggersDataStore = {    
     
@@ -14,6 +16,27 @@ const DataloggersDataStore = {
     },
 
     getAll: () => globalState,
+
+    getLastTotalDataLoad: () => {
+        const val = globalState.lastTotalDataLoad || 0;
+        console.log(`📍 [STORE] getLastTotalDataLoad: ${val ? new Date(val).toISOString() : 'NUNCA'}`);
+        return val;
+    },
+
+    setLastTotalDataLoad: (timestamp) => {
+        console.log(`📍 [STORE] setLastTotalDataLoad: ${new Date(timestamp).toISOString()}`);
+        globalState.lastTotalDataLoad = timestamp;
+    },
+
+    shouldReloadTotalData: (intervalHours = 24) => {
+        const lastLoad = globalState.lastTotalDataLoad || 0;
+        const now = Date.now();
+        const intervalMs = intervalHours * 60 * 60 * 1000;
+        const shouldReload = (now - lastLoad) > intervalMs;
+        const timeSince = lastLoad ? Math.round((now - lastLoad) / (1000 * 60)) : 'NUNCA';
+        console.log(`📍 [STORE] shouldReloadTotalData(${intervalHours}h): ${shouldReload} (ultima carga: hace ${timeSince} min)`);
+        return shouldReload;
+    },
 
     /**
      * Busca a qué Datalogger pertenece un Channel UUID.

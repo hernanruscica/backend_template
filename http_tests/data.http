@@ -88,3 +88,23 @@ Authorization: Bearer {{token}}
 GET {{api}}/data/totalontime/businesses/{{own_business_uuid}}/{{channel_compresor1_quilmes}}?start='2025-06-01'&end='2025-12-31'
 Content-Type: application/json
 Authorization: Bearer {{token}}
+
+### '/data/energyincidents/:dataloggerUuid'
+# required filter queries: 'start' and 'end'. Example: ?start='2025-06-01'&end='2025-12-31'
+# Devuelve cortes de energia (energia=1) y reinicios (texto='Iniciando equipo')
+
+GET {{api}}/data/energyincidents/businesses/{{own_business_uuid}}/{{datalogger_quilmes}}?start='2025-06-01'&end='2025-12-31'
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### '/data/energyincidents/:dataloggerUuid' - Rango corto
+# Prueba con un rango de fechas mas corto
+
+GET {{api}}/data/energyincidents/businesses/{{own_business_uuid}}/{{datalogger_quilmes}}?start='2026-01-15'&end='2026-04-15'
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### '/data/energyincidents/:dataloggerUuid' - Sin params (deberia dar error 400)
+GET {{api}}/data/energyincidents/businesses/{{own_business_uuid}}/{{datalogger_mdv}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
