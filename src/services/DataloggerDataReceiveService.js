@@ -28,12 +28,10 @@ const DataloggerDataReceiveService = {
             const shouldReload = DataloggersDataStore.shouldReloadTotalData(24);
             
             if (!totalDataExists || shouldReload) {
-                console.log(`📊 [PRUEBA] Canal ${ch.uuid}: CARGANDO totalData (shouldReload=${shouldReload})`);
                 const responseDataTotalData = await DataService.getTotalOnTimeFromChannel(ch.uuid);
                 ch.totalData = responseDataTotalData;
                 if (shouldReload) {
                     DataloggersDataStore.setLastTotalDataLoad(Date.now());
-                    console.log(`✅ [PRUEBA] lastTotalDataLoad actualizado a: ${new Date().toISOString()}`);
                 }
             } else {
                 ch.totalData = DataloggersDataStore.getLoggerData(ch.datalogger_id).channels.find(c => c.uuid == ch.uuid).totalData;            
@@ -44,18 +42,28 @@ const DataloggerDataReceiveService = {
 
             return ch;
         })
-        const channelsWithAllData = await Promise.all(promises);        
-       
+        const channelsWithAllData = await Promise.allSettled(promises);
+        const rejectedChannels = channelsWithAllData.filter(r => r.status === 'rejected');
+        if (rejectedChannels.length > 0) {
+            console.error(`❌ ${rejectedChannels.length} canal(es) fallaron al cargar datos:`, rejectedChannels.map(r => r.reason?.message || r.reason));
+        }
+        const successfulChannels = channelsWithAllData.filter(r => r.status === 'fulfilled').map(r => r.value);
+        
         //create promise array of queries for the last conection date for all dataloggers.
         const promisesLastConection = activeDataloggers.map(async (dl) => {
             const responseData = await DataService.getDataloggerLastConection(dl.uuid);
             dl.lastConection = responseData !== null ? responseData.data : null;
             return dl;
         })
-        const dataloggersWithLastConectionInfo = await Promise.all(promisesLastConection);    
+        const dataloggersWithLastConectionInfo = await Promise.allSettled(promisesLastConection);
+        const rejectedDataloggers = dataloggersWithLastConectionInfo.filter(r => r.status === 'rejected');
+        if (rejectedDataloggers.length > 0) {
+            console.error(`❌ ${rejectedDataloggers.length} datalogger(s) fallaron al cargar última conexión:`, rejectedDataloggers.map(r => r.reason?.message || r.reason));
+        }
+        const successfulDataloggers = dataloggersWithLastConectionInfo.filter(r => r.status === 'fulfilled').map(r => r.value);
 
-        dataloggersWithLastConectionInfo.forEach(dl => {
-            const channelsForCurrentDatalogger = channelsWithAllData.filter(ch => ch.datalogger_id == dl.uuid);
+        successfulDataloggers.forEach(dl => {
+            const channelsForCurrentDatalogger = successfulChannels.filter(ch => ch.datalogger_id == dl.uuid);
             dl.channels = channelsForCurrentDatalogger;            
             DataloggersDataStore.setLoggerData(dl.uuid, dl);   
         });

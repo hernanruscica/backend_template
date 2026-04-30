@@ -10,7 +10,8 @@ export const permissionMiddleware = async (req, res, next) => {
       'channels': ['POST', 'GET', 'PUT', 'DELETE'],
       'alarms': ['POST', 'GET', 'PUT', 'DELETE'],
       'user-businesses': ['POST', 'GET', 'PUT', 'DELETE'],
-      'users-alarms': ['POST', 'GET', 'PUT', 'DELETE']
+      'users-alarms': ['POST', 'GET', 'PUT', 'DELETE'],
+      'alarmlogs': ['POST', 'GET', 'PUT', 'DELETE']
     },
     'Technician': {
       'businesses': ['GET'],
@@ -18,7 +19,8 @@ export const permissionMiddleware = async (req, res, next) => {
       'dataloggers': ['GET'],
       'channels': ['GET'],
       'alarms': ['GET'],
-      'users-alarms': ['GET']
+      'users-alarms': ['GET'],
+      'alarmlogs': ['GET', 'PUT']
     },
     'Default': {
       'businesses': [''],

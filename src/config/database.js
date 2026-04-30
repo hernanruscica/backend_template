@@ -13,7 +13,11 @@ try {
     database: process.env.DB_NAME || 'mdv_sensors_v2',
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    connectTimeout: 10000,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0,
+    idleTimeout: 60000
   });
   console.log('Database pool created successfully');
 } catch (error) {
@@ -29,7 +33,11 @@ try {
       database: process.env.DB_NAME_DATA,
       waitForConnections: true,
       connectionLimit: 10,
-      queueLimit: 0
+      queueLimit: 0,
+      connectTimeout: 10000,
+      enableKeepAlive: true,
+      keepAliveInitialDelay: 0,
+      idleTimeout: 60000
   });
   console.log('Database poolData created successfully');
 } catch (error) {

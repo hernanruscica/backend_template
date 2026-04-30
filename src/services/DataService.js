@@ -20,7 +20,7 @@ const DataService = {
             
             return data;
         } catch (error) {
-            console.log(error);
+            console.error(`❌ DataService.getLastPorcentageUsageByChannel failed [${error.code || 'UNKNOWN'}]:`, error.message);
         }
     },
     getDataloggerLastConection: async (dataloggerUuid) => {
@@ -36,8 +36,7 @@ const DataService = {
             
             //const lastConectionDate = await dataModel.findDataloggerLastConection(dataloggerUuid);
         } catch (error) {
-         console.log('error', error);
-            
+            console.error(`❌ DataService.getDataloggerLastConection failed [${error.code || 'UNKNOWN'}]:`, error.message);
         }
     },    
     getTotalOnTimeFromChannel: async (channelUuid) => {
@@ -60,7 +59,7 @@ const DataService = {
             return data;
             
         } catch (error) {
-            console.log('error', error);
+            console.error(`❌ DataService.getTotalOnTimeFromChannel failed [${error.code || 'UNKNOWN'}]:`, error.message);
         }
     },
     getTotalOnTimeFromChannelByPeriod: async (channelUuid, startInterval, stopInterval) => {
@@ -76,7 +75,7 @@ const DataService = {
             return responseData[0];
             
         } catch (error) {
-            console.log('error', error);
+            console.error(`❌ DataService.getTotalOnTimeFromChannelByPeriod failed [${error.code || 'UNKNOWN'}]:`, error.message);
         }
     },
     //findRollingAverageData (tableName, columnPrefix, averagingPeriod, startInterval, stopInterval)
@@ -91,7 +90,7 @@ const DataService = {
             //console.log('data from getAllAverageUsageByChannel service: ',data);
             return data;
         } catch (error) {
-            console.log('error', error);            
+            console.error(`❌ DataService.getAllAverageUsageByChannel failed [${error.code || 'UNKNOWN'}]:`, error.message);
         }
     },
     //findDailyAverageByPeriod  (tableName, columnPrefix, startInterval, stopInterval)
@@ -105,8 +104,7 @@ const DataService = {
             const data = await dataModel.findDailyAverageByPeriod(table_name, column_name, startInterval, stopInterval);
             return data;
         } catch (error) {
-            console.log('error', error);
-            
+            console.error(`❌ DataService.getAllDailyUsageByChannel failed [${error.code || 'UNKNOWN'}]:`, error.message);
         }
     },
     // findtWeeklyAverageByPeriod (tableName, columnPrefix, startInterval, stopInterval)
@@ -120,8 +118,7 @@ const DataService = {
             const data = await dataModel.findtWeeklyAverageByPeriod(table_name, column_name, startInterval, stopInterval);
             return data;
         } catch (error) {
-            console.error('error', error);
-            
+            console.error(`❌ DataService.getAllWeeklyUsageByChannel failed [${error.code || 'UNKNOWN'}]:`, error.message);
         }
     },
 
@@ -147,7 +144,7 @@ const DataService = {
                 data: incidents
             };
         } catch (error) {
-            console.error('error', error);
+            console.error(`❌ DataService.getEnergyIncidents failed [${error.code || 'UNKNOWN'}]:`, error.message);
             return { success: false, message: 'Error al obtener incidentes', data: [] };
         }
     }

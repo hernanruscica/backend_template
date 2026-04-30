@@ -100,7 +100,7 @@ class AlarmStateService {
         }else{
           console.log(`❌ Falló el envío de notificación a ${user.email} (Triggered: ${isTriggered})`);
           //uso  async update(uuid, fields, updatedBy) {para actualizar el log
-          await AlarmLogModel.update(logId, {email_sent: 0}, null);
+          await AlarmLogModel.update(logId.uuid, {email_sent: 0}, null);
       }
     }
       

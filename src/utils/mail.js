@@ -254,7 +254,6 @@ export const sendActivation = async (token, userData) => {
         }
         return false;
     } catch (e) {
-        console.log('Error enviando activación:', e);
         return false;
     }
 }

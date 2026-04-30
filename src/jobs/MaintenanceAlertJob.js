@@ -112,9 +112,7 @@ const checkMaintenanceAlerts = async () => {
     });
   }
 
-  console.log(`📊 [PRUEBA] MaintenanceAlertJob: Actualizando store con totalData para ${channelsWithData.length} canales`);
   DataloggersDataStore.setLastTotalDataLoad(Date.now());
-  console.log(`✅ [PRUEBA] lastTotalDataLoad actualizado a: ${new Date().toISOString()}`);
 
   for (const dl of dataloggers) {
     if (!dl.is_active) continue;
@@ -127,7 +125,6 @@ const checkMaintenanceAlerts = async () => {
         lastConection: existingData.lastConection || null
       };
       DataloggersDataStore.setLoggerData(dl.uuid, updatedDl);
-      console.log(`   └─ Datalogger ${dl.uuid}: ${channelsForDl.length} canales actualizados`);
     }
   }
   

@@ -38,11 +38,6 @@ class FuncionamientoSimultaneoStrategy {
   
     try {
       const isTriggered = evaluate(condition_logic, variables);
-      
-      // Solo loguear si se dispara para no llenar la consola
-      if (isTriggered) {
-          console.log(`${name} >>> DISPARADA - lógica: ${condition_logic} - vars: ${JSON.stringify(variables)}`);      
-      }
 
       return { 
         triggered: isTriggered, 

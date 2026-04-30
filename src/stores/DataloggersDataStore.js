@@ -8,7 +8,6 @@ const DataloggersDataStore = {
     setLoggerData: (dataloggerUuid, data) => {
         // data se asume que es un Array de canales: [{ channelUuid: '...', ... }, ...]
         globalState[dataloggerUuid] = data;
-        console.log(`[STORE] Logger actualizado: ${dataloggerUuid}`);
     },
 
     getLoggerData: (dataloggerUuid) => {
@@ -18,13 +17,10 @@ const DataloggersDataStore = {
     getAll: () => globalState,
 
     getLastTotalDataLoad: () => {
-        const val = globalState.lastTotalDataLoad || 0;
-        console.log(`📍 [STORE] getLastTotalDataLoad: ${val ? new Date(val).toISOString() : 'NUNCA'}`);
-        return val;
+        return globalState.lastTotalDataLoad || 0;
     },
 
     setLastTotalDataLoad: (timestamp) => {
-        console.log(`📍 [STORE] setLastTotalDataLoad: ${new Date(timestamp).toISOString()}`);
         globalState.lastTotalDataLoad = timestamp;
     },
 
@@ -33,8 +29,6 @@ const DataloggersDataStore = {
         const now = Date.now();
         const intervalMs = intervalHours * 60 * 60 * 1000;
         const shouldReload = (now - lastLoad) > intervalMs;
-        const timeSince = lastLoad ? Math.round((now - lastLoad) / (1000 * 60)) : 'NUNCA';
-        console.log(`📍 [STORE] shouldReloadTotalData(${intervalHours}h): ${shouldReload} (ultima carga: hace ${timeSince} min)`);
         return shouldReload;
     },
 

@@ -12,22 +12,9 @@ class FalloComunicacionStrategy {
     const currentDatalogger = DataloggersDataStore.getLoggerData(datalogger_uuid);
     const secondsFromLastConection = getSecondsSince(currentDatalogger.lastConection);
     const variables = {value: parseFloat(secondsFromLastConection / 60).toFixed(2)};
-    /* 
-    console.log(`Nombre del datalogger ${currentDatalogger.name}`);    
-    console.log(`Segundos desde la ultima conexion: ${secondsFromLastConection}`);
-    console.log('condition logic:', condition_logic);
-    console.log('Variables:', variables);      
-    ejemplos de datos reales
-    Nombre del datalogger Cocina MDV srl
-    Segundos desde la ultima conexion: 257333
-    condition logic: value < 5
-    Variables: { value: 4288.883333333333 }
-    */
 
-    // Evaluar
     try {
       const isTriggered = evaluate(condition_logic, variables);
-      console.log(`${name} >>> condicion logica : ${condition_logic} - variables: ${JSON.stringify(variables)} - disparada: ${isTriggered}`);
       return { triggered: isTriggered, variables, message: `Valor registrado: ${variables.value} minutos desde el último dato.` };
     } catch (error) {
       console.error(`Error evaluando fallo comunicación:`, error);

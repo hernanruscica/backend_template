@@ -109,9 +109,7 @@ const MaintenanceLogService = {
         }
 
         const result = await MaintenanceLogModel.delete(uuid, user.uuid);
-        console.log('Delete result:', result);
         if (result.affectedRows === 1) {
-            console.log(`Maintenance log with UUID ${uuid} marked as inactive`);
             return {
                 message: 'Maintenance log deleted successfully',
                 item: {...existingItem, is_active: false}
