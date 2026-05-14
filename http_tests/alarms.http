@@ -86,7 +86,7 @@ Content-Type: application/json
 {
     "name": "New Test Alarm",
     "description": "A test alarm created by the owner.",
-    "channel_uuid": "sdfsd1232ds-sda213-sd-asdadsa-213sd",
+    "channel_uuid": "4b7b7074-f062-4994-8724-dce0fdd78847",
     "table_name": "cocina",
     "column_name": "d1",
     "time_range": 300,
@@ -100,7 +100,7 @@ Content-Type: application/json
 
 ###
 # Update an alarm as Owner
-PUT {{api}}/alarms/{{alarm_cafetera_mdvsrl}}
+PUT {{api}}/businesses/{{business_mdvsrl}}/alarms/{{alarm_cafetera_mdvsrl}}
 Authorization: Bearer {{ownerLogin.response.body.token}}
 Content-Type: application/json
 
@@ -110,7 +110,7 @@ Content-Type: application/json
 
 ###
 # Delete an alarm as Owner
-DELETE {{api}}/alarms/{{alarm_cafetera_mdvsrl}}
+DELETE {{api}}/businesses/{{business_mdvsrl}}/alarms/{{alarm_cafetera_mdvsrl}}/hard
 Authorization: Bearer {{ownerLogin.response.body.token}}
 
 

@@ -8,6 +8,7 @@ import {
 } from '../services/businessService.js';
 import catchAsync from '../utils/catchAsync.js';
 import CustomError from '../utils/customError.js';
+import logger from '../services/loggerService.js';
 
 export const createBusiness = catchAsync(async (req, res, next) => {
   const { street, city, state, country, zip_code, ...businessData } = req.body;
@@ -16,10 +17,23 @@ export const createBusiness = catchAsync(async (req, res, next) => {
   const businessPayload = { ...businessData, address, createdBy: created_by };
 
   if (req.file) {
-    businessPayload.logo_url = req.file.path; // Cloudinary URL
+    businessPayload.logo_url = req.file.path;
   }
   
   const business = await BusinessModel.create(businessPayload);
+
+  await logger.log({
+    action: 'create',
+    log_type: 'businesses',
+    details: `Se creó business "${business.name}"`,
+    extra_data: {
+      entity_uuid: business.uuid,
+      entity_name: business.name,
+      created_by_uuid: req.user.uuid
+    },
+    log_level: 'info'
+  });
+
   res.status(201).json({
     success: true,
     message: 'Business created successfully',
@@ -39,7 +53,7 @@ export const getAllBusinesses = catchAsync(async (req, res) => {
 
 export const getBusinessByUuid = catchAsync(async (req, res, next) => {
   const { businessUuid } = req.params;
-  console.log('businessUuid', businessUuid);
+  //console.log('businessUuid', businessUuid);
   
   //const business = await BusinessModel.findByUuid(uuid);
   const business = await getBusinessByUuidService(businessUuid);

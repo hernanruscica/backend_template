@@ -249,7 +249,7 @@ export const sendActivation = async (token, userData) => {
     try {
         const results = await transporter.sendMail(mailOptions);        
         if (results.rejected.length == 0){
-            console.log('Correo de activación enviado!');
+            //console.log('Correo de activación enviado!');
             return true;
         }
         return false;
@@ -267,7 +267,7 @@ export const testMessage = async (text, email) => {
     };  
     const results = await transporter.sendMail(mailOptions);        
     if (results.rejected.length == 0){
-        console.log('Correo enviado correctamente!');
+        //console.log('Correo enviado correctamente!');
         return true;
     }else{
         return false;

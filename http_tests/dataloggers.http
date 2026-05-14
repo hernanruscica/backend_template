@@ -1,13 +1,13 @@
 @api = http://localhost:5000/api
 @owner_dni = 28470359
-@owner_password = Password1234
+@owner_password = Pass1234
 
 @technician_dni = 28470350
 
 @technician_password = 1298
 
 
-@business_uuid = 1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d
+@business_uuid = 4e329ada-8511-4bfa-8d44-57a0ca4fd80c
 
 @technician_business_uuid =2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e
 
@@ -21,8 +21,8 @@ POST {{api}}/auth/login
 Content-Type: application/json
 
 {
-  "dni": "{{owner_dni}}",
-  "password": "{{owner_password}}"
+  "dni": "28470359",
+  "password": "Pass1234"
 }
 
 ###
@@ -38,7 +38,7 @@ Content-Type: application/json
 
 ###
 # Create a new datalogger
-POST {{api}}/dataloggers
+POST {{api}}/businesses/{{business_uuid}}/dataloggers
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -64,7 +64,7 @@ Content-Type: application/json
 
 ###
 # Update a datalogger
-PUT {{api}}/dataloggers/a1b2c3d4-e5f6-7890-1234-567890abcdef
+PUT {{api}}/businesses/{{business_uuid}}/dataloggers/eefa9754-1c0f-41a6-9dfb-e2d37bb52245
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -76,7 +76,7 @@ Authorization: Bearer {{token}}
 
 ###
 # Soft delete a datalogger
-DELETE {{api}}/dataloggers/a1b2c3d4-e5f6-7890-1234-567890abcdef
+DELETE {{api}}/businesses/{{business_uuid}}/dataloggers/eefa9754-1c0f-41a6-9dfb-e2d37bb52245
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -86,5 +86,5 @@ Content-Type: application/json
 
 ###
 # Hard delete a datalogger
-DELETE {{api}}/dataloggers/b2c3d4e5-f6a7-8901-2345-67890abcdef1/hard
+DELETE {{api}}/businesses/{{business_uuid}}/dataloggers/eefa9754-1c0f-41a6-9dfb-e2d37bb52245/hard
 Authorization: Bearer {{token}}

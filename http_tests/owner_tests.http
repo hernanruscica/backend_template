@@ -48,10 +48,10 @@ Authorization: Bearer {{token}}
 {
   "firstName": "juan",
   "lastName": "borrable",
-  "email": "technician.user.unique@example.com",
+  "email": "technician.user.uniqued@example.com",
   "password": "Password1234",
   "phone": "2222222",
-  "dni": "2222222",
+  "dni": "22122222",
   "street": "Technician St",
   "city": "Technician City",
   "state": "Technician State",
@@ -178,7 +178,7 @@ Content-Type: image/jpeg
 # ubicacion uuid mdv: 4e329ada-8511-4bfa-8d44-57a0ca4fd80c
 # /api/businesses/4e329ada-8511-4bfa-8d44-57a0ca4fd80c/users/58bf0fd4-b70b-4216-8494-df228d71a243
 
-DELETE {{api}}/businesses/5f430bdb-9622-4c1b-9e55-68b1db5ae91d/users/0d1e2f3a-4b5c-6d7e-8f90-a1b2c3d4e5f6/hard
+DELETE {{api}}/businesses/5f430bdb-9622-4c1b-9e55-68b1db5ae91d/users/aa615131-5a32-4e3c-b966-c0ddad5eb7c0/hard
 Authorization: Bearer {{token}}
 
 ###
@@ -268,7 +268,7 @@ Authorization: Bearer {{token}}
 ###
 
 # Update business (Owner) - Use a placeholder UUID, replace with an actual business ID
-PUT {{api}}/businesses/86bd6605-d8ac-4692-8321-c475a10f5c07
+PUT {{api}}/businesses/5f430bdb-9622-4c1b-9e55-68b1db5ae91d
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -300,13 +300,13 @@ Content-Type: image/jpeg
 ###
 
 # Delete business (Owner) - Use a placeholder UUID, replace with an actual business ID
-DELETE {{api}}/businesses/87174422-7126-43a3-8b01-56d22fd31a12
+DELETE {{api}}/businesses/8c763e1e-2955-4f1e-8b88-91e4ae8cb24a
 Authorization: Bearer {{token}}
 
 ###
 
 # HARD Delete business (Owner) - Use a placeholder UUID, replace with an actual business ID
-DELETE {{api}}/businesses/2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e/hard
+DELETE {{api}}/businesses/8c763e1e-2955-4f1e-8b88-91e4ae8cb24a/hard
 Authorization: Bearer {{token}}
 
 

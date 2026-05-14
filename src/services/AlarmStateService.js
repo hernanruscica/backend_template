@@ -7,6 +7,7 @@ import ChannelModel from '../models/ChannelModel.js';
 import { sendMessage } from '../utils/mail.js';
 import generateTokenAlarmLog from '../utils/generateTokenAlarmLog.js';
 import crypto from 'crypto';
+import logger from '../services/loggerService.js';
 
 class AlarmStateService {
   
@@ -19,11 +20,18 @@ class AlarmStateService {
     const newState = isTriggered ? 1 : 0;
     
     if (alarm.triggered == newState) {
-      // El estado no ha cambiado, no hacemos nada (o logueamos debug)
-      return; 
+      return { changed: false };
     }
 
-    console.log(`🔄 Cambio de estado para alarma ${alarm.name}: ${alarm.triggered} -> ${newState}`);
+    // console.log(`🔄 Cambio de estado para alarma ${alarm.name}: ${alarm.triggered} -> ${newState}`);
+    await logger.info('system', `Cambio de estado para alarma "${alarm.name}": ${alarm.triggered} -> ${newState}`, {
+      alarm_uuid: alarm.uuid,
+      alarm_name: alarm.name,
+      previous_state: alarm.triggered,
+      new_state: newState,
+      alarm_type: alarm.alarm_type,
+      channel_uuid: alarm.channel_uuid
+    });
 
     // 2. Actualizar la alarma en DB - Example: async update(uuid, fields, updatedBy)
     await AlarmModel.update(alarm.uuid, {triggered: newState}, null); 
@@ -34,7 +42,9 @@ class AlarmStateService {
     const usersAffected = await UserAlarmModel.findUsersByAlarmUuid(alarm.uuid);
     //console.log('usersAffected', usersAffected);
     
-    if (!usersAffected || usersAffected.length === 0) return;
+    if (!usersAffected || usersAffected.length === 0) {
+      return { changed: true, newState: isTriggered ? 'triggered' : 'reset' };
+    }
 
     const eventUuidForAllUsersAffects = crypto.randomUUID()
     // 4. Procesar notificaciones para cada usuario (Parallel processing)
@@ -43,6 +53,8 @@ class AlarmStateService {
     );
 
     await Promise.allSettled(notificationPromises);
+
+    return { changed: true, newState: isTriggered ? 'triggered' : 'reset' };
   }
 
   async notifyUser(user, alarm, isTriggered, variables, message = `Alarma ${isTriggered == 1 ? 'disparada' : 'reseteada'}`, eventUuid) {
@@ -96,9 +108,21 @@ class AlarmStateService {
         emailSent = await sendMessage(alarm, enrichedVariables, user.email, token, isTriggered);
 
         if(emailSent){
-          console.log(`📧 Notificación enviada a ${user.email} (Triggered: ${isTriggered})`);
+          // console.log(`📧 Notificación enviada a ${user.email} (Triggered: ${isTriggered})`);
+          await logger.info('system', `Notificación enviada a ${user.email}`, {
+            user_email: user.email,
+            is_triggered: isTriggered,
+            alarm_uuid: alarm.uuid,
+            alarm_name: alarm.name
+          });
         }else{
-          console.log(`❌ Falló el envío de notificación a ${user.email} (Triggered: ${isTriggered})`);
+          // console.log(`❌ Falló el envío de notificación a ${user.email} (Triggered: ${isTriggered})`);
+          await logger.warn('system', `Falló el envío de notificación a ${user.email}`, {
+            user_email: user.email,
+            is_triggered: isTriggered,
+            alarm_uuid: alarm.uuid,
+            alarm_name: alarm.name
+          });
           //uso  async update(uuid, fields, updatedBy) {para actualizar el log
           await AlarmLogModel.update(logId.uuid, {email_sent: 0}, null);
       }
@@ -109,7 +133,13 @@ class AlarmStateService {
       
 
     } catch (error) {
-      console.error(`❌ Error notificando usuario ${user.email}:`, error);
+      // console.error(`❌ Error notificando usuario ${user.email}:`, error);
+      await logger.error('system', `Error notificando usuario ${user.email}`, {
+        user_email: user.email,
+        alarm_uuid: alarm.uuid,
+        alarm_name: alarm.name,
+        error: error.message
+      });
     }
   }
 }

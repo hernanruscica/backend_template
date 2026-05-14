@@ -5,6 +5,7 @@ import CustomError from '../utils/customError.js';
 import bcrypt from 'bcryptjs';
 import { sendActivation } from '../utils/mail.js';
 import jwt from 'jsonwebtoken';
+import logger from './loggerService.js';
 
 //Function to generate activation token and send activation email by UUID
   export const sendActivationEmailByUuid = async (userUuid) => {
@@ -74,9 +75,36 @@ export const createUserService = async (userData, businessUuid, roleName, adminU
   const sendEmailResults = await sendActivationEmailByUuid(newUser.uuid);  
 
   if (!sendEmailResults.success) {
+    await logger.log({
+      action: 'create',
+      log_type: 'users',
+      details: `Error al crear usuario: falló envío de email de activación a "${newUser.email}"`,
+      extra_data: {
+        entity_uuid: newUser.uuid,
+        entity_email: newUser.email,
+        business_uuid: businessUuid,
+        created_by_uuid: adminUser.uuid,
+        created_by_email: adminUser.email
+      },
+      log_level: 'error'
+    });
     throw new CustomError('User created but failed to send activation email.', 500);
   }
-  
+
+  await logger.log({
+    action: 'create',
+    log_type: 'users',
+    details: `Se creó usuario "${newUser.email}" en negocio ${businessUuid} por admin ${adminUser.email}`,
+    extra_data: {
+      entity_uuid: newUser.uuid,
+      entity_email: newUser.email,
+      business_uuid: businessUuid,
+      created_by_uuid: adminUser.uuid,
+      created_by_email: adminUser.email
+    },
+    log_level: 'info'
+  });
+
   return sendEmailResults.user;
 };
 
@@ -107,15 +135,11 @@ export const updateUserByUuidService = async (uuid, updateData, requesterUser, f
   const userRolesOriginBusiness = requesterUser.roles.find(ur => ur.businessUuid === uuidOrigin);
   const isTechnician = userRolesOriginBusiness?.role === 'Technician';
 
-  // 'Technician' users only can update his own user
   if (isTechnician && uuid !== requesterUser.uuid) {
     throw new CustomError('This user role only can UPDATE his own user', 403);
   }
-
-  //console.log('uuid', uuid);
   
   const user = await UserModel.findByUuid(uuid);
-  //console.log('user', user);
   
   if (!user) {
     throw new CustomError('User not found', 404);
@@ -123,14 +147,12 @@ export const updateUserByUuidService = async (uuid, updateData, requesterUser, f
 
   const fieldsToUpdate = {};
 
-  // Copy all non-address fields that are not undefined
   for (const key in restOfUpdateData) {
     if (restOfUpdateData[key] !== undefined && !['street', 'city', 'state', 'country', 'zip_code'].includes(key)) {
       fieldsToUpdate[key] = restOfUpdateData[key];
     }
   }
 
-  // Handle address fields
   const addressUpdates = {};
   const addressFields = ['street', 'city', 'state', 'country', 'zip_code'];
   let hasAddressUpdate = false;
@@ -154,7 +176,22 @@ export const updateUserByUuidService = async (uuid, updateData, requesterUser, f
   }
 
   await UserModel.update(uuid, fieldsToUpdate, requesterUser.uuid);
-  return UserModel.findByUuid(uuid);
+  const updatedUser = await UserModel.findByUuid(uuid);
+
+  await logger.log({
+    action: 'update',
+    log_type: 'users',
+    details: `Se actualizó usuario "${user.email}" por admin ${requesterUser.uuid}`,
+    extra_data: {
+      entity_uuid: uuid,
+      entity_email: user.email,
+      changed_fields: Object.keys(fieldsToUpdate),
+      updated_by_uuid: requesterUser.uuid
+    },
+    log_level: 'info'
+  });
+
+  return updatedUser;
 };
 
 export const deleteUserByUuidService = async (uuid, adminUser) => {
@@ -166,6 +203,19 @@ export const deleteUserByUuidService = async (uuid, adminUser) => {
   if (result.affectedRows === 0) {
     throw new CustomError('User not found', 404);
   }
+
+  await logger.log({
+    action: 'delete',
+    log_type: 'users',
+    details: `Se eliminó usuario "${user.email}"`,
+    extra_data: {
+      entity_uuid: uuid,
+      entity_email: user.email,
+      updated_by_uuid: adminUser.uuid
+    },
+    log_level: 'info'
+  });
+
   return { message: 'User deleted successfully', user: {...user, is_active: false} };
 };
 
@@ -178,5 +228,17 @@ export const hardDeleteUserByUuidService = async (uuid) => {
   if (result.affectedRows === 0) {
     throw new CustomError('User not found', 404);
   }
+
+  await logger.log({
+    action: 'delete',
+    log_type: 'users',
+    details: `Se eliminó permanentemente usuario "${user.email}"`,
+    extra_data: {
+      entity_uuid: uuid,
+      entity_email: user.email
+    },
+    log_level: 'info'
+  });
+
   return { message: 'User permanently deleted successfully', user };
 };

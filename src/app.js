@@ -14,6 +14,7 @@ import userAlarmRoutes from './routes/userAlarmRoutes.js';
 import dataRoutes from './routes/dataRoutes.js';
 import userBusinessRoutes from './routes/userBusinessRoutes.js';
 import maintenanceLogRoutes from './routes/maintenanceLogRoutes.js';
+import backendLogRoutes from './routes/backendLogRoutes.js';
 import errorHandler from './middlewares/errorHandler.js';
 
 const app = express();
@@ -44,6 +45,7 @@ app.use('/api', solutionRoutes);
 app.use('/api', userAlarmRoutes); 
 app.use('/api', userBusinessRoutes);
 app.use('/api', maintenanceLogRoutes);
+app.use('/api', backendLogRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');

@@ -1,5 +1,6 @@
 import DataloggerModel from "../models/DataloggerModel.js";
 import dataModel from "../models/dataModel.js";
+import logger from "./loggerService.js";
 
 const DataService = {
 
@@ -20,7 +21,7 @@ const DataService = {
             
             return data;
         } catch (error) {
-            console.error(`❌ DataService.getLastPorcentageUsageByChannel failed [${error.code || 'UNKNOWN'}]:`, error.message);
+            logger.log({ action: null, log_type: 'data', details: `DataService.getLastPorcentageUsageByChannel failed: ${error.message}`, extra_data: { error_code: error.code }, log_level: 'error' });
         }
     },
     getDataloggerLastConection: async (dataloggerUuid) => {
@@ -36,7 +37,8 @@ const DataService = {
             
             //const lastConectionDate = await dataModel.findDataloggerLastConection(dataloggerUuid);
         } catch (error) {
-            console.error(`❌ DataService.getDataloggerLastConection failed [${error.code || 'UNKNOWN'}]:`, error.message);
+            logger.log({ action: null, log_type: 'data', details: `DataService.getDataloggerLastConection failed: ${error.message}`, extra_data: { error_code: error.code }, log_level: 'error' });
+            return null;
         }
     },    
     getTotalOnTimeFromChannel: async (channelUuid) => {
@@ -59,7 +61,7 @@ const DataService = {
             return data;
             
         } catch (error) {
-            console.error(`❌ DataService.getTotalOnTimeFromChannel failed [${error.code || 'UNKNOWN'}]:`, error.message);
+            logger.log({ action: null, log_type: 'data', details: `DataService.getTotalOnTimeFromChannel failed: ${error.message}`, extra_data: { error_code: error.code }, log_level: 'error' });
         }
     },
     getTotalOnTimeFromChannelByPeriod: async (channelUuid, startInterval, stopInterval) => {
@@ -75,7 +77,7 @@ const DataService = {
             return responseData[0];
             
         } catch (error) {
-            console.error(`❌ DataService.getTotalOnTimeFromChannelByPeriod failed [${error.code || 'UNKNOWN'}]:`, error.message);
+            logger.log({ action: null, log_type: 'data', details: `DataService.getTotalOnTimeFromChannelByPeriod failed: ${error.message}`, extra_data: { error_code: error.code }, log_level: 'error' });
         }
     },
     //findRollingAverageData (tableName, columnPrefix, averagingPeriod, startInterval, stopInterval)
@@ -90,7 +92,7 @@ const DataService = {
             //console.log('data from getAllAverageUsageByChannel service: ',data);
             return data;
         } catch (error) {
-            console.error(`❌ DataService.getAllAverageUsageByChannel failed [${error.code || 'UNKNOWN'}]:`, error.message);
+            logger.log({ action: null, log_type: 'data', details: `DataService.getAllAverageUsageByChannel failed: ${error.message}`, extra_data: { error_code: error.code }, log_level: 'error' });
         }
     },
     //findDailyAverageByPeriod  (tableName, columnPrefix, startInterval, stopInterval)
@@ -104,7 +106,7 @@ const DataService = {
             const data = await dataModel.findDailyAverageByPeriod(table_name, column_name, startInterval, stopInterval);
             return data;
         } catch (error) {
-            console.error(`❌ DataService.getAllDailyUsageByChannel failed [${error.code || 'UNKNOWN'}]:`, error.message);
+            logger.log({ action: null, log_type: 'data', details: `DataService.getAllDailyUsageByChannel failed: ${error.message}`, extra_data: { error_code: error.code }, log_level: 'error' });
         }
     },
     // findtWeeklyAverageByPeriod (tableName, columnPrefix, startInterval, stopInterval)
@@ -118,7 +120,7 @@ const DataService = {
             const data = await dataModel.findtWeeklyAverageByPeriod(table_name, column_name, startInterval, stopInterval);
             return data;
         } catch (error) {
-            console.error(`❌ DataService.getAllWeeklyUsageByChannel failed [${error.code || 'UNKNOWN'}]:`, error.message);
+            logger.log({ action: null, log_type: 'data', details: `DataService.getAllWeeklyUsageByChannel failed: ${error.message}`, extra_data: { error_code: error.code }, log_level: 'error' });
         }
     },
 
@@ -144,7 +146,7 @@ const DataService = {
                 data: incidents
             };
         } catch (error) {
-            console.error(`❌ DataService.getEnergyIncidents failed [${error.code || 'UNKNOWN'}]:`, error.message);
+            logger.log({ action: null, log_type: 'data', details: `DataService.getEnergyIncidents failed: ${error.message}`, extra_data: { error_code: error.code }, log_level: 'error' });
             return { success: false, message: 'Error al obtener incidentes', data: [] };
         }
     }

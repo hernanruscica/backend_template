@@ -2,13 +2,14 @@ import DataloggerModel from "../models/DataloggerModel.js";
 import ChannelModel from "../models/ChannelModel.js";
 import DataloggersDataStore from "../stores/DataloggersDataStore.js";
 import DataService from "./DataService.js";
+import logger from "./loggerService.js";
 //import dataModel from "../models/dataModel";
 
 const DataloggerDataReceiveService = {
     loadData: async () => {
-        console.log('========================================');
-        console.log('🔄 DataloggerDataReceiveJob ejecutandose...');
-        console.log('========================================');
+        // console.log('========================================');
+        // console.log('🔄 DataloggerDataReceiveJob ejecutandose...');
+        // console.log('========================================');
         // Get All active dataloggers
         const responseDls = await DataloggerModel.findAll();
         const activeDataloggers = responseDls.filter(dl => dl.is_active == true);        
@@ -35,17 +36,14 @@ const DataloggerDataReceiveService = {
                 }
             } else {
                 ch.totalData = DataloggersDataStore.getLoggerData(ch.datalogger_id).channels.find(c => c.uuid == ch.uuid).totalData;            
-            }
-            
-
-
+            }  
 
             return ch;
         })
         const channelsWithAllData = await Promise.allSettled(promises);
         const rejectedChannels = channelsWithAllData.filter(r => r.status === 'rejected');
         if (rejectedChannels.length > 0) {
-            console.error(`❌ ${rejectedChannels.length} canal(es) fallaron al cargar datos:`, rejectedChannels.map(r => r.reason?.message || r.reason));
+            logger.log({ action: null, log_type: 'data', details: `${rejectedChannels.length} canal(es) fallaron al cargar datos`, extra_data: { errors: rejectedChannels.map(r => r.reason?.message || r.reason) }, log_level: 'warn' });
         }
         const successfulChannels = channelsWithAllData.filter(r => r.status === 'fulfilled').map(r => r.value);
         
@@ -58,7 +56,7 @@ const DataloggerDataReceiveService = {
         const dataloggersWithLastConectionInfo = await Promise.allSettled(promisesLastConection);
         const rejectedDataloggers = dataloggersWithLastConectionInfo.filter(r => r.status === 'rejected');
         if (rejectedDataloggers.length > 0) {
-            console.error(`❌ ${rejectedDataloggers.length} datalogger(s) fallaron al cargar última conexión:`, rejectedDataloggers.map(r => r.reason?.message || r.reason));
+            logger.log({ action: null, log_type: 'data', details: `${rejectedDataloggers.length} datalogger(s) fallaron al cargar última conexión`, extra_data: { errors: rejectedDataloggers.map(r => r.reason?.message || r.reason) }, log_level: 'warn' });
         }
         const successfulDataloggers = dataloggersWithLastConectionInfo.filter(r => r.status === 'fulfilled').map(r => r.value);
 
@@ -67,7 +65,12 @@ const DataloggerDataReceiveService = {
             dl.channels = channelsForCurrentDatalogger;            
             DataloggersDataStore.setLoggerData(dl.uuid, dl);   
         });
-        
+
+        return {
+            successfulDataloggers,
+            rejectedDataloggers,
+            rejectedChannels
+        };
     }
 }
 

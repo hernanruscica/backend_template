@@ -38,12 +38,18 @@ export const permissionMiddleware = async (req, res, next) => {
 
 
 
+  const urlArray = originalUrl.split('/');
+  const entity = (urlArray.length > 4) ? urlArray[4] : urlArray[2];
+
+  // Excepcion para backendlogs (logs globales del sistema)
+  if (entity === 'backendlogs' && isOwner) {
+    return next();
+  }
+
   // If requester user is owner can do all.
   if (isOwner) {
     return next();
   }
-  const urlArray = originalUrl.split('/');
-  const entity = (urlArray.length > 4) ? urlArray[4] : urlArray[2];
   
   //console.log('urlArray:', urlArray);  
   

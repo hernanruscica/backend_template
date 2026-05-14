@@ -54,7 +54,7 @@ const MaintenanceLogModel = {
              ORDER BY ml.created_at DESC`,
             [dataloggerUuid, channelUuid, businessUuid]
         );
-        console.log("Maintenance logs fetched from database:", rows);
+        //console.log("Maintenance logs fetched from database:", rows);
         return rows;
     },
 

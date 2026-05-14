@@ -9,7 +9,9 @@ import MaintenanceLogModel from '../models/MaintenanceLogModel.js';
 import DataService from '../services/DataService.js';
 import DataloggersDataStore from '../stores/DataloggersDataStore.js';
 import { sendMessage } from '../utils/mail.js';
+import logger from '../services/loggerService.js';
 
+// La hora a la que se ejecutará el job (1 = 1am)
 const MAINTENANCE_CRON_HOUR = 1;
 
 let isRunning = false;
@@ -18,28 +20,49 @@ const startMaintenanceAlertJob = () => {
    cron.schedule(`0 ${MAINTENANCE_CRON_HOUR} * * *`, async () => {
     //cron.schedule(`* * * * *`, async () => {
     if (isRunning) {
-      console.log('⚠️ El job de Maintenance Alert sigue corriendo. Saltando esta ejecución.');
+      // console.log('⚠️ El job de Maintenance Alert sigue corriendo. Saltando esta ejecución.');
+      await logger.warn('cronjob', 'Job de mantenimiento anterior ejecutándose, saltando esta ejecución');
       return;
     }
 
     isRunning = true;
     try {
-      console.log('🔧 Iniciando chequeo de mantenimientos programados...');
-      await checkMaintenanceAlerts();
+      // console.log('🔧 Iniciando chequeo de mantenimientos programados...');
+      await logger.info('cronjob', 'Iniciando chequeo de mantenimientos programados');
+      const result = await checkMaintenanceAlerts();
+
+      const details = `Chequeo de mantenimientos completado: ${result.total_channels} canales, ${result.skipped_channels} saltados, ${result.notifications_sent} notificaciones enviadas, ${result.total_dataloggers_updated} dataloggers actualizados`;
+
+      const extraData = {
+        channels: result.channels.map(ch => ({
+          uuid: ch.uuid,
+          name: ch.name,
+          business_uuid: ch.business_uuid,
+          maintenance_count: ch.maintenanceCount,
+          notifications_sent: ch.notificationsSent
+        })),
+        total_channels: result.total_channels,
+        skipped_channels: result.skipped_channels,
+        notifications_sent: result.notifications_sent,
+        total_dataloggers_updated: result.total_dataloggers_updated
+      };
+
+      await logger.info('cronjob', details, extraData);
     } catch (error) {
-      console.error('❌ Error en el job de Maintenance Alert:', error);
+      // console.error('❌ Error en el job de Maintenance Alert:', error);
+      await logger.error('cronjob', 'Error en job de mantenimiento', { error: error.message });
     } finally {
       isRunning = false;
-      console.log('🏁 Chequeo de mantenimientos finalizado.');
     }
   });
-  console.log(`✅ Job MaintenanceAlert programado para ejecutarse cada 12 horas a las ${MAINTENANCE_CRON_HOUR}:00`);
+  // console.log(`✅ Job MaintenanceAlert programado para ejecutarse cada 12 horas a las ${MAINTENANCE_CRON_HOUR}:00`);
+  logger.info('cronjob', `Job de mantenimiento programado para ejecutarse a las ${String(MAINTENANCE_CRON_HOUR).padStart(2, '0')}:00 Hs`);
 };
 
 const checkMaintenanceAlerts = async () => {
-  console.log('========================================');
-  console.log('🔧 checkMaintenanceAlerts ejecutandose...');
-  console.log('========================================');
+  // console.log('========================================');
+  // console.log('🔧 checkMaintenanceAlerts ejecutandose...');
+  // console.log('========================================');
   
   const channels = await ChannelModel.findAll();
   const dataloggers = await DataloggerModel.findAll();
@@ -48,6 +71,8 @@ const checkMaintenanceAlerts = async () => {
   const todayStr = today.toISOString().split('T')[0];
 
   const channelsWithData = [];
+  let skippedCount = 0;
+  let sentCount = 0;
 
   for (const channel of channels) {
     if (!channel.is_active) continue;
@@ -57,7 +82,8 @@ const checkMaintenanceAlerts = async () => {
     const businessUuid = channel.business?.uuid || business_uuid;
 
     if (!businessUuid || !channelUuid) {
-      console.log(`⚠️ Canal ${channelUuid} sin business_uuid, saltando.`);
+      // console.log(`⚠️ Canal ${channelUuid} sin business_uuid, saltando.`);
+      skippedCount++;
       continue;
     }
 
@@ -101,7 +127,8 @@ const checkMaintenanceAlerts = async () => {
         }
 
         await MaintenanceLogModel.markNotificationSent(maintenance.uuid);
-        console.log(`📧 Notificación enviada para maintenance: ${maintenance.title}`);
+        // console.log(`📧 Notificación enviada para maintenance: ${maintenance.title}`);
+        sentCount++;
       }
     }
 
@@ -114,6 +141,8 @@ const checkMaintenanceAlerts = async () => {
 
   DataloggersDataStore.setLastTotalDataLoad(Date.now());
 
+  let updatedDlCount = 0;
+
   for (const dl of dataloggers) {
     if (!dl.is_active) continue;
     const channelsForDl = channelsWithData.filter(ch => ch.datalogger_id == dl.uuid || ch.datalogger?.uuid == dl.uuid);
@@ -125,10 +154,25 @@ const checkMaintenanceAlerts = async () => {
         lastConection: existingData.lastConection || null
       };
       DataloggersDataStore.setLoggerData(dl.uuid, updatedDl);
+      updatedDlCount++;
     }
   }
   
-  console.log('🏁 checkMaintenanceAlerts FINALIZADO');
+  // console.log('🏁 checkMaintenanceAlerts FINALIZADO');
+
+  return {
+    total_channels: channels.length,
+    skipped_channels: skippedCount,
+    notifications_sent: sentCount,
+    total_dataloggers_updated: updatedDlCount,
+    channels: channelsWithData.map(ch => ({
+      uuid: ch.uuid,
+      name: ch.name,
+      business_uuid: ch.business_uuid,
+      maintenanceCount: 0,
+      notificationsSent: 0
+    }))
+  };
 };
 
 const getUsersByRole = async (businessUuid, roles) => {

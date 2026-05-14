@@ -1,16 +1,28 @@
+import logger from '../services/loggerService.js';
+
 const errorHandler = (err, req, res, next) => {
-  if (err.name === 'CustomError') {
-    console.error(`ERROR: ${err.statusCode} - ${err.message}`);
-  } else {
-    console.error(err.stack);
+  const extra = {
+    statusCode: err.statusCode || 500,
+    method: req.method,
+    url: req.originalUrl,
+    user_uuid: req.user?.uuid
+  };
+
+  if (err.name !== 'CustomError') {
+    extra.stack = err.stack;
   }
 
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
+  logger.log({
+    action: null,
+    log_type: 'system',
+    details: err.message,
+    extra_data: extra,
+    log_level: 'error'
+  });
 
-  res.status(statusCode).json({
+  res.status(extra.statusCode).json({
     success: false,
-    message,
+    message: err.message || 'Internal Server Error',
   });
 };
 

@@ -1,0 +1,100 @@
+@api = http://localhost:5000/api
+
+###
+# @name login
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{
+  "dni": "28470359",
+  "password": "Pass1234"
+}
+
+###
+@token = {{login.response.body.token}}
+
+###
+# Get all backend logs
+GET {{api}}/backendlogs
+Authorization: Bearer {{token}}
+
+###
+# Get backend logs with filters - log_type
+GET {{api}}/backendlogs?log_type=user
+Authorization: Bearer {{token}}
+
+###
+# Get backend logs with filters - log_level
+GET {{api}}/backendlogs?log_level=error
+Authorization: Bearer {{token}}
+
+###
+# Get backend logs with filters - action
+GET {{api}}/backendlogs?action=create
+Authorization: Bearer {{token}}
+
+###
+# Get backend logs with filters - multiple
+GET {{api}}/backendlogs?log_type=user&log_level=info&limit=10
+Authorization: Bearer {{token}}
+
+###
+# Get a backend log by UUID (use an existing UUID from previous response)
+GET {{api}}/backendlogs/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+###
+# Create backend log - info level
+POST {{api}}/backendlogs
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "create",
+  "log_type": "user",
+  "details": "Usuario john.doe@example.com creó un nuevo negocio",
+  "extra_data": { "business_uuid": "6a541cec-0733-4dfc-8f66-79c2ec6bf02e", "business_name": "Guemes" },
+  "log_level": "info"
+}
+
+###
+# Create backend log - warn level
+POST {{api}}/backendlogs
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": null,
+  "log_type": "system",
+  "details": "Uso de memoria del servidor elevado",
+  "extra_data": { "memory_usage": 85, "threshold": 80 },
+  "log_level": "warn"
+}
+
+###
+# Create backend log - error level
+POST {{api}}/backendlogs
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": null,
+  "log_type": "cronjob",
+  "details": "Job de alarmas falló por timeout de conexión",
+  "extra_data": { "job_name": "alarmJob", "error": "ECONNREFUSED", "attempt": 3 },
+  "log_level": "error"
+}
+
+###
+# Create backend log - CRUD update
+POST {{api}}/backendlogs
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "update",
+  "log_type": "user",
+  "details": "Usuario john.doe@example.com actualizó la configuración de alarma",
+  "extra_data": { "alarm_uuid": "a1b2c3d4-0005-4a7b-8c9d-0e1f2a3b4c5d", "field": "threshold" },
+  "log_level": "info"
+}

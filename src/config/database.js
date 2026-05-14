@@ -19,7 +19,7 @@ try {
     keepAliveInitialDelay: 0,
     idleTimeout: 60000
   });
-  console.log('Database pool created successfully');
+  //console.log('Database pool created successfully');
 } catch (error) {
   console.error('Error creating database pool:', error);
   process.exit(1);
@@ -39,7 +39,7 @@ try {
       keepAliveInitialDelay: 0,
       idleTimeout: 60000
   });
-  console.log('Database poolData created successfully');
+  //console.log('Database poolData created successfully');
 } catch (error) {
   console.error('Error creating database poolData:', error);
   process.exit(1);
