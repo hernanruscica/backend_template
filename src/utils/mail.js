@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import logger from '../services/loggerService.js';
 
 // Configuración del transporte
 let transporter = nodemailer.createTransport({
@@ -9,7 +10,9 @@ let transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     },
-    tls: { rejectUnauthorized: false }
+    tls: { rejectUnauthorized: false },
+    debug: true,
+    logger: true
 }); 
 
 // --- HELPER: FORMATEAR FECHA ---
@@ -202,6 +205,11 @@ export const sendMessage = async (alarm, variables, email, token, isTriggered) =
         const results = await transporter.sendMail(mailOptions);        
         return results.rejected.length === 0;
     } catch (error) {
+        logger.error('system', `Error enviando notificación de alarma a ${email}`, {
+            error: error.message,
+            alarm_name: alarm?.name,
+            email
+        });
         return false;
     }
 }
@@ -253,7 +261,11 @@ export const sendActivation = async (token, userData) => {
             return true;
         }
         return false;
-    } catch (e) {
+    } catch (error) {
+        logger.error('system', `Error enviando activación a ${userData?.email}`, {
+            error: error.message,
+            email: userData?.email
+        });
         return false;
     }
 }
@@ -265,11 +277,17 @@ export const testMessage = async (text, email) => {
         subject: `testing hostinger with nodemailer`,
         html: text
     };  
-    const results = await transporter.sendMail(mailOptions);        
-    if (results.rejected.length == 0){
-        //console.log('Correo enviado correctamente!');
-        return true;
-    }else{
+    try {
+        const results = await transporter.sendMail(mailOptions);        
+        if (results.rejected.length == 0){
+            return true;
+        }
+        return false;
+    } catch (error) {
+        logger.error('system', `Error en testMessage a ${email}`, {
+            error: error.message,
+            email
+        });
         return false;
     }
 }

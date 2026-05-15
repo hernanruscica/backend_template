@@ -18,6 +18,7 @@ import backendLogRoutes from './routes/backendLogRoutes.js';
 import errorHandler from './middlewares/errorHandler.js';
 
 const app = express();
+app.set('trust proxy', 1);
 
 // Set security HTTP headers
 app.use(helmet());
