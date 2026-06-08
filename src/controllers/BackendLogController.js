@@ -2,12 +2,14 @@ import BackendLogService from '../services/BackendLogService.js';
 import catchAsync from '../utils/catchAsync.js';
 
 const getAll = catchAsync(async (req, res, next) => {
-    const { log_type, log_level, action, limit } = req.query;
+    const { log_type, log_level, action, start_date, end_date, limit } = req.query;
 
     const filters = {
         log_type,
         log_level,
         action,
+        start_date,
+        end_date,
         limit
     };
 

@@ -2,7 +2,7 @@ import BackendLogModel from '../models/BackendLogModel.js';
 
 const BackendLogService = {
     async getAll(filters = {}) {
-        const { log_type, log_level, action, limit = 100 } = filters;
+        const { log_type, log_level, action, start_date, end_date, limit = 100 } = filters;
 
         let whereClause = '';
         const params = [];
@@ -19,6 +19,14 @@ const BackendLogService = {
         if (action) {
             conditions.push('action = ?');
             params.push(action);
+        }
+        if (start_date) {
+            conditions.push('created_at >= ?');
+            params.push(start_date);
+        }
+        if (end_date) {
+            conditions.push('created_at < ? + INTERVAL 1 DAY');
+            params.push(end_date);
         }
 
         whereClause = conditions.length > 0 ? 'WHERE ' + conditions.join(' AND ') : '';
