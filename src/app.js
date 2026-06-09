@@ -16,6 +16,7 @@ import userBusinessRoutes from './routes/userBusinessRoutes.js';
 import maintenanceLogRoutes from './routes/maintenanceLogRoutes.js';
 import backendLogRoutes from './routes/backendLogRoutes.js';
 import errorHandler from './middlewares/errorHandler.js';
+import { csrfMiddleware } from './middlewares/csrfMiddleware.js';
 
 const app = express();
 app.set('trust proxy', 1);
@@ -33,6 +34,8 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 app.use(express.json());
+
+app.use('/api', csrfMiddleware);
 
 app.use('/api/auth', authRoutes);
 app.use('/api', businessRoutes);
