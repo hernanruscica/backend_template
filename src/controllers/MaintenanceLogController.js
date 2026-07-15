@@ -108,11 +108,27 @@ const complete = async (req, res, next) => {
     }
 };
 
+const runCheck = async (req, res, next) => {
+    try {
+        const { checkMaintenanceAlerts } = await import('../jobs/MaintenanceAlertJob.js');
+        const result = await checkMaintenanceAlerts();
+
+        res.status(200).json({
+            success: true,
+            message: 'Chequeo de mantenimiento ejecutado',
+            result,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 MaintenanceLogController.getAll = getAll;
 MaintenanceLogController.create = create;
 MaintenanceLogController.getByUuid = getByUuid;
 MaintenanceLogController.updateByUuid = updateByUuid;
 MaintenanceLogController.deleteByUuid = deleteByUuid;
 MaintenanceLogController.complete = complete;
+MaintenanceLogController.runCheck = runCheck;
 
 export default MaintenanceLogController;

@@ -139,10 +139,11 @@ Definicion de agentes especializados, sus responsabilidades, las specs que consu
 - Para crear nuevos tipos de alarmas (strategies)
 - Para modificar el pipeline de datos
 - Para optimizar queries de time-series
-- Para modificar el DataloggersDataStore
+- Para modificar el DataloggersDataStore o EnergyIncidentsCache
 - Para agregar nuevas condiciones de evaluacion
+- Para modificar el pipeline de mantenimiento o sus alertas
 
-**Entregable:** Strategies, services, models, y jobs del pipeline IoT implementados segun spec.
+**Entregable:** Strategies, services, models, stores (DataloggersDataStore, EnergyIncidentsCache), y jobs (MaintenanceAlertJob) del pipeline IoT implementados segun spec.
 
 ---
 

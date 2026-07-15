@@ -70,12 +70,29 @@ Capa central de logica de negocio. Recibe requests de controllers, aplica reglas
 - Las estrategias leen de `DataloggersDataStore` (in-memory)
 - Las estrategias usan `mathjs` para evaluar expresiones dinamicas
 
+### Patron de Cache en DataService
+- `DataService` usa `ChannelMetadataStore` (Map en memoria) para cachear metadatos de canal
+- Metodo `getChannelMetadata(channelUuid)`: busca en cache, si no existe va a DB y guarda
+- Los metadatos (table_name, column_name, name, averaging_period) son estaticos y se cachean indefinidamente
+- El cache se invalida cuando: el cron job carga datos (cada 5 min) o se actualiza/elimina un canal
+- `ChannelService` invalida el cache en update/delete/hardDelete llamando a `ChannelMetadataStore.invalidate(uuid)`
+- Este patron elimina 1 query a la DB por request en los endpoints de time-series
+
+### Patron de Cache con TTL (EnergyIncidentsCache)
+- `DataService` usa `EnergyIncidentsCache` (Map con TTL) para cachear resultados de energyincidents
+- Key compuesta: `${dataloggerUuid}:${start}:${end}`
+- TTL: 5 minutos (300,000 ms)
+- Cleanup automatico cada 10 minutos via `setInterval`
+- En cache hit: 0 queries a DB
+- En cache miss: ejecuta queries, guarda resultado en cache, retorna
+- Invalidacion: solo por TTL (no hay invalidacion manual)
+
 ## 4. Dependencias
 
 ### Hacia que capas depende
 - **Models** (spec 05): Persistencia de datos
 - **Utils** (spec 06): `CustomError`, `loggerService`, `mail`, `dateUtils`
-- **Stores** (spec 07): `DataloggersDataStore` para datos en memoria
+- **Stores** (spec 07): `DataloggersDataStore` para datos en memoria, `ChannelMetadataStore` para metadatos cacheados
 
 ### Que capas dependen de esta
 - **Controllers** (spec 03): Delegan toda la logica de negocio

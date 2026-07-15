@@ -15,7 +15,7 @@ Capa de acceso a datos. Encapsula todas las interacciones con la base de datos M
 - `userModel.js` - Modelo de usuarios (custom, no usa BaseModel)
 - `businessModel.js` - Modelo de negocios (custom, no usa BaseModel)
 - `roleModel.js` - Modelo de roles y permisos (custom)
-- `DataloggerModel.js` - Modelo de dataloggers (extiende BaseModel)
+- `DataloggerModel.js` - Modelo de dataloggers (extiende BaseModel + findByUuidDirect)
 - `ChannelModel.js` - Modelo de canales (extiende BaseModel + custom findAll)
 - `AlarmModel.js` - Modelo de alarmas (extiende BaseModel + custom queries)
 - `AlarmLogModel.js` - Modelo de logs de alarma (extiende BaseModel + agregaciones)
@@ -47,6 +47,12 @@ Capa de acceso a datos. Encapsula todas las interacciones con la base de datos M
 - `poolData` (BD de datos): datos de time-series de sensores
 - Los modelos normales solo usan `pool`
 - `dataModel.js` usa ambos pools segun la consulta
+
+### findByUuidDirect (patron de optimizacion)
+- `BaseModel.findByUuid()` carga TODOS los registros y filtra en JS (ineficiente para tablas grandes)
+- `findByUuidDirect()` hace una query directa por UUID (mas eficiente)
+- Usar `findByUuidDirect()` en lugar de `findByUuid()` cuando la tabla es grande
+- Ejemplo: `DataloggerModel.findByUuidDirect(uuid)` en vez de `DataloggerModel.findByUuid(uuid)`
 
 ### Naming de columnas en DB
 - snake_case en la base de datos: `business_uuid`, `is_active`, `created_at`

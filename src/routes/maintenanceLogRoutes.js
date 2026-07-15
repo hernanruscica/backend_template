@@ -7,6 +7,9 @@ const router = Router();
 
 router.use(authMiddleware);
 
+router.route('/businesses/:businessUuid/maintenance-logs/run-check')
+    .post(permissionMiddleware, MaintenanceLogController.runCheck);
+
 router.route('/businesses/:businessUuid/dataloggers/:dataloggerUuid/maintenance-logs')
     .post(permissionMiddleware, MaintenanceLogController.create)
     .get(permissionMiddleware, MaintenanceLogController.getAll);

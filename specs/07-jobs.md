@@ -20,7 +20,12 @@ Tareas programadas que se ejecutan automaticamente sin interaccion del usuario. 
 - Naming: `[nombre]Store.js`
 
 #### Archivos actuales
-- `DataloggersDataStore.js` - Cache en memoria de datos de dataloggers y canales
+- `DataloggersDataStore.js` - Cache en memoria de datos de dataloggers y canales (lastData, totalData, lastConection)
+- `ChannelMetadataStore.js` - Cache en memoria de metadatos de canal (table_name, column_name, name, averaging_period)
+- `EnergyIncidentsCache.js` - Cache con TTL de 5 min para resultados de energyincidents
+  - Key: `${dataloggerUuid}:${start}:${end}`
+  - TTL: 5 minutos
+  - Cleanup: cada 10 minutos
 
 ### Config de DB
 - Ubicacion: `src/config/*.js`
@@ -62,11 +67,25 @@ async function runJob() {
 ### Pipeline de datos (DataloggerDataReceiveJob)
 1. Fetch todos los dataloggers activos de la DB
 2. Fetch todos los canales activos de la DB
-3. Para cada canal: query ultimo porcentaje de uso (rolling average)
-4. Para cada canal: query tiempo total de uso (cache 24h)
-5. Para cada datalogger: query ultima conexion
-6. Almacenar todo en DataloggersDataStore
-7. Ejecutar AlarmMonitorService.checkAlarms()
+3. **Cargar metadatos de canal en ChannelMetadataStore** (table_name, column_name, etc.)
+4. Procesar canales en **batches de 3** (no todos en paralelo)
+5. Para cada batch: query ultimo porcentaje de uso + query tiempo total de uso (cache 24h)
+6. Procesar dataloggers en **batches de 3**: query ultima conexion
+7. Almacenar todo en DataloggersDataStore
+8. Ejecutar AlarmMonitorService.checkAlarms()
+
+### Batch processing (patron de concurrencia)
+- Los items se procesan en batches de `BATCH_SIZE = 3`
+- Cada batch se ejecuta en paralelo via `Promise.allSettled`
+- Los batches se ejecutan secuencialmente (uno a la vez)
+- Esto reduce la carga concurrente de N queries a 3 queries simultaneas
+- Patron: `processBatches(items, processFn)` es una funcion generica reutilizable
+
+### Connection pool config (Hostinger Shared)
+- `pool` (app DB): connectionLimit = 10, connectTimeout = 10s
+- `poolData` (sensor DB): connectionLimit = 5, connectTimeout = 5s, idleTimeout = 30s
+- Hostinger Shared tiene limites estrictos de conexiones concurrentes
+- Reducir connectionLimit previene crash de MySQL por exceso de conexiones
 
 ### Pipeline de alarma (AlarmMonitorService)
 1. Fetch todas las alarmas activas de la DB
@@ -81,6 +100,14 @@ async function runJob() {
 - TTL: totalData se recarga cada 24 horas
 - Actualizado por DataloggerDataReceiveService
 - Leido por estrategias de alarma
+
+### ChannelMetadataStore (in-memory)
+- Map nativo de JS, key = channelUuid
+- Cache: table_name, column_name, name, averaging_period
+- TTL: se invalida cuando el cron job carga datos (cada 5 min) o cuando se actualiza un canal
+- Poblado por DataloggerDataReceiveService al inicio de loadData()
+- Leido por DataService para queries de time-series
+- Invalidado por ChannelService en update/delete
 
 ### MaintenanceAlertJob
 1. Fetch todos los canales y dataloggers
@@ -123,6 +150,8 @@ DB remota -> DataloggerDataReceiveJob -> DataloggersDataStore -> AlarmMonitorSer
 - Solo una instancia del job puede correr a la vez
 - Si un job toma mas tiempo que el schedule, se salta la siguiente ejecucion
 - El flag `isRunning` se resetea en el bloque `finally`
+- Los items se procesan en batches de 3 (no todos en paralelo) para no agotar el pool de conexiones
+- Hostinger Shared: connectionLimit = 5 para poolData, connectTimeout = 5s
 
 ### Cache
 - DataloggersDataStore tiene TTL para datos de largo plazo
@@ -152,15 +181,19 @@ DB remota -> DataloggerDataReceiveJob -> DataloggersDataStore -> AlarmMonitorSer
 ### Checklist de verificacion
 - [ ] El job tiene concurrency guard (isRunning)
 - [ ] El job maneja errores sin crashear (try/catch + finally)
+- [ ] El job usa batches para queries paralelas (BATCH_SIZE = 3)
 - [ ] El job se registra en index.js
 - [ ] El store usa singleton o globalThis
 - [ ] El store tiene TTL para datos que se vuelven obsoletos
 - [ ] Los schedules son correctos y documentados
+- [ ] poolData connectionLimit <= 5 para Hostinger Shared
 
 ## 8. Errores comunes de esta capa
 
 - No usar concurrency guard (duplicacion de ejecuciones)
 - No manejar errores en jobs (causa crash del servidor)
+- No usar batches para queries paralelas (agota pool de conexiones en Hostinger Shared)
+- connectionLimit demasiado alto para Shared hosting (causa crash de MySQL)
 - Hardcodear schedules en vez de usar variables de entorno
 - No tener TTL en el store (memory leak o datos stale)
 - Ejecutar el job inicial antes de que la DB este lista

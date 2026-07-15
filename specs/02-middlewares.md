@@ -19,6 +19,7 @@ Define los middlewares de Express que procesan las requests antes de llegar a lo
 - `userValidation.js` - Validacion de datos de usuario
 - `businessValidation.js` - Validacion de datos de negocio
 - `errorHandler.js` - Handler global de errores
+- Rate limiting global en `app.js` (`express-rate-limit`, 700 req/15min por IP)
 
 ## 3. Patrones obligatorios
 
@@ -31,7 +32,7 @@ Define los middlewares de Express que procesan las requests antes de llegar a lo
 ### Cadena de ejecucion (order)
 El orden de middlewares es critico:
 ```
-csrfMiddleware -> authMiddleware -> permissionMiddleware -> [validacion] -> controller
+rateLimiter -> csrfMiddleware -> authMiddleware -> permissionMiddleware -> [validacion] -> controller
 ```
 
 ### Middlewares de autenticacion
@@ -93,6 +94,12 @@ csrfMiddleware -> authMiddleware -> permissionMiddleware -> [validacion] -> cont
 ### CSRF
 - Todas las rutas `/api` requieren header `X-Requested-With: XMLHttpRequest`
 - Excepciones: rutas de auth (`/api/auth/*`)
+
+### Rate Limiting
+- Configurado en `app.js` con `express-rate-limit`
+- 700 requests por IP en ventana de 15 minutos
+- Aplica a todas las rutas `/api`
+- Responde con 429 y headers `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `Retry-After`
 
 ## 7. Como extender esta capa
 

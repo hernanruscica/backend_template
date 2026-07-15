@@ -32,12 +32,12 @@ try {
       password: process.env.DB_PASSWORD_DATA,
       database: process.env.DB_NAME_DATA,
       waitForConnections: true,
-      connectionLimit: 10,
+      connectionLimit: 5,
       queueLimit: 0,
-      connectTimeout: 10000,
+      connectTimeout: 5000,
       enableKeepAlive: true,
       keepAliveInitialDelay: 0,
-      idleTimeout: 60000
+      idleTimeout: 30000
   });
   //console.log('Database poolData created successfully');
 } catch (error) {
