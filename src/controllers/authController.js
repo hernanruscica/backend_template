@@ -43,7 +43,9 @@ export const AuthController = {
       isOwner: isOwner,
     };
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+    });
 
     await logger.log({ action: 'login', log_type: 'user', details: `Login exitoso: ${user.email}`, extra_data: {
       user_uuid: user.uuid,

@@ -84,7 +84,7 @@ Funciones utilitarias y clases base que son compartidas por todas las demas capa
 
 ### Seguridad
 - bcrypt salt rounds: 10 (balance seguridad/rendimiento)
-- JWT expiry: 1h para auth, 24h para alarm links
+- JWT expiry: `JWT_EXPIRES_IN` (env var, default 8h) para auth, 24h para alarm links
 - Passwords: min 8 chars, 1 digito, 1 minuscula, 1 mayuscula
 
 ### Timezone

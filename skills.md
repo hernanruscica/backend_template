@@ -74,7 +74,7 @@ Catalogo de habilidades disponibles para los agentes. Cada skill define que hace
 **Convenciones que impone:**
 - Tokens se extraen de header `Authorization: Bearer <token>`
 - JWT payload incluye: uuid, roles, isOwner
-- Expiry: 1h para auth, 24h para alarm links
+- Expiry: `JWT_EXPIRES_IN` (env var, default 8h) para auth, 24h para alarm links
 - Owner bypassa todos los controles de permiso
 - Los middlewares de auth van SIEMPRE antes que permisos
 
